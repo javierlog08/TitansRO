@@ -1,0 +1,10 @@
+-	script	MonsterTest	-1,{
+	OnInit:
+	//	monster "prontera",155,175,"Poringz0rd",2320,1,"MonsterTest::OnThisMobDeath";
+	end;
+	
+	OnThisMobDeath:
+	callfunc "KafraPluginPayInstance",100,getcharid(1);
+	end;
+}
+

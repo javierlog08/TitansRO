@@ -1,0 +1,187 @@
+//**********************************************************************************/
+//*	Kafra points display command
+//**********************************************************************************/
+-	script	cmd_kafra	-1,{
+OnInit:
+	bindatcmd "kpoints",strnpcinfo(3)+"::OnAtCommand";
+	end;
+	
+OnAtCommand:
+	dispbottom "--------------------------------------------------------";
+	dispbottom "TIENES "+#CASHPOINTS+" kafra points.";
+	dispbottom "--------------------------------------------------------";
+	end;
+}
+
+
+
+//**********************************************************************************/
+//*	Kafra Shops Definition
+//**********************************************************************************/
+-	cashshop	shop_c	-1,12212:1,6240:1,6241:1,6225:1,6226:1,7619:5,6220:25,12622:100 //Consumables
+-	cashshop	shop_b	-1,14004:5,13989:5,12913:5,13625:5,12914:5,13810:8,16396:8,16394:8,16261:10,16258:10,14152:200//boxes
+-	cashshop	shop_h	-1,5483:200,5389:300,5325:400,5361:400,5467:400,5653:500,5453:500,5452:600,5451:700,18508:800,5518:1000 //headgears
+//-	cashshop	shop_r	-1,5265:10,2753:20,2760:20,2688:50,2741:50,5266:75,5326:100,2137:150,2132:200,13422:200,1829:200,1929:200,1628:200,1729:200,1286:200,1580:200,13175:200,1487:250,13309:300,13021:300,1174:400,1424:500 //Rental Items 5 Days
+
+
+//**********************************************************************************/
+//*	Kafra Shop core npc
+//**********************************************************************************/
+itemmall,180,71,4	script	Kafra Shop Employer::kafra_shop	423,{
+	mes "Bienvenido al Systema de Kafra Shop";
+	mes "Aqui puedes cambiar diferentes utilidades por ^0000FFKafra Points^000000";
+	mes "Que deseas hacer?";
+	next;
+	
+	menu_kaf:
+		//menu "Que son Kafra Points en Titans?",m_explain,"Kafra Points x Zeny",m_xzeny,"Kafra Points x Medallas",m_xmedal,"Obtener Premios",m_menu_shop;
+		menu "Que son Kafra Points en Titans?",m_explain,"Kafra Points x Medallas",m_xmedal,"Recompensa para Guild",m_xguild,"Obtener Premios",m_menu_shop;
+	end;
+	
+	m_explain:
+		mes "Los ^0000FFKafra Points^000000 Son puntajes especiales";
+		mes "Que puedes cambiar por los articulos que posee el sistema de kafra.";
+		mes "Puedes obtener ^0000FF Kafra Points^000000 de la siguiente manera:";
+		next;
+		mes "^FF6347BATTLE GROUNDS^000000:";
+		mes "Una medalla equivale a  ^0000FF5 Kafra Points^000000";
+		mes "^FF6347PVP KILL^000000";
+		mes "Al matar a alguien en el pvp tienes un 20% de probabilidad de obtener ^0000FF1 Kafra Points^000000";
+		mes "^FF6347CAZERIA MVP^000000";
+		mes "Cada MVP que mates en el mapa de origen del MVP te da un total de ^0000FF5 Kafra Points^000000";
+		mes "Los Mini Boss Seleccionados por el server te da un total de ^0000FF1 Kafra Point^000000";
+		mes "^FF6347ENDLESS TOWER^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF100 Kafra Points^000000 a cada miembro";
+		mes "^FF6347BAKONOWA EXTERMINATION^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF100 Kafra Points^000000 a cada miembro";
+		mes "^FF6347NURSE IN PORT MALAYA^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF100 Kafra Points^000000 a cada miembro";
+		mes "^FF6347NIDHOGGUR'S NEST^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF100 Kafra Points^000000 a cada miembro";
+		mes "^FF6347SEALED SHRINE QUEST^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF50 Kafra Points^000000 a cada miembro";
+		mes "^FF6347BUWAYA'S CAVE^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF50 Kafra Points^000000 a cada miembro";
+		mes "^FF6347HAZY FOREST^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF40 Kafra Points^000000 a cada miembro";
+		mes "^FF6347ORC MEMORY DUNGEON^000000";
+		mes "La Quest de Instancia Terminada te da un total de  ^0000FF30 Kafra Points^000000 a cada miembro";
+		mes "^FF6347WAR OF EMPERIUM^000000";
+		mes "Romper el emperium te da un total de ^0000FF10 Kafra Points^000000";
+		mes "Poseer un castillo premia a la guild entera con ^0000FF50 Kafra Points^000000 por semana por cada castillo";
+		//mes "^FF6347POINTS X ZENY^000000";
+		//mes "1,000,000 zeny equivale a  ^0000FF1 Kafra Points^000000";
+		mes "^FF6347DONACIONES^000000";
+		mes "Pueds obtener ^0000FFKafra Points^000000 apoyando al servidor. En el sitio web mas información";
+		mes "^FF6347VOTAR POR EL SERVIDOR^000000";
+		mes "Por votar cada dia obtendras ^0000FF10 Kafra Points^000000. En el sitio web mas información";
+		mes "^FF6347FESTIVAL DE TITANS RO^000000";
+		mes "En el festival existen diferentes juegos que puedes cambiar por kafra points";
+		mes "pero de ello no te puedo explicar aqui...";
+		next;
+		goto menu_kaf;
+	end;
+	
+	m_xzeny:
+		mes "Un 1,000,000 es igual a ^0000FF1 Kafra Points^000000";
+		mes "Deseas cambiarlo?";
+		next;
+		menu "Si",z_yes,"No",exit;
+	end;
+	
+	z_yes:
+		mes "Introduce sin comas el numero de Zeny, que deseas";
+		mes "cambiar por ^0000FFKafra Points^000000";
+		input .@zeny;
+		
+		if(.@zeny >= .ZENY_EQUAL && Zeny >= .@zeny) {
+			.@cash = (.@zeny /.ZENY_EQUAL);
+			set Zeny, Zeny - .@zeny;
+			atcommand "@cash "+.@cash;
+		} else {
+			next;
+			mes "^FF0000 LA CANTIDAD ES INVALIDA. ^000000";
+		}
+		close;
+	end;
+	
+	
+	m_xguild:
+		mes "Paga de Guild Desabilitada hasta horarios oficiales de WOE.";
+		close;
+	end;
+	
+	m_xmedal:
+		mes "Una medalla es igual a ^0000FF5 Kafra Points^000000";
+		mes "Deseas cambiar medallas?";
+		next;
+		menu "Si",m_yes,"No",exit;
+	end;
+	
+	m_yes:
+		mes "El tipo  de medalla, que deseas";
+		mes "cambiar por ^0000FFKafra Points^000000";
+		set .@choice,0;
+		switch(select("Bravery Badge:Valor Badge:Wat Badge")) {
+			case 1:
+				set .@choice,7828;
+			break;
+
+			case 2:
+				set .@choice,7829;
+			break;
+
+			case 3:
+				set .@choice,7773;
+			break;
+		}
+
+		next;
+		mes "Cuantas ^FF6347"+getitemname(.@choice)+"^000000";
+		mes "Deseas cambiar por ^0000FFKafra Points^000000?";
+		input .@medals;
+		
+		if(.@medals > 0 && countitem(.@choice)>=.@medals) {
+			.@cash =  (.@medals * .MEDALS_PER);
+			atcommand "@cash "+.@cash;
+			delitem .@choice,.@medals;
+		} else {
+			next;
+			mes "^FF0000Por favor introduce el numero real de medallas que puedas cambiar.^000000";
+		}
+		close;
+	end;
+	
+	exit:
+		mes "OH Bueno, tu sabes que existen muchas maneras....";
+		close;
+	end;
+	
+	m_menu_shop:
+		mes "Que deseas hacer con tus puntos?";
+		menu "Consumibles:Boxes:Headgears",m_shops;
+	end;
+	
+	m_shops:
+		if(@menu==1) {
+			callshop "shop_c",1;
+			npcshopattach "shop_c";
+		}
+		if(@menu==2) {
+			callshop "shop_b",1;
+			npcshopattach "shop_b";
+		}
+		
+		if(@menu==3) {
+			callshop "shop_h",1;
+			npcshopattach "shop_h";
+		}
+	end;
+	
+	
+	OnInit:
+		set .ZENY_EQUAL,10000000; //Zeny Equal To a KAFRA Point
+		set .MEDALS_PER,5; //PAy per medals
+	end;
+	
+}

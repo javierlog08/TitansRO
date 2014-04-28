@@ -101,7 +101,7 @@ OnAgitBreak:
 	set .@GID,getcharid(2);
 	// Show and log error if an unguilded player breaks the Emperium. (Should NEVER happen)
 	if (.@GID <= 0) {
-		set .@notice$,"Character "+strcharinfo(0)+" ("+getcharid(0)+") broke the Emperium in Castle: "+strnpcinfo(2)+" while guildless. No data will be saved and Emperium respawned.";
+		set .@notice$,"El impostor "+strcharinfo(0)+" ("+getcharid(0)+") tomo el Emperium en castillo: "+strnpcinfo(2)+" sin tener guild. No data guardada y emperium resteado.";
  		logmes .@notice$; debugmes .@notice$;
 		donpcevent "Agit#"+strnpcinfo(2)+"::OnStartArena";
 		end;
@@ -119,7 +119,9 @@ OnAgitBreak:
 	setcastledata strnpcinfo(2),1, .@GID;
 
 	// Announce that the Emperium is destroyed, and respawn all but new castle-occupants.
-	mapannounce strnpcinfo(2),"The emperium has been destroyed.",bc_map|bc_woe,"0x00CCFF",FW_NORMAL,12;
+	mapannounce strnpcinfo(2),"El emperium fue destruido.",bc_map|bc_woe,"0x00CCFF",FW_NORMAL,12;
+	announce "El emperium de [" + getcastlename(strnpcinfo(2)) + "] fue destruido por "+strcharinfo(0)+" de la guild  [" + getguildname(.@GID) + "].",bc_all|bc_woe; //JGI: ANUNCIO POR ROMPER
+	atcommand "@cash "+10; //JGI: RECOMPENZA POR ROMPER
 	maprespawnguildid strnpcinfo(2),.@GID,6;
 
 	// Refresh castle data, disable Kafra and reset Invest information.
@@ -139,7 +141,7 @@ OnAgitBreak:
 	if( agitcheck() )
 		donpcevent "Agit#"+strnpcinfo(2)+"::OnStartArena";
 	sleep 7000;
-	announce "The [" + getcastlename(strnpcinfo(2)) + "] castle has been conquered by the [" + getguildname(.@GID) + "] guild.",bc_all|bc_woe;
+	announce "El castillo [" + getcastlename(strnpcinfo(2)) + "] ha sido conquistado por la guild [" + getguildname(.@GID) + "].",bc_all|bc_woe;
 	end;
 
 // War of Emperium has ended.
@@ -161,7 +163,7 @@ OnGuildBreak:
 	setcastledata strnpcinfo(2),1,0;
 	// Wait before refreshing guild information.
 	sleep 7000;
-	announce "Guild Base [" + getcastlename(strnpcinfo(2)) + "] has been abandoned.",0;
+	announce "El castillo [" + getcastlename(strnpcinfo(2)) + "] ha sido abandonado por la guild.",0;
 	donpcevent strnpcinfo(0)+"::OnRecvCastle";
 	end;
 

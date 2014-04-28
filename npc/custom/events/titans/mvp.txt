@@ -1,0 +1,237 @@
+//************************************************************************
+//		AUTOMATIC INVATION PORING EVENT
+//	@autor: Javierlog08 (GM Makarov)
+//	@Description----------------------------------------------------------
+//	Summon around 2000 Poirngs in prontera, 
+//	a Special group of them can drop a items as reward or cash points 
+//	to the killer.
+//	----------------------------------------------------------------------
+//	@Features:
+//	-Multi Languages
+//	-Friendly paramenter Config
+//************************************************************************
+
+
+//******************************************
+//*EVENT TIMER SCRIPT
+//******************************************
+-	script	mvp_timer	-1,{
+	OnClock0100:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock0400:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock0700:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock1000:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock1300:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock1600:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock1900:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	OnClock2200:
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+}
+
+//******************************************
+//*EVENT START MANAGER
+//******************************************
+-	script	mvp_event_manager	-1,{
+	OnInit:
+		goto SETTINGS;
+	end;
+
+	OnStart:
+		//PRIZE MONSTER SPAWNS
+		for(.j=0;.@j<.PRIZE_MOBS_SPAWN_TIME;++.@j) {
+			for(.@i=0;.@i<getarraysize(.PRIZE_MOBS);++.@i) {
+				monster .MAP$,0,0,"Event Crystal",.PRIZE_MOBS[.@i],1,strnpcinfo(0)+"::OnPrizeMonster";
+			}
+		}
+		
+		for(.@i=0;.@i<getarraysize(.MVP_MOBS);++.@i) {
+			monster .MAP$,0,0,"Event MVP",.MVP_MOBS[.@i],1;
+		}
+
+		for(.@i=0;.@i<getarraysize(.MINI_MOBS);++.@i) {
+			monster .MAP$,0,0,"Event MVP",.MINI_MOBS[.@i],1;
+		}
+
+		//FLAGS
+		removemapflag .MAP$,mf_pvp;
+		setmapflag .MAP$,mf_nomemo;
+		setmapflag .MAP$,mf_nosave;
+		
+		//sSTART ANNOUNCE
+		announce getvariableofnpc(.T_ANNOUNCE_START$,"npc_translation"), bc_all,getvariableofnpc(.ANNOUNCE_COLOR$,"npc_translation");
+
+		//ENABLE NPC RECRUITER
+		enablenpc "mvp_recruiter";
+
+		//TIMER
+		initnpctimer;
+		
+	end;
+
+	OnTimer600000: //10 Minutes event
+		announce getvariableofnpc(.T_ANNOUNCE_STILL$,"npc_translation"), bc_all,getvariableofnpc(.ANNOUNCE_COLOR$,"npc_translation");
+    end;
+
+	OnTimer1200000: //20 Minutes event
+		goto STOP_EVENT;
+    end;
+
+	OnPrizeMonster:
+		skilleffect 693,0;
+		soundeffect "vallentine.wav",0; //Optional wav, do you must use yours
+		getitem .PRIZE_ITEM,.PRIZE_QTY;
+	end;
+	
+	STOP_EVENT:
+		disablenpc "mvp_recruiter";
+		mapwarp .MAP$,"prontera",160,180;
+		announce getvariableofnpc(.T_ANNOUNCE_STOP$,"npc_translation"), bc_all,getvariableofnpc(.ANNOUNCE_COLOR$,"npc_translation");
+		killmonster .MAP$,"All";
+		cleanmap .MAP$;
+		stopnpctimer;	
+	end;
+
+	SETTINGS:
+		disablenpc "mvp_recruiter";
+		set .MAP$,"pvp_y_5-3";
+		set .RANDOM_MVP,0; /* look random in the mvp list? 0:no   1:yes*/
+		set .PRIZE_MOBS_SPAWN_TIME,5;
+		set .PRIZE_ITEM,7711;
+		set .PRIZE_QTY,1;
+		setarray .PRIZE_MOBS[0],/* the monster in the map that drop the item prize for kafra shop or any system*/
+					1952,	//CRYSTAL GREEN
+					1953,	//RED CRYSTAL
+					1877,	//YELLOW CRYSTAL
+					1954;	//BLUE CRYSTAL
+
+		setarray .MVP_MOBS[0],1511,/*AMONRA*/
+						1785,/*ATROX*/
+						1630,/*BACSOJIN*/
+						1039,/*BAPHO*/
+						//1874,/*BERZE*/
+						2068,/*BOITATA*/
+						//2319,/*buyaya*/
+						1272,/*dark lord*/
+						//1719,/*detaler*/
+						1046,/*dopel*/
+						1389,/*dracula*/
+						1112,/*drake*/
+						1115,/*eddga*/
+						1418,/*evil snkae*/
+						//1871,/*fallen*/
+						1252,/*garm*/
+						1768,/*gloom*/
+						//2165,/*queen  scara*/
+						1885,/*gopinch*/
+						//1832,/*ifrit*/
+						//1492,/*samurai*/
+						//1734,/*kiel*/
+						1251,/*stormy Knight*/
+						//1779,/*ktunulux*/
+						1373,/*lord of death*/
+						//1147,/*maya*/
+						1059,/*mitress*/
+						1150,/*moonlight*/
+						1087,/*orc hero*/
+						1190,/*orc lord*/
+						1038,/*osiris*/
+						1157,/*pharao*/
+						1159,/*phreoniee*/
+						1623,/*RSX*/
+						//1583,/*tao gunka*/
+						1312;/*turtle general*/
+						//1751,/*randris*/
+						//1917,/*stan morrco*/
+						//1658;/*tnizem*/
+
+			setarray .MINI_MOBS[0],1096,//Angeling
+								1388,	//archangeling
+								1307,	//cat nine
+								1582,	//deviling
+								1093,	//eclipse
+								1120,	//ghostring
+								1990,	//hardrock
+								1090,	//mastering
+								1894,	//pouring
+								1991,	//tendrillion
+								1089,	//toad
+								2208,	//wildrider
+								1388,	//archangeling
+								1307,	//cat nine
+								1582,	//deviling
+								1093,	//eclipse
+								1120,	//ghostring
+								1990,	//hardrock
+								1090,	//mastering
+								1894,	//pouring
+								1991,	//tendrillion
+								1089,	//toad
+								2208;	//wildrider
+	end;
+	
+}
+
+prontera,162,181,3	script	Monster Hunt::mvp_recruiter	10055,{
+	for(.@i=0;.@i<getvariableofnpc(.RECRUITER_TEXT_SIZE,"npc_translation");++.@i) {
+		mes getvariableofnpc(.T_RECRUITER_TEXT$[.@i],"npc_translation");
+	}
+	next;
+	mes getvariableofnpc(.T_DO_YOU_WHISH$,"npc_translation");
+	if(select(getvariableofnpc(.T_CONFIRMATION$,"npc_translation"))==1) {
+		if(getvariableofnpc(.MAP$,"mvp_event_manager")!="")
+			warp getvariableofnpc(.MAP$,"mvp_event_manager"),0,0;
+	} else {
+		mes getvariableofnpc(.T_COBARD$,"npc_translation");
+		close;
+	}
+	
+	
+}
+
+-	script	npc_translation	-1,{
+
+	OnInit:
+		set .ANNOUNCE_COLOR$,"0X90EE90";
+		goto Lang_ES; //Default Lang
+	end;
+
+	Lang_ES:
+		setarray .T_RECRUITER_TEXT$[0],"^90EE90 [EVENTO MONSTER HUNT]^000000",
+									"El evento durara "+20+" Minutos.",
+									"Te premiara de la siguiente manera:",
+									"  ^BBBBBB~Event Ticktes^000000",
+									"  ^BBBBBB~Kafra Points^000000",
+									"El mapa tiene ^0000ffCristales^000000 ",
+									"Cada Cristal te da 1 ^FF0000Event Ticket^000000",
+									"Cada Monstruo en el mapa premia con ^0000FFKP ^000000";
+		set .RECRUITER_TEXT_SIZE,getarraysize(.T_RECRUITER_TEXT$);
+		set .T_DO_YOU_WHISH$,"Deseas ir al evento?";
+		set .T_CONFIRMATION$,"Si:No";
+		set .T_COBARD$,"^FF0000Eres solo un cobarde, Espero no verte otra vez^000000";
+		set .T_ANNOUNCE_START$,"El evento de Monster Hunt se ha activado ! -- Habla con el NPC en Prontera para participar";
+		set .T_ANNOUNCE_STILL$,"Evento de Monster Hunt estara activo "+10+" Minutos mas.";
+		set .T_ANNOUNCE_STOP$,"TIEMPO ! El evento Monster Hunt ha llegado a su fin.";
+	end;
+	
+}

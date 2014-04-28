@@ -1,0 +1,82 @@
+
+prontera,164,168,4	script	Horarios de Eventos::info_npc	837,{
+
+	i_start:
+	for(.@i=0;.@i<getvariableofnpc(.INFO_I_S,"npc_translation_info");++.@i) {
+		mes getvariableofnpc(.T_INFO_INTRO$[.@i],"npc_translation_info");
+	}
+	next;
+
+	i_menu:
+		switch(select(getvariableofnpc(.T_EVENT_MENU$,"npc_translation_info"))) {
+			case 1:
+				for(.@i=0;.@i<getvariableofnpc(.INFO_I_P,"npc_translation_info");++.@i) {
+					mes getvariableofnpc(.T_INFO_PORING$[.@i],"npc_translation_info");
+				}
+				close2;
+				goto i_start;
+			break;
+			
+			case 2:
+				for(.@i=0;.@i<getvariableofnpc(.INFO_I_M,"npc_translation_info");++.@i) {
+					mes getvariableofnpc(.T_INFO_MVP$[.@i],"npc_translation_info");
+				}
+				close2;
+				goto i_start;
+			break;
+		}
+	end;
+	
+	close;
+	
+	
+}
+
+-	script	npc_translation_info	-1,{
+	OnInit:
+		goto Lang_ES;
+	end;
+	
+	Lang_ES:
+		setarray .T_INFO_INTRO$[0],"^B266FF[Horarios de Eventos]^000000",
+								"Selecciona el Horario del evento",
+								"^BBBBBBEvento Poring^000000",
+								" Invoca porings en todo el mapa",
+								" cada poring dropea un Tickete de evento.",
+								"^BBBBBBMonster Hunt^000000",
+								" Invoca monstruos en todo el mapa",
+								" cada monstruo da KP.",
+								" Existen Mobs Crystals",
+								" Cada Crystal al morir da 1 Ticket de evento.";
+
+		set .INFO_I_S,getarraysize(.T_INFO_INTRO$);
+								
+		set .T_EVENT_MENU$,"Horarios Evento Poring:Horarios Evento MVP";
+		
+		setarray .T_INFO_PORING$[0],"^B266FF[Horarios de Eventos]^000000",
+								"Evento automatico Poring:",
+								"  ^BBBBBB~00:00 L-D^000000",
+								"  ^BBBBBB~03:00 L-D^000000",
+								"  ^BBBBBB~06:00 L-D^000000",
+								"  ^BBBBBB~09:00 L-D^000000",
+								"  ^BBBBBB~12:00 L-D^000000",
+								"  ^BBBBBB~15:00 L-D^000000",
+								"  ^BBBBBB~18:00 L-D^000000",
+								"  ^BBBBBB~21:00 L-D^000000";
+
+		set .INFO_I_P,getarraysize(.T_INFO_PORING$);
+								
+		setarray .T_INFO_MVP$[0],"^B266FF[Horarios de Eventos]^000000",
+								"Evento automatico Monster Hunter:",
+								"  ^BBBBBB~01:00 L-D^000000",
+								"  ^BBBBBB~04:00 L-D^000000",
+								"  ^BBBBBB~07:00 L-D^000000",
+								"  ^BBBBBB~10:00 L-D^000000",
+								"  ^BBBBBB~13:00 L-D^000000",
+								"  ^BBBBBB~16:00 L-D^000000",
+								"  ^BBBBBB~19:00 L-D^000000",
+								"  ^BBBBBB~22:00 L-D^000000";
+
+		set .INFO_I_M,getarraysize(.T_INFO_MVP$);
+	end;
+}

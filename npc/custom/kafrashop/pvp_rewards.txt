@@ -1,0 +1,11 @@
+-	script	kafrashoppvp	-1,{
+	OnInit:
+		set .PAY_PER_DEATH,1;
+	end;
+	OnPCKillEvent:
+		if(rand(1,20)==20){
+			announce "\""+strcharinfo(0)+"\" obtuvo "+.PAY_PER_DEATH+" Kafra Point al matar a  \""+rid2name(killedrid)+"\"",bc_green|bc_map;
+			atcommand "@cash +"+.PAY_PER_DEATH;
+		}
+	end;
+}

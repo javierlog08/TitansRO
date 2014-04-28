@@ -833,10 +833,10 @@ OnInstanceInit:
 OnEnable:
 	set .@map$, instance_mapname("2@orcs");
 	monster .@map$,185,8,"Shaman Cargalache",1984,1,instance_npcname("#Boss Control")+"::OnMyMobDead";
-	monster .@map$,179,15,"Depraved Orc Hero",1087,1;
+	monster .@map$,179,15,"Depraved Orc Hero",2094,1;
 	enablenpc instance_npcname("#Boss Control");
 	end;
-
+	
 OnMyMobDead:
 	donpcevent instance_npcname("Kruger#")+"::OnEnable";
 	set .@map$, instance_mapname("2@orcs");

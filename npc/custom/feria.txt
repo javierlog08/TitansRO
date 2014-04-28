@@ -1,0 +1,1436 @@
+prontera,0,0,0	script	::festivalSteal	-1,{
+	OnPCLogoutEvent:
+		if(countitem(7919)>=1)
+			delitem 7919,1;
+	end;
+	
+	OnPCDieEvent:
+		if(countitem(7919)>=1)
+			delitem 7919,1;
+	end;
+	
+	OnPCLoadMapEvent:
+		if(countitem(7919)>=1)
+			delitem 7919,1;
+	end;
+}
+
+prontera,161,148,0	script	Entrada::entrada_feria	45,1,1,{
+
+OnTouch:
+	mes "El Festival es una sorpresa de nuestro servidor. una vez este lista te dejaremos entrar.";
+	close;
+	warp "prontera",159,148;
+	end;
+	mes "La entrada a el Festival no es gratis.";
+	mes "Tiene un costo de ^ff0000 5^000000 ^0000ffGame Points^000000";
+	mes "Deseas Entrar?";
+	next;
+	menu "No",eno,"Si",esi;
+
+	eno:
+		warp "prontera",159,148;
+	end;
+
+	esi:
+		if(#CASHPOINTS>=5){
+			getitem 7919,1;
+			set #CASHPOINTS,#CASHPOINTS-5;
+			warp "prontera",170,147;
+		}else{
+			mes "No tienes Game Points, para entrar,lo sentimos";
+			next;
+			goto eno;
+		}
+	end;
+	
+}
+
+prontera,166,148,0	script	Salida::exit_feria	-1,2,2,{
+
+OnTouch:
+	mes "Desea salir de la feria?";
+	if(select("no:si")==2)
+		if(countitem(7919)>=1)
+			delitem 7919,1;
+		warp "prontera",159,148;
+	
+	close;
+	end;
+	
+}
+
+prontera,177,154,4	script	Coins	478,{
+if(countitem(7919)<1)
+	end;
+mes "Bievenido a el Festival de Reverse";
+mes "Que Deseas Hacer?";
+next;
+	switch(select("Comprar Coins:Vender Coins:Informarme"))
+	{
+		case 1:
+			mes "Con 1 Game Point puedes comprar 2 Bronze Coins para jugar";
+			mes "Cuantos ^ff0000Game Points^000000 usaras?";
+			next;
+			input @coins;
+			if(#CASHPOINTS>=@coins){
+				getitem 673,@coins*2;
+				set #CASHPOINTS,#CASHPOINTS-@coins;
+				close;
+			}else{
+			mes "No tienes suficientes Game Points";
+			close;
+			}
+		break;
+		
+		case 2:
+				mes "Yo doy ^ff0000 GAme Points ^000000 A cambio de ^0000ff Gold Coins^000000";
+				mes "Dime " + strcharinfo(0) + ", ¿Cuantas ^0000FFGold Coin^000000 me trajiste?";
+				next;
+				input .@gcoins;
+				if ( countitem(7929) < .@gcoins ) {
+					mes "Veo que no tienes " + .@gcoins + ", vuelve cuando hayas participado en los juegos...";
+					close;
+				} else {
+					mes "Bueno, aqui tienes ^FF0000 5 Game Points^000000 por cada ^0000FFGold Coin^000000...";
+					delitem 7929 , .@gcoins ;
+					set #CASHPOINTS , #CASHPOINTS + ( .@gcoins * 5 ) ;
+					close2;
+					dispbottom "Tienes actualmente [ " + #CASHPOINTS + " ] Game Points";
+					end;
+				}
+		break;
+
+		case 3:
+			mes "Existen tres tipos de coins,";
+			mes "^0000ffBronze Coins,Silver Coins y Gold Coins^000000";
+			mes "Los distintos tipos de Coins, son usados en la feria y su valor depende del juego...";
+			mes "Yo solo te puedo verder ^0000ffBronce Coins^000000, pero si me traes ^0000ffGold Coin^000000 te las puedo cambiar por ^FF0000Game Points^000000";
+			next;
+			mes "Para consegir las coins, necesitas participar en los diferentes puestos de la feria... y cada puesto obtendras una Coin diferente";
+			mes "Para obtener ^0000ffGold Coins^000000, tienes que participar en nuestras grandes atracciones ^FF0000La Casa Embrujada y Team Battle^000000";
+			close;
+		break;
+	}
+	
+	OnInit:
+		waitingroom "Coins",0;
+	end;
+}
+
+prontera,225,158,4	script	Apostador	960,{
+	function getNumbers;
+	function pujaar;
+	if(countitem(7919)<1)
+		end;
+	if(getarraysize(@numbers)>0)deletearray @numbers;	
+	if(getarraysize(@apostador)>0)deletearray @apostador;
+	set @losecoins,0;
+	set @premio,0;
+
+	set @numbers,getNumbers();
+	mes "Las apuestas estan abiertas";
+	mes "Si apuestas a muchos numeros tienes mas posibilidades de obtener ^ff0000 Silver Coins ^000000";
+	mes "Si apuestas a un numero mas de una vez y este juega ganas el doble de  ^ff0000 Silver Coins ^000000";
+	mes "Deseas Apostar a algun numero?";
+	if(select("no:si")==2)
+		goto apuja;
+	mes "Bah Eres Un miedoso";
+	close;
+
+	apuja:
+		mes "Puedes Apostar a algunos de estos numeros";
+		switch(select("^ff0000"+@numbers[0]+"^000000:^00ff00"+@numbers[1]+"^000000:^0000ff"+@numbers[2]+"^000000:^800080"+@numbers[3]+"^000000:^ffff00"+@numbers[4]+"^000000:"+@numbers[5]))
+		{
+			case 1:
+				pujaar(0);
+ 			break;
+			case 2:
+				pujaar(1);
+ 			break;
+			case 3:
+				pujaar(2);
+ 			break;
+			case 4:
+				pujaar(3);
+ 			break;
+			case 5:
+				pujaar(4);
+ 			break;
+			case 6:
+				pujaar(5);
+ 			break;
+		}
+	end;
+
+
+	function pujaar{
+		mes "Este numero Tiene un costo de  ^ff00001 Bronze Coin^000000";
+		mes "Deseas Realmente apostar a el?";
+		if(select("si:no")==1)
+		{
+			if(countitem(673)>0){
+				set @losecoins,@losecoins+1;
+				set @apostador[getarraysize(@apostador)],@numbers[getarg(0)];
+			}else if(getarraysize(@apostador)){
+				mes "^ff0000 Ya no mas Gamepoints para apostar a otro numero, la rifa continara...^000000";
+			}else{
+				goto pujaend;
+			}
+			next;
+			if(countitem(673)>0 && @losecoins<countitem(673))
+			{
+				mes "Desea apostar a otro numero mas?";
+				if(select("si:no")==1)
+					goto apuja;
+			}
+		}
+		else if(!getarraysize(@apostador))
+		{
+			mes "Regresa cuando desees apostar";
+			close;
+			end;
+		}
+		next;
+		delitem 673,@losecoins;
+		mes "COMIENZA EL SORTEO";
+		mes "...................";
+		mes "........................";
+		mes "...............................";
+		mes "crick,crick,crick";
+		next;
+		mes "Los numeros ganador es:";
+		set @gana,@numbers[rand($apujas)];
+		mes "^ff0000"+@gana+"^000000";
+		for(set .@x,0;.@x<getarraysize(@apostador);set .@x,.@x+1)
+		{
+			if(@gana==@apostador[.@x])
+				set @premio,@premio+1;
+		}
+		next;
+		getitem 675,@premio;
+		mes "Has ganado un total de "+@premio+" Silver Coins";
+		mes "Gracias por participar!!!";
+		close;
+
+		pujaend:
+		next;
+		mes "Lo siento no tienes Bronze Coins";
+		mes "Regresa cuando tengas como apostar Haha!";
+		close;
+		end;
+		
+	}
+
+	function getNumbers{
+		for(set .@i,0;.@i<=$apujas;set .@i,.@i+1)
+		{ 
+			set @numbers[.@i],rand(100);
+		}
+		return @numbers;
+	}
+
+	OnInit:
+		//if(getarraysize(@numbers)>0)deletearray @numbers;	
+		//if(getarraysize(@apostador)>0)deletearray @apostador;
+		set $apujas,5;
+		waitingroom "Apuestas",0;
+	end;
+
+}
+
+
+prontera,226,177,4	script	Blackjack	961,{
+	function barajar;
+	if(countitem(7919)<1)
+		end;
+	if(getarraysize(@cartas)>0)deletearray @cartas;
+	set @suma,0;
+	mes "En esta mensa jugaremos Blackjack o 21";
+	mes "Se te otorgan 2 cartas , si tu numero es mas cercano a 21, que mi numero entonces ganas.....";
+	mes "Puedes pedirme cartas si consideras que con ello te puedes acercar mas";
+	mes "Al numero 21... tu eres el que decide cuando comparar resultados";
+	mes "Deseas jugar?";
+	next;
+	menu "Si",si21,"No",no21;
+
+	si21:
+	mes "Se estan Barajeando las cartas";
+	mes "%%%%%%%%%%%%%";
+	mes "--------------------";
+	mes "@@@@@@@@@@@@@@@@@@@@@@@@@";
+	mes "******************************";
+	next;
+	mes "Las cartas se estan repartiendo";
+	barajar();
+	mes "Recivistes 2 cartas";
+	set @suma,@cartas[0]+@cartas[1];
+	if(@cartas[0]==11 || @cartas[0]==1)set @cartas[0],"A";
+	if(@cartas[1]==11 || @cartas[1]==1)set @cartas[1],"A";
+	if(@cartas[0]==10)set @cartas[0],"J";
+	if(@cartas[1]==10)set @cartas[1],"Q";
+	mes "---"+" "+"---";
+	mes "-"+@cartas[0]+"- -"+@cartas[1]+"-";
+	mes "---"+" "+"---";
+	next;
+	close; //optional
+	end;
+
+	no21:
+	close;
+	end;
+
+	function barajar{
+		set @cartas[0],rand(2,11);
+		set @cartas[1],rand(2,11);
+		set @casa[0],rand(2,11);
+		set @casa[1],rand(2,11);
+	}
+
+	OnInit:
+		waitingroom "BlackJack",0;
+	end;
+}
+
+//[==============================================================================================]
+
+prontera,205,175,0	script	Portal de Batalla::BATLEENTER	723,2,2,{
+		if(countitem(7919)<1)
+			end;
+		mes "El campo de batalla no es para cualquier Guerrero ";
+		mes "Tiene un costo de ^00ff00 1 silver Coin ^000000 la entrada";
+		mes "^ff0000 Asi que te sugiero que no entres solo para que no gastes tus coins^000000";
+		mes "Organiza tu equipo primero. ^0000ff Al menos que ya tengas dos equipos de 3 gerreros.... ^000000";
+		next;
+		mes "Deseas pagar 1 silver coin para entrar?";
+		if(select("No:Si")==2)
+		{
+			set $@v,getvariableofnpc(.Ocupado,"PVP");
+			if(countitem(675)>=1 && $@v == 0)
+			{
+				warp "quiz_01",230,368;
+				delitem 675,1;
+			}
+			else
+			{
+				if($@v == 1)
+					mes "La sala esta ocupada, espera a que se desocupe, se anunciara cuando eso pase.";
+				if(countitem(675)<1)
+					mes "Vamos man, no tienes ^ff0000 Silver coins ^000000";
+				mes "Sin eso no puedes entrar";
+				close;
+			}
+		}
+		else
+		{
+			mes "Regresa cuando tengas la gente para jugar entonces";
+			close;
+		}
+}
+
+//prontera,200,173,4	script	Team_A	973,{
+quiz_01,221,368,4	script	Team_A	973,{
+	OnInit:
+		waitingroom "Equipo A",$maxPVP,"PVP::OnRegister",$maxPVP;
+	end;
+
+	OnEnter:
+		set $@team_A,waitingroom2bg("guild_vs4",7,49,"PVP::OnLeave","");
+	end;
+
+}
+
+//prontera,211,173,4	script	Team_B	974,{
+quiz_01,239,368,4	script	Team_B	974,{
+
+	OnInit:
+		waitingroom "Equipo B",$maxPVP,"PVP::OnRegister",$maxPVP;
+	end;
+
+	OnEnter:
+		set $@team_B,waitingroom2bg("guild_vs4",91,49,"PVP::OnLeave","");
+	end;
+
+}
+/*   [ =================================================================================================================================== ]   */
+
+quiz_01,231,375,4	script	Batallas::PVP	966,{
+mes "El campo de batalla es exclusivo para ciertas personas";
+mes "Entra del lado del equipo a el que desees pertenecer";
+mes "Este estilo de batalla es ^0000ff WOE 2.0 ^000000";
+mes "No ahi mas nada que explicar... Tan solo te deseo suerte...";
+close;
+end;
+
+function Armar1;
+function Armar2;
+function ActWarps;
+function DesWarps;
+function QuitBarAux;
+
+OnLeave:
+	if(@teamPVP==1)
+	{
+		for( set .@i,0; .@i <= getarraysize($@membersA); set .@i,.@i +1 )
+		{
+				if($@membersA[.@i] == getcharid(3))
+					deletearray $@membersA[.@i],1;
+		}
+		bg_leave;
+		if(bg_get_data($@team_A,0)<1)
+		{
+			mapannounce "guild_vs4","El equipo A se retiro del campo. la batalla llega a su fin.",0,0xB40404;
+			killmonsterall "guild_vs4";
+			set .Ocupado , 0 ;
+			bg_destroy $@team_A;
+			bg_destroy $@team_B;
+			disablenpc "PortalA";
+			disablenpc "PortalB";
+			set $BarrAuxNorte,0;
+			set $BarriAuxSur,0;
+			QuitBarAux();
+			DesWarps();
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 673,1,$@membersB[.@i];
+			}
+			deletearray $@membersA;
+			deletearray $@membersB;
+			sleep2 5000;
+			mapannounce "guild_vs4","En 5 segundos los participanes seran llevados a prontera.",0,0xB40404;
+			sleep2 5000;
+			mapwarp "guild_vs4","prontera",206,173;
+		}
+			
+	}
+	
+	if(@teamPVP==2)
+	{
+		for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+		{
+				if($@membersB[.@i] == getcharid(3))
+					deletearray $@membersB[.@i],1;
+		}
+		
+		if(bg_get_data($@team_B,0)<1)
+		{
+			mapannounce "guild_vs4","El equipo B se retiro del campo. la batalla llega a su fin",0,0xB40404;
+			killmonsterall "guild_vs4";
+			set .Ocupado , 0 ;
+			bg_destroy $@team_A;
+			bg_destroy $@team_B;
+			disablenpc "PortalA";
+			disablenpc "PortalB";
+			set $BarrAuxNorte,0;
+			set $BarriAuxSur,0;
+			QuitBarAux();
+			DesWarps();
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 673,1,$@membersA[.@i];
+			}
+			deletearray $@membersA;
+			deletearray $@membersB;
+			sleep2 5000;
+			mapannounce "guild_vs4","En 5 segundos los participanes seran llevados a prontera.",0,0xB40404;
+			sleep2 5000;
+			mapwarp "guild_vs4","prontera",205,170;
+			areaannounce "prontera",187,190,229,152,"La sala de Batalla PVP esta desocupada....",0,0xB40404;
+		}
+			
+	}
+end;
+
+//Definimos el equipo B
+RegisterB:
+donpcevent "PVP::OnRegister";
+end;
+
+OnRegister:
+	set $@stateA,getwaitingroomstate(0,"Team_A");
+	set $@stateB,getwaitingroomstate(0,"Team_B");
+	if($@stateA >=$maxPVP &&  $@stateB >=$maxPVP)
+	{
+		donpcevent "Team_A::OnEnter";
+		donpcevent "Team_B::OnEnter";
+		bg_warp $@team_A,"quiz_02",236,345;
+		bg_warp $@team_B,"quiz_02",263,345;
+		set .Ocupado , 1 ;
+		//set $BarrAuxNorte,0;
+		//set $BarriAuxSur,0;
+		//QuitBarAux();
+		//DesWarps();
+		areaannounce "prontera",187,190,229,152,"Dos grupos acaban de registrarse en el Campo de batalla de la feria.",0,0xB40404;
+
+		sleep2 2000;
+		//areaannounce "prontera",187,190,229,152,"Teletransportando al lugar del encuentro!",0,0xB40404;
+		//warpparty "guild_vs4",7,49,.Partys[1];//WARP GRUPO 1
+		//warpparty "guild_vs4",91,49,.Partys[2];//WARP GRUPO 1
+		set .BarUno,0;
+		set .BarDos,0;
+		Armar1();//ARMA BARRICADAS GRUPO 1
+		Armar2();//AMRA BARRICADAS GRUPO 2
+		ActWarps();//ACTIVA WARPS EN EL MAPA
+		set $@scoreA,2;
+		set $@scoreB,2;
+		bg_updatescore "guild_vs4",$@scoreA,$@scoreB;
+		//pvpon "guild_vs4";//ACTIVA PVP
+		monster "guild_vs4",50,49,getmonsterinfo(1907,0),1907,1,"PVP::OnEmpeBreak";//EMPERIUM
+		areamonster "guild_vs4",44,55,55,44,"Guardian",1286,4;//GUARDIANES
+		areaannounce "quiz_02",224,357,275,334,"Los warps al campo de batalla se activaran en 5 segundos, solo podran entrar aquellos con Siver Coins.",0,0xB40404;
+		sleep2 5000;
+		enablenpc "PortalA";
+		enablenpc "PortalB";
+		areaannounce "quiz_02",224,357,275,334,"Los warps fueron Activados .La batalla comienza!!!",0,0xB40404;
+	}
+end;
+
+function Armar1{
+	if(.BarUno <=0 )
+	{
+		setwall "guild_vs4",25,48,10,0,0,"Barricadas1";
+		set .BarUno, 4;
+		monster "guild_vs4",24,51,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA1
+		monster "guild_vs4",24,50,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA2
+		monster "guild_vs4",24,49,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA3
+		monster "guild_vs4",24,48,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA4
+	}
+}//ENDFUNCTION
+
+function Armar2{
+	if(.BarDos <=0 )
+	{
+		setwall "guild_vs4",74,48,10,0,0,"Barricadas2";
+		set .BarDos, 4;
+		monster "guild_vs4",75,51,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+		monster "guild_vs4",75,50,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+		monster "guild_vs4",75,49,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+		monster "guild_vs4",75,48,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+	}
+}//ENDFUNCTION
+
+function ActWarps{
+	enablenpc "WarpPVP";
+	enablenpc "WarpPVP01";
+	enablenpc "WarpPVP02";
+	enablenpc "WarpPVP03";
+}//ENDFUNCTION
+
+function DesWarps{
+	disablenpc "WarpPVP";
+	disablenpc "WarpPVP01";
+	disablenpc "WarpPVP02";
+	disablenpc "WarpPVP03";
+}//ENDFUNCTION
+
+
+//retira las barreras invisibles
+function QuitBarAux{
+	delwall "BarricadasAuxNorte";
+	delwall "BarricadasAuxSur";
+}//ENDFUNCTION
+
+//Se ejecuta al destruiruna barricada  del grupo 1
+OnBarricUno:
+	set .BarUno , .BarUno - 1 ; //BarUno es el total de barricadas, cada vez que una se destruye llega se resta -1
+	if ( .BarUno == 0 ) { // si no ahi barricadas entonces se borran las tiles que no se ven
+		delwall "Barricadas1";
+		mapannounce "guild_vs4","El grupo A destruyo todas las barricadas!.",0,0xB40404;
+	}//ENDIF
+	end;
+
+OnBarricDos:
+	set .BarDos , .BarDos - 1 ;
+	if ( .BarDos == 0 ) {
+		delwall "Barricadas2";
+		mapannounce "guild_vs4","El grupo B destruyo todas las barricadas!.",0,0xB40404;
+	}//ENDIF
+	end;
+
+OnEmpeBreak:
+	//pvpoff "guild_vs4";
+	//set $BarrAuxEqui , 0 ;
+	if(@teamPVP == 1)
+	{
+		mapannounce "guild_vs4",strcharinfo(0)+" del Equipo A Rompio el emperium",0,0xB40404;
+		sleep2 2000;
+		set $@scoreA,$@scoreA-1;
+		bg_updatescore "guild_vs4",$@scoreA,$@scoreB;
+		donpcevent "PVP::OnRespawn";
+	}
+	
+	if(@teamPVP == 2)
+	{
+		mapannounce "guild_vs4",strcharinfo(0)+" del Equipo B Rompio el emperium",0,0xB40404;
+		sleep2 2000;
+		set $@scoreB,$@scoreB-1;
+		bg_updatescore "guild_vs4",$@scoreA,$@scoreB;
+		donpcevent "PVP::OnRespawn";
+	}
+	
+	if(!($@scoreB) || !($@scoreA) )
+	{
+		killmonsterall "guild_vs4";
+		set .Ocupado , 0 ;
+		bg_destroy $@team_A;
+		bg_destroy $@team_B;
+		disablenpc "PortalA";
+		disablenpc "PortalB";
+		set $BarrAuxNorte,0;
+		set $BarriAuxSur,0;
+		QuitBarAux();
+		DesWarps();
+		if($@scoreA == 0)
+		{
+			set $@winer$,"Grupo A";
+			for( set .@i,0; .@i <= getarraysize($@membersA); set .@i,.@i +1 )
+			{
+				getitem 7929,2,$@membersA[.@i];
+			}
+			
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 7929,1,$@membersB[.@i];
+			}
+		}
+			
+		if($@scoreB == 0)
+		{
+			set $@winer$,"Grupo B";
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 7929,2,$@membersB[.@i];
+			}
+			
+			for( set .@i,0; .@i <= getarraysize($@membersA); set .@i,.@i +1 )
+			{
+				getitem 7929,1,$@membersA[.@i];
+			}
+		}
+		deletearray $@membersA;
+		deletearray $@membersB;
+		mapannounce "guild_vs4","Ha ganado el [ " + $@winer$ + " ]. Felicidades!",0,0xB40404;
+		sleep2 5000;
+		mapannounce "guild_vs4","Los ganadores reciven 2 Golds coins  y los perdedores 1 ",0,0xB40404;
+		sleep2 5000;
+		mapwarp "guild_vs4","prontera",205,170;
+		areaannounce "prontera",187,190,229,152,"La sala de Batalla PVP esta desocupada....",0,0xB40404;
+	}
+	end;
+
+OnRespawn:
+	bg_warp $@team_A,"guild_vs4",7,49;
+	bg_warp $@team_B,"guild_vs4",91,49;
+	Armar1();
+	Armar2();
+	monster "guild_vs4",50,49,getmonsterinfo(1907,0),1907,1,"PVP::OnEmpeBreak";//EMPERIUM 1288
+	areamonster "guild_vs4",44,55,55,44,"Guardian",1286,4;//GUARDIANES
+	end;
+
+OnInit:
+	set $BarrAuxNorte,0;
+	set $BarriAuxSur,0;
+	QuitBarAux();
+	DesWarps();
+	disablenpc "PortalA";
+	disablenpc "PortalB";
+	set $maxPVP,1; // el numero de jugadores para entrar a BG
+	end;
+
+OnPCDieEvent:
+getmapxy(@map$,@mapx,@mapy,0);
+if(@map$=="guild_vs4")
+{
+	if(@teamPVP==1)
+		Armar1();
+	
+	if(@teamPVP==2)
+		Armar2();
+}
+percentheal 100,100;
+	end;
+
+}//ENDSCRIPT
+
+//Warpers para la entrada oficial
+quiz_02,236,355,0	script	::PortalA	45,2,2,{
+	OnTouch:
+		set @teamPVP,1;
+		set $@membersA[getarraysize($@membersA)],getcharid(3); //Guarndamos el id de las personas q entran de este ekipo
+		warp "guild_vs4",7,49;
+	end;
+}
+
+quiz_02,263,355,0	script	::PortalB	45,2,2,{
+	OnTouch:
+		set @teamPVP,2;
+		set $@membersB[getarraysize($@membersB)],getcharid(3); //Guarndamos el id de las personas q entran de este ekipo
+		warp "guild_vs4",91,49;
+	end;
+}
+	/*   [ ================== Warp Random  ================== ]   */
+
+guild_vs4,65,50,0	script	::WarpPVP	45,2,2,{
+end;
+function ArmarAuxiliarNor;
+function ArmarAuxiliarSur;
+OnTouch:
+	set .WarpsPVP,rand(0,7);
+	if ( .WarpsPVP  == 1 ) {
+		mapannounce "guild_vs4",strcharinfo(0) + " logró pasar y va por el Emperium!",0;
+		warp "guild_vs4",49,58;
+	} else {
+		set .NorSur,rand(1,2);
+		if ( .NorSur == 1 ) {
+			if ( $BarrAuxNorte == 0 ) {
+				set $BarrAuxNorte,1;
+				areamonster "guild_vs4",48,87,51,77,"Guardian Montado",1893,2;//GUARDIANES
+				ArmarAuxiliarNor();
+			}
+			warp "guild_vs4",49,91;
+		} else {
+			if ( $BarriAuxSur == 0 ) {
+				set $BarriAuxSur,1;
+				areamonster "guild_vs4",51,12,48,22,"Guardian Montado",1893,2;//GUARDIANES
+				ArmarAuxiliarSur();
+			}//ENDIF
+			warp "guild_vs4",49,8;
+		}//ENDELSE
+		
+	}//ENDELSE
+	end;
+
+function ArmarAuxiliarNor{
+	setwall "guild_vs4",51,74,10,2,0,"BarricadasAuxNorte";
+	set $BarAuxNor, 4;
+	monster "guild_vs4",48,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA1
+	monster "guild_vs4",49,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA2
+	monster "guild_vs4",50,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA3
+	monster "guild_vs4",51,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA4
+}//ENDFUNCTION
+
+function ArmarAuxiliarSur{
+	setwall "guild_vs4",51,25,10,2,0,"BarricadasAuxSur";
+	set $BarAuxSur, 4;
+	monster "guild_vs4",51,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA1
+	monster "guild_vs4",50,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA2
+	monster "guild_vs4",49,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA3
+	monster "guild_vs4",48,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA4
+}
+
+
+}//ENDWARP
+
+guild_vs4,49,65,0	duplicate(WarpPVP)	::WarpPVP01	45,2,2
+guild_vs4,34,50,0	duplicate(WarpPVP)	::WarpPVP02	45,2,2
+guild_vs4,49,34,0	duplicate(WarpPVP)	::WarpPVP03	45,2,2
+
+-	script	VerBarricAux	-1,{
+OnBarricNorte:
+	set $BarAuxNor , $BarAuxNor - 1 ;
+	if ( $BarAuxNor == 0 ) {
+		delwall "BarricadasAuxNorte";
+		set $BarrAuxNorte,0;
+	}//ENDIF
+	end;
+
+OnBarricSur:
+	set $BarAuxSur ,$BarAuxSur - 1 ;
+	if ( $BarAuxSur == 0 ) {
+		delwall "BarricadasAuxSur";
+		set $BarriAuxSur,0;
+	}//ENDIF
+	end;
+
+}//ENDSCRIPT
+
+quiz_01,228,375,4	script	[Muerto]	849,{
+mes "¿Quieres salir de la zona de reclutamiento de batallas?";
+if ( select("No:Si") == 1 ) {
+	mes " ";
+	mes "¿Deberias participar en el evento, no crees?";
+	close2;
+} else {
+	mes " ";
+	mes "...";
+	close2;
+	warp "prontera",205,171;
+	getitem 675,1;
+}//ENDELSE
+end;
+}//ENSCRIPT
+
+//===============================FLAGS BG PVP AND DICE EVENT ==============================================
+//guild_vs4	mapflag	gvg	off
+//guild_vs4	mapflag	battleground	2
+quiz_02	mapflag	nosave
+quiz_02	mapflag	noteleport
+quiz_02	mapflag	nowarpto
+quiz_02	mapflag	nowarp
+//quiz_02	mapflag noreturn
+guild_vs4	mapflag	nosave
+guild_vs4	mapflag	noteleport
+guild_vs4	mapflag	nowarpto
+//guild_vs4	mapflag nowarp
+//guild_vs4	mapflag noreturn
+//prontera	mapflag	nosave
+prontera	mapflag	noteleport
+//prontera	mapflag	nowarpto
+//prontera	mapflag	nowarp
+//prontera	mapflag noreturn
+quiz_01	mapflag	nosave
+quiz_01	mapflag	noteleport
+quiz_01	mapflag	nowarpto
+//quiz_01	mapflag nowarp
+//quiz_01	mapflag noreturn
+/*   [ =================================================================================================================================== ]   */
+
+prontera,224,169,4	script	Humorista	715,{
+
+if(countitem(7919)<1)	end;
+		
+set .CoinQuit,673;//ID DEL CON QUE PEDRIÁ EL NPC
+set .CoinDar,675;//ID COIN QUE DA EL NPC POR BUEN CHISTE
+
+mes "Hola " + strcharinfo(0) + ", yo soy el que mejor cuenta chistes en el server, ni siquiera un clown me supera...! Ha ha ha!";
+next;
+mes "¿Que puedo hacer por ti?";
+switch ( select("Escuchar mis chistes:Contar un chiste:Salir") ) {
+	case 1:
+		do {
+		if ( @cuenta > 3 ) {
+			next;
+			mes "Ahora te cobraré por chiste... no creas que serán gratis para siempre...";
+			if ( countitem(.CoinQuit) < 1 ) {
+				mes "No tienes ningún coin, vuelve con alguna!";
+				close;
+			}//ENDIF
+			delitem .CoinQuit,1;
+		}//ENDIF
+		next;
+		mes "Ha ha ha... ya me dio risa!";
+		mes " ";
+		set .@azar, rand(getarraysize(.Chistes$));
+		mes "^0000FF" + .Chistes$[ .@azar ] + "^000000.";
+		set @cuenta , @cuenta + 1;
+		} while ( select ("Salir:Escuchar otro") - 1 );
+		next;
+		mes "Vuelve cuando quieras saber de chistes, ha ha ha!";
+		break;
+
+	case 2:
+		next;
+		mes "Crees que puedes mejorarme?????";
+		mes "Si me gusta uno de tus chistes te pagare ^ff0000 1 silver Coin ^000000";
+		if(jobname(Class)=="Clown" && JobLevel>=70) // Si eres un clow tu chiste vale 2 puntos mas
+		{
+			mes "^00ff00 O_O ^000000 Que tenemos aqui.......";
+			mes "JAJAJA UN ^ff0000 CLOWN ^000000";
+			mes "^0000ff D:  MI ENEMIGO DE LA VIDA !!!^000000";
+			mes "No me haras reir....";
+			set $@calidadChiste,4;
+		}
+		else
+		{
+			set $@calidadChiste,2;
+		}
+		mes "Aver, asombrame con un chiste corto...";
+		input .@chiste$;
+		if(getstrlen(.@chiste$)>=15) // Si el chiste es bastante largo he inspirador tu chiste vale 3 puntos mas
+			set $@calidadChiste,$@calidadChiste+4;
+		next;
+		for ( set .@i , 0 ; .@i < getarraysize ( .Filtro$ ) ; set .@i , .@i + 1 )
+ 			if( compare( .@anuncio$, .Filtro$[ .Chistes$ ] ) ) {
+				mes "No copies ninguno de mis chistes, esos tienen mi derecho!";
+ 				close;
+			}//FinIf
+		set .@calif,rand(0,20);
+		if ( .@calif < $@calidadChiste) {
+			mes "Realmente buen chiste, te compraré los derechos de autor!";
+			if($@calidadChiste>=10) //Si el chiste es lo suficientemente bueno lo guardamos
+			{
+				set .largo , getarraysize(.Chistes$);//VERIFICA EL LARGO DEL ARREGLO
+				set .Chistes$[ .largo + 1 ] , .@chiste$ ;//GUARDA EL CHISTE EN LA ULTIMA POSICION
+			}
+			next;
+			if($@calidadChiste>=10)
+				mes "^0000ff JAJAJA GRAN CHISTE CLOWN!!.. Ahora estára en mi repertorio de chistes para que otros se rian tambien, ten tu paga...^000000";
+			getitem .CoinDar,1;
+		} else {
+			mes "Ha ha ha, no tienes ningún futuro como comediante!";
+			mes " ";
+			mes "Aver si me convences con otro chiste...";
+			}
+		break;
+
+	case 3:
+		next;
+		mes "Vuelve cuando quieras saber de chistes!, ha ha ha!";
+		break;
+
+}
+close;
+
+OnInit:
+	waitingroom "Humorista",0;
+	setarray .Chistes$[0],"Habia una vez...trus!","Mama, ¿el abuelo se tambalea?... entonces dale otro tiro!","Mama, ya no quiero al abuelo... callate y sigue comiendo!","Habia un pollito llamado mantequilla, salio al sol y se derritio","Hola, ¿Conchita?.. No tarzan","Mi hija se casó con un piloto italiano. ¿Y la suya?...Con un Vestido de seda","¿Sabes que mi hermano anda en bicicleta desde los cuatro años?...¡Coño! Ya debe de andar muy lejos","En un restaurante: >>-¡Y como quiere el señor sus huevos? >>-Yo, con toda mi alma.","-Oiga, este autobús me lleva al cementerio?>>-Si se pone delante, es posible.",">>Qué se pone Superman cuando sale de la ducha? >>Súper-fume.";
+	end;
+
+}//ENDSCRIPT
+
+/*   [ =================================================================================================================================== ]   */
+
+prontera,194,174,5	script	Samantha	769,{
+if(countitem(7919)<1)
+		end;
+set .Coin,675;//COIN POR BUFF
+
+if ( Sex == 1 ) mes "Hola guapo, soy la chica que da los besos, claro que me tienes que pagar por cada besito que te de...";
+else mes "Omg, tienes algún problema sexual " + strcharinfo(0) + ", un beso no lo negare ni a una mujer, pagame y podre darte el besito...";
+next;
+mes "¿Quieres que te de un besito?";
+if ( select("Si:No") == 2 ) {
+	mes "Bueno, vuelve cuando quieras un besito mio...";
+	close;
+}
+next;
+mes "Ok, ¿donde te gustaria el besito?";
+switch ( select("Mejilla:Cuello:Boca") ) {
+
+	case 1:
+		mes " ";
+		mes "Ok... Este beso te costará 1 " + getitemname(.Coin) + "...";
+		if ( countitem(.Coin) < 1 ) {
+			mes "No te puedo dar un beso si no tienes dinero...";
+			close;
+		}
+		next;
+		mes "Muak!";
+		delitem .Coin,1;
+		emotion 30;//BESO
+		sc_start SC_ASSUMPTIO,100000,5;
+		sc_start SC_ANGELUS,100000,10;
+		break;
+
+	case 2:
+		mes " ";
+		mes "Ok... Este beso te costará 2 " + getitemname(.Coin) + "...";
+		if ( countitem(.Coin) < 2 ) {
+			mes "No te puedo dar un beso si no tienes dinero...";
+			close;
+		}
+		next;
+		mes "Muak!";
+		delitem .Coin,2;
+		emotion 30;//BESO
+		sc_start SC_CP_WEAPON,600000,5;
+		sc_start SC_CP_SHIELD,600000,5;
+		sc_start SC_CP_ARMOR,600000,5;
+		sc_start SC_CP_HELM,600000,5;
+		break;
+
+	case 3:
+		mes " ";
+		mes "Ok... Este beso te costará 5 " + getitemname(.Coin) + "...";
+		if ( countitem(.Coin) < 5 ) {
+			mes "No te puedo dar un beso si no tienes dinero...";
+			close;
+		}
+		next;
+		mes "Muak!";
+		delitem .Coin,5;
+		emotion 30;//BESO
+		sc_start SC_STRFOOD,1200000,5;
+		sc_start SC_INTFOOD,1200000,5;
+		sc_start SC_DEXFOOD,1200000,5;
+		break;
+}
+next;
+mes "Vuelve por mas besitos... creo que me gustas un poco";
+close2;
+emotion 4;
+sleep2 1000;
+dispbottom "Samantha se ha enamorado de ti...";
+end;
+}//ENDSCRIPT
+
+/*   [ =================================================================================================================================== ]   */
+
+prontera,198,146,0	script	Warp::CasaEmbrujada	45,2,2,{
+if(countitem(7919)<1)
+		end;
+function MobsLvlUno;
+function MobsLvlDos;
+function MobsLvlTres;
+function MobsLvlCuatro;
+function MobsLvlFinal;
+function QuitaWarps;
+if(countitem(7919)<1)
+		end;
+		
+OnTouch:
+	if(countitem(7919)<1)
+		end;
+	if ( countitem( .Cost[0] ) < .Cost[1] ) {
+		mes "No tienes los suficientes coins para entrar a la casa embrujada";
+		close2;
+		warp "prontera",196,149;
+	} else {
+		if ( .Ocupado == 1 ) {
+			mes "La casa embrujada esta siendo usada por ^FF0000" + .NomParty$ + "^000000, vuelve mas tarde...";
+			close2;
+			warp "prontera",196,149;
+		} else {
+			if ( .hablo == 1 )	end;
+			if( getcharid(1) == 0 ) {
+				mes "Necesitas un grupo para poder entrar a la casa embrujada...";
+				close2;
+				warp "prontera",196,149;
+				end;
+			} else {
+				if ( getpartyleader(getcharid(1),2) != getcharid(0) ) {
+					mes "No eres el lider del grupo, solo el me puede hablar!...";
+					close2;
+					warp "prontera",196,149;
+					end;
+				}
+				set .hablo , 1 ;
+				mes "Bienvenido a la Casa embrujada lider de ^0000FF" + strcharinfo(1) + "^000000, con tu grupo tendrán que matar a todos los monstruos para ganar premio...";
+				mes " ";
+				mes "¿Quieren participar de la casa embrujada?";
+				if ( select( "Si:No" ) == 2 ) {
+					next;
+					mes "Ok, vuelvan cuando quieran participar...";
+					close2;
+					set .hablo , 0 ;
+					warp "prontera",196,149;
+					end;
+				} else {
+					next;
+					getpartymember(getcharid(1));
+					if( $@partymembercount != .PartyCant ) {
+						mes "Tu grupo necesita " + .PartyCant + " para participar de la casa embrujada.";
+						close2;
+						set .hablo , 0 ;
+						warp "prontera",196,149;
+						end;
+					}
+					getpartymember(getcharid(1));
+					set .@party_count, $@partymembercount;
+					copyarray .@party_names$[0],$@partymembername$[0],.@party_count;
+					getpartymember(getcharid(1),1);
+					copyarray .@party_charid[0],$@partymembercid[0],.@party_count;
+					getpartymember(getcharid(1),2);
+					copyarray .@party_aid[0],$@partymemberaid[0],.@party_count;
+					for ( set .@i , 0 ; .@i < .@party_count ; set .@i , .@i + 1 ) {
+						if ( !isloggedin(.@party_aid[ .@i ] , .@party_charid[ .@i ] ) ) {
+							mes "El miembro ^0000FF" + .@party_names$[ .@i ] + "^000000 no se encuentra conectado, vuelve cuando esten todos ^00FF00disponibles^000000.";
+							close2;
+							set .hablo , 0 ;
+							warp "prontera",196,149;
+							end;
+						}//ENDIF
+					}//ENDFOR
+					delitem .Cost[0] , .Cost[1] ; 
+					set .hablo , 0 ;
+					set .Ocupado , 1 ;
+					set .IdParty , getcharid(1) ; 
+					set .NomParty$ , strcharinfo(1) ;
+					QuitaWarps();
+					warpparty "quiz_02",318,34,.IdParty;
+					MobsLvlUno();
+					initnpctimer;
+				}//ENDELSE
+			}//ENDELSE
+		}//ENDELSE
+	}
+	end;
+
+function MobsLvlUno{
+	for ( set .@i , 0 ; .@i < getarraysize(.NivelUno) ; set .@i , .@i + 2 ) {
+		areamonster "quiz_02",314,34,323,57,getmonsterinfo(.NivelUno[ .@i ],0),.NivelUno[ .@i ],.NivelUno[ .@i + 1 ],"CasaEmbrujada::OnKillUno";
+		set .@Suma , .@Suma + .NivelUno[ .@i + 1 ] ;
+	}
+	set .CantMobs , .@Suma;
+}//ENDFUNCTION
+
+function MobsLvlDos{
+	set .@Suma , 0 ;
+	for ( set .@i , 0 ; .@i < getarraysize(.NivelDos) ; set .@i , .@i + 2 ) {
+		areamonster "quiz_02",326,34,335,56,getmonsterinfo(.NivelDos[ .@i ],0),.NivelDos[ .@i ],.NivelDos[ .@i + 1 ],"CasaEmbrujada::OnKillDos";
+		set .@Suma , .@Suma + .NivelDos[ .@i + 1 ] ;
+	}
+	set .CantMobs , .@Suma;
+}//ENDFUNCTION
+
+function MobsLvlTres{
+	set .@Suma , 0 ;
+	for ( set .@i , 0 ; .@i < getarraysize(.NivelTres) ; set .@i , .@i + 2 ) {
+		areamonster "quiz_02",338,34,347,57,getmonsterinfo(.NivelTres[ .@i ],0),.NivelTres[ .@i ],.NivelTres[ .@i + 1 ],"CasaEmbrujada::OnKillTres";
+		set .@Suma , .@Suma + .NivelTres[ .@i + 1 ] ;
+	}
+	set .CantMobs , .@Suma;
+}//ENDFUNCTION
+
+function MobsLvlCuatro{
+	set .@Suma , 0 ;
+	for ( set .@i , 0 ; .@i < getarraysize(.NivelCuatro) ; set .@i , .@i + 2 ) {
+		areamonster "quiz_02",350,34,359,57,getmonsterinfo(.NivelCuatro[ .@i ],0),.NivelCuatro[ .@i ],.NivelCuatro[ .@i + 1 ],"CasaEmbrujada::OnKillCuatro";
+		set .@Suma , .@Suma + .NivelCuatro[ .@i + 1 ] ;
+	}
+	set .CantMobs , .@Suma;
+}//ENDFUNCTION
+
+function MobsLvlFinal{
+	set .@Suma , 0 ;
+	for ( set .@i , 0 ; .@i < getarraysize(.NivelFinal) ; set .@i , .@i + 2 ) {
+		areamonster "quiz_02",322,81,351,66,getmonsterinfo(.NivelFinal[ .@i ],0),.NivelFinal[ .@i ],.NivelFinal[ .@i + 1 ],"CasaEmbrujada::OnKillFinal";
+		set .@Suma , .@Suma + .NivelFinal[ .@i + 1 ] ;
+	}
+	set .CantMobs , .@Suma;
+}//ENDFUNCTION
+
+function QuitaWarps{
+	disablenpc "WarpNivelDos";
+	disablenpc "WarpNivelTres";
+	disablenpc "WarpNivelCuatro";
+	disablenpc "WarpNivelFinal";
+}//EDNFUNCTION
+
+OnKillUno:
+	set .CantMobs , .CantMobs - 1;
+	if ( .CantMobs == 0 )  {
+		mapannounce "quiz_02","Pasas al nivel dos!",0,0xBDBDBD;
+		enablenpc "WarpNivelDos";
+		atcommand "@cleanmap";
+		MobsLvlDos();
+	}//ENDIF
+	end;
+
+OnKillDos:
+	set .CantMobs , .CantMobs - 1;
+	if ( .CantMobs == 0 )  {
+		mapannounce "quiz_02","Pasas al nivel tres!",0,0xBDBDBD;
+		enablenpc "WarpNivelTres";
+		atcommand "@cleanmap";
+		MobsLvlTres();
+	}//ENDIF
+	end;
+
+OnKillTres:
+	set .CantMobs , .CantMobs - 1;
+	if ( .CantMobs == 0 )  {
+		mapannounce "quiz_02","Pasas al nivel cuatro!",0,0xBDBDBD;
+		enablenpc "WarpNivelCuatro";
+		atcommand "@cleanmap";
+		MobsLvlCuatro();
+	}//ENDIF
+	end;
+
+OnKillCuatro:
+	set .CantMobs , .CantMobs - 1;
+	if ( .CantMobs == 0 )  {
+		mapannounce "quiz_02","Pasas al nivel final!",0,0xBDBDBD;
+		enablenpc "WarpNivelFinal";
+		atcommand "@cleanmap";
+		MobsLvlFinal();
+	}//ENDIF
+	end;
+
+OnKillFinal:
+	set .CantMobs , .CantMobs - 1;
+	if ( .CantMobs == 0 )  {
+		mapannounce "quiz_02","Oh!! lograron pasar la casa embrujada!",0,0xBDBDBD;
+		QuitaWarps();
+		sleep2 2000;
+		mapannounce "quiz_02","Tengan un pequeño premio por haberla completado!",0,0xBDBDBD;
+		getpartymember(getcharid(1));
+		set .@party_count, $@partymembercount;
+		copyarray .@party_names$[0],$@partymembername$[0],.@party_count;
+		for ( set .@i , 0 ; .@i < .@party_count ; set .@i , .@i + 1 )
+			if ( getareausers("quiz_02",315,82,358,59) < .@party_count )
+				charcommand "#item " + .@party_names$[ .@i ] + " " + .Premio[0] + " " + .Premio[1] ;
+		sleep2 2000;
+		warpparty "prontera",196,149,.IdParty;
+		set .Ocupado , 0 ;
+		atcommand "@cleanmap";
+		stopnpctimer;
+	}//ENDIF
+	end;
+
+OnTimer3600000:// 1 HORA DE TIEMPO
+	stopnpctimer;
+	mapannounce "quiz_02","Se demoraron un eternidad en pasar... Juego Terminado",0,0xBDBDBD;
+	killmonsterall "quiz_02";
+	sleep2 1000;
+	warpparty "prontera",196,149,.IdParty;
+	set .Ocupado , 0 ;
+	QuitaWarps();
+	atcommand "@cleanmap";
+	end;
+	
+OnInit:
+	set .PartyCant,2;//MIEMBROS DE LA PARTY
+	setarray .Premio[0],7929,1;//PREMIO (ID,CANT)
+	setarray .Cost[0],675,1;//COIN PARA ENTRAR (ID,CANT)
+	setarray .NivelUno[0],1016,3,1152,3,1476,3,1469,5;//MOBS NIVEL 1 (ID,CANT,ID,CANT...)
+	setarray .NivelDos[0],1153,5,1865,2,1015,3,1197,3;//MOBS NIVEL 2 (ID,CANT,ID,CANT...)
+	setarray .NivelTres[0],1263,3,1186,3,1179,3,1061,4;//MOBS NIVEL 3 (ID,CANT,ID,CANT...)
+	setarray .NivelCuatro[0],1652,1,1653,1,1654,1,1655,1,1656,1,1657,1,1681,1;//MOBS NIVEL 4 (ID,CANT,ID,CANT...)
+	setarray .NivelFinal[0],1373,1,1219,2,1268,2;//MOBS NIVEL FINAL (ID,CANT,ID,CANT...)
+	end;
+
+OnPCDieEvent:
+	getmapxy .@mapa$,.@x,.@y,0;
+	if ( .@mapa$ != "quiz_02" )	end;
+	if ( Revivido == 0 ) {
+		sleep2 500;
+		atcommand "@alive " + strcharinfo(0) ;
+		dispbottom "Reviviste milagrosamente, si mueres denuevo pierdes.";
+		set Revivido , 1 ;
+	} else {
+		if ( getareausers("quiz_02",314,34,354,70) <= 1 ) {
+			stopnpctimer;
+			mapannounce "quiz_02","Todos perdieron... Juego Terminado",0,0xBDBDBD;
+			killmonsterall "quiz_02";
+			sleep2 1000;
+			warp "prontera",196,149;
+			set .Ocupado , 0 ;
+			QuitaWarps();
+			atcommand "@cleanmap";
+			set Revivido , 0 ;
+		} else {
+			dispbottom "Que pena... Juego Terminado";
+			sleep2 1000;
+			warp "prontera",196,149;
+			set Revivido , 0 ;
+		}//ENDELSE
+	}//ENDELSE
+	end;
+
+OnPCLogoutEvent:
+	if ( getcharid(1) == .IdParty && getareausers("quiz_02",314,34,354,70) > 1 ) {
+		set Revivido , 0 ;
+		mapannounce "quiz_02","Se desconecto el usuario " + strcharinfo(0) + ", espero que puedan pasar sin su ayuda...",0,0xBDBDBD;
+	} else {
+		if ( getcharid(1) == .IdParty ) {
+			killmonsterall "quiz_02";
+			sleep2 1000;
+			set .Ocupado , 0 ;
+			QuitaWarps();
+			atcommand "@cleanmap";
+			set Revivido , 0 ;
+		}
+	}
+	end;
+
+}//ENDSCRIPT
+
+/*   [ ================ WARPS ==================== ]   */
+	quiz_02,318,57,0	warp	WarpNivelDos	2,2,quiz_02,331,34
+	quiz_02,330,57,0	warp	WarpNivelTres	2,2,quiz_02,341,34
+	quiz_02,342,57,0	warp	WarpNivelCuatro	2,2,quiz_02,354,34
+	quiz_02,355,57,0	warp	WarpNivelFinal	2,2,quiz_02,354,77
+/*   [ ======================================== ]   */
+
+/*   [ ================ MAPFLAG ==================== ]   */
+quiz_02	mapflag	nosave	SavePoint
+quiz_02	mapflag	noteleport
+/*   [ ============================================= ]   */
+
+/*   [ =================================================================================================================================== ]   */
+quiz_00,4,108,0	script	Salida::ExitEvent	45,2,2,{
+mes "¿Seguro que quieres salir de la zona de evento de dados?";
+if ( select("No:Si") == 1 ) {
+	mes "...";
+	close2;
+	warp "quiz_00",9,107;
+} else {
+	mes "...";
+	close2;
+	getitem .Coin,1;
+	warp "prontera",217,188;
+}//ENDELSE
+end;
+	
+OnInit:
+	set .Coin,673;
+	end;
+}//ENDSCRIPT
+
+prontera,223,188,0	script	Entrada::InEvent	45,2,2,{
+if(countitem(7919)<1)	end;
+
+mes "Para entrar al evento dados, deberás pagarme con ^0000FFuna Bronze Coin^000000, ¿quieres entrar?";
+if ( select("No:Si") == 1 ) {
+	mes "Bueno, vuelve cuando quieras...";
+	close2;
+	warp "prontera",217,188;
+} else {
+	if ( countitem(.Coin) < 1 ) {
+		mes "No tienes 1 Bronze Coin, vuelve cuando tengas...";
+		close2;
+		warp "prontera",217,188;
+	} else {
+		mes "Aqui vamos!";
+		close2;
+		delitem .Coin,1;
+		warp "quiz_00",4,122;
+	}//ENDELSE
+}//ENDELSE
+end;
+
+OnInit:
+	set .Coin,673;
+	end;
+}//ENDSCRIPT
+
+quiz_00,22,115,3	script	Mr. Dice::DicEvent	873,{
+function Limpiar;
+
+mes "Concurso de dados, se activa cuando se llena el chat... ";
+close;
+
+OnIntro:
+	warpwaitingpc "quiz_01",205,90;
+	delwaitingroom;
+	hideonnpc "DicEvent";
+	hideonnpc "DicePremio";
+	sleep2 3000;
+	mapannounce "quiz_01","Comenzemos con el evento dice!",0,0x4B8A08;
+	sleep2 3000;
+	mapannounce "quiz_01","Antes, explicaré las reglas:",0,0x4B8A08;
+	sleep2 3000;
+	mapannounce "quiz_01","Tiraré un dado y les daré tiempo para ubicarse dentro de las casillas con número...",0,0x4B8A08;
+	sleep2 5000;
+	mapannounce "quiz_01","Se deben ubicar DENTRO DE LAS CASILLAS, si te ubicas en las escaleras o fuera de ellas pierden!...",0,0x4B8A08;
+	sleep2 5000;
+	mapannounce "quiz_01","El ultimo jugador que quiede en el mapa, ganará... Eso es todo, ¡A JUGAR!",0,0x4B8A08;
+	sleep2 3000;
+	donpcevent "DicEvent::OnStart";
+	end;
+	
+OnStart:
+	if( getmapusers("quiz_01") == 0 ) {
+			areaannounce "prontera",187,190,229,152,"Lamentablemente nadie logro ganar...",0,0x4B8A08;
+			sleep2 60000;
+			hideoffnpc "DicEvent";
+			donpcevent "DicEvent::OnInit";
+	} else  {
+		if( getmapusers("quiz_01") == 1 ) {
+			mapannounce "quiz_01","Ganaste, Sube las escaleras y reclama tu premio...",0,0x4B8A08;
+			hideoffnpc "DicePremio";
+		} else {
+			set $@dado , rand(1,4) ;
+			sleep2 10000;
+			mapannounce "quiz_01","10 segundos para que se ubiquen en una casilla!",0,0x4B8A08;
+			sleep2 10000;
+			mapannounce "quiz_01"," ... 5 ... ",0,0x4B8A08;
+			sleep2 1000;
+			mapannounce "quiz_01"," ... 4 ... ",0,0x4B8A08;
+			sleep2 1000;
+			mapannounce "quiz_01"," ... 3 ... ",0,0x4B8A08;
+			sleep2 1000;
+			mapannounce "quiz_01"," ... 2 ... ",0,0x4B8A08;
+			sleep2 1000;
+			mapannounce "quiz_01"," ... 1 ... ",0,0x4B8A08;
+			sleep2 1000;
+			mapannounce "quiz_01","Tiempo!.",0,0x4B8A08;
+			Limpiar();
+			mapannounce "quiz_01","Salio el número " + $@dado + ".",0,0x4B8A08;
+			if(($@dado != 1) && ($@dado != 2) && ($@dado != 3)) {	
+				areawarp "quiz_01",183,81,191,59,"prontera",217,188;
+				areawarp "quiz_01",195,81,203,59,"prontera",217,188;
+				areawarp "quiz_01",207,81,215,59,"prontera",217,188;
+				donpcevent "DicEvent::OnStart";
+			}
+			if(($@dado != 1) && ($@dado != 2) && ($@dado != 4)) {
+				areawarp "quiz_01",183,81,191,59,"prontera",217,188;
+				areawarp "quiz_01",195,81,203,59,"prontera",217,188;
+				areawarp "quiz_01",219,81,227,59,"prontera",217,188;
+				donpcevent "DicEvent::OnStart";
+			}
+			if(($@dado != 1) && ($@dado != 3) && ($@dado != 4)){
+				areawarp "quiz_01",183,81,191,59,"prontera",217,188;
+				areawarp "quiz_01",207,81,215,59,"prontera",217,188;
+				areawarp "quiz_01",219,81,227,59,"prontera",217,188;
+				donpcevent "DicEvent::OnStart";
+			}
+			if(($@dado != 2) && ($@dado != 3) && ($@dado != 4)) {
+				areawarp "quiz_01",195,81,203,59,"prontera",217,188;
+				areawarp "quiz_01",207,81,215,59,"prontera",217,188;
+				areawarp "quiz_01",219,81,227,59,"prontera",217,188;
+				donpcevent "DicEvent::OnStart";
+			}
+			}//ENDELSE
+	}//ENDELSE
+	end;
+
+function Limpiar{
+	areawarp "quiz_01",182,94,228,88,"prontera",217,188;
+	areawarp "quiz_01",185,87,188,82,"prontera",217,188;
+	areawarp "quiz_01",197,87,200,82,"prontera",217,188;
+	areawarp "quiz_01",209,87,212,82,"prontera",217,188;
+	areawarp "quiz_01",221,87,224,82,"prontera",217,188;
+}//ENDFUNCTION
+
+OnInit:
+	set $@maxDiceUsers,2;
+	waitingroom "Dados",$@maxDiceUsers,"DicEvent::OnIntro",$@maxDiceUsers;
+	end;
+
+}//ENDSCRIPT
+
+quiz_01,205,93,4	script	Mr. Dice::DicePremio	873,{
+
+mes "Eres el ganador " + strcharinfo(0) + ", ten tu premio...";
+getitem .Premio[0] , .Premio[1] ;
+close2;
+warp "prontera",217,188;
+sleep2 60000;
+hideoffnpc "DicEvent";
+donpcevent "DicEvent::OnInit";
+end;
+
+OnInit:
+	setarray .Premio[0],675,1;//PREMIO (ID,CANTIDAD)
+	end;
+}//ENDSCRIPT
+
+
+/*   [ =================================================================================================================================== ]   */
+
+prontera,229,184,4	script	Maquina	910,{
+if(countitem(7919)<1)
+	end;
+mes "Ingresa una moneda : ^0000FF[====]^000000 ";
+mes " ";
+mes "Ingresa un billete : (Solo cuando la luz este verde)";
+mes "^0000FF[====================]^000000 ^FF0000[IIII]^000000";
+if ( countitem(.Coin) < 1 )	close;
+next;
+mes "Registra cantidad de " + getitemname(.Coin) + " que ingresaste :";
+mes "  [ 7 ]  [ 8 ]  [ 9 ]";
+mes "  [ 4 ]  [ 5 ]  [ 6 ]";
+mes "  [ 1 ]  [ 2 ]  [ 3 ]";
+mes "          [ 0 ]";
+input .@cant;
+if ( .@cant == 0 )	close;
+next;
+if ( countitem(.Coin) < .@cant )
+	mes "No ingresaste " + .@cant + " " + getitemname(.Coin);
+else
+	if ( checkweight(.Drink[0],( .@cant * .Drink[1] )) == 0 )
+		mes "No puedes llevar " + ( .@cant * .Drink[1] ) + " " + getitemname(.Drink[0]);
+	else {
+		mes "Gracias...";
+		delitem .Coin , .@cant ;
+		getitem .Drink[0] , ( .@cant * .Drink[1] ) ;
+	}//ENDELSE
+close;
+
+OnInit:
+	setarray .Drink[0],12143,10;
+	set .Coin,673;
+	end;
+}//ENDSCRIPT

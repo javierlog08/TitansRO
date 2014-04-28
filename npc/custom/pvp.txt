@@ -1,0 +1,54 @@
+//===== rAthena Script ======================================= 
+//= Untitle Script
+//===== By: ================================================== 
+//= Zealock!
+//===== Current Version: ===================================== 
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena , eAthena
+//===== Description: ========================================= 
+//= PVP Warper
+//============================================================
+
+prontera,162,193,4	script	 PVP	683,{
+
+
+	mes "[ PVP Warper ]";
+	mes "Would You Like to Enter the Room?";
+	next;
+	menu "Yes, I'm Hunger for Blood",PatayanNa,"No, Too Lazy to Kill",No;
+
+	PatayanNa:
+	mes "[ PvP Warper ]";
+	mes "You Made the Right Choice!";
+	next;
+	mes "Let's Go!";
+	warp "guild_vs2",0,0;
+	L_All:
+	announce "[ PvP Warper ] Announcer:  "+strcharinfo(0)+" has Enter the Room ",0;
+	close;
+
+
+	No:
+	mes "[ PvP Warper ]";
+	mes "Are you Scared?";
+	next;
+	mes "Come Back Again, if you already have the Guts!";
+	close;
+
+//WAITING ROOM updates every 2.5 second
+OnInit:
+    	while(1) {
+	delwaitingroom;
+	waitingroom "PvP ["+getmapusers("guild_vs2")+"]",0;
+	sleep 2500; //2.5 seconds
+	}
+	end;
+}
+
+// Mapflags
+guild_vs2	mapflag	nowarp
+guild_vs2	mapflag	nowarpto
+guild_vs2	mapflag	pvp	on
+guild_vs2	mapflag	noteleport
+guild_vs2	mapflag	nosave	SavePoint

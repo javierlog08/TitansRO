@@ -26,6 +26,17 @@ OnAgitStart:
 		sleep 425;
 	}
 	end;
+
+OnPCLoadMapEvent:
+   getmapxy @map$,@x,@y,0;
+   if (@map$ == "aldeg_cas01" || @map$ == "gefg_cas02" || @map$ == "payg_cas02" || @map$ == "prtg_cas01" || @map$ == "arug_cas02" || @map$ == "arug_cas03" || @map$ == "schg_cas01" || @map$ == "schg_cas02" ) {
+	if(countitem(4403) > 1 || checkequipedcard(4403) || countitem(4131) > 1 || checkequipedcard(4131) || countitem(4263) > 1 || checkequipedcard(4263) || countitem(4128) > 1 || checkequipedcard(4128) || countitem(4441) > 1 || checkequipedcard(4441)){
+		warp "prontera",158,178;
+		dispbottom "NO PUEDES LLEVAR LAS CARTAS KIEL CARD/SAMURAI/GTB/FALLEN A WOE";
+	}
+   }
+   end;
+
 }
 
 // Script Core
@@ -355,6 +366,11 @@ while(1) {
 						copyarray $WOE_CONTROL[.@i+4], $WOE_CONTROL[.@i], .Size-.@i;
 						setarray $WOE_CONTROL[.@i], .@day, .@start, .@end, .@castle;
 						set .Size, getarraysize($WOE_CONTROL);
+						//JGI: Woes en tabla separada para flux cp
+						for(set .@j,0; .@j<30; set .@j,.@j+1)
+							if (.@castle&(1<<.@j)) set .@castle_name$,getcastlename(.Castles$[.@j]);
+						
+						query_sql("INSERT INTO `woe_times` (day,start,end,castle) VALUES ("+.@day+","+.@start+","+.@end+",'"+.@castle_name$+"')");
 					case 3:
 						mes "[New Session]";
 						mes ((.@d)?"Session added.":"Cancelled.");
@@ -391,6 +407,14 @@ while(1) {
 			if (.@j == 2)
 				mes "Cancelled.";
 			else {
+				//JGI: Borrar del registro
+				set .@day, $WOE_CONTROL[.@i*4];
+				set .@start, $WOE_CONTROL[(.@i*4)+1];
+				set .@end, $WOE_CONTROL[(.@i*4)+2];
+				for(set .@j,0; .@j<30; set .@j,.@j+1)
+					if ($WOE_CONTROL[(.@i*4)+3]&(1<<.@j)) set .@castle$,getcastlename(.Castles$[.@j]);
+					
+				query_sql("DELETE FROM `woe_times` where day="+.@day+" and start="+.@start+" and end="+.@end+" and castle='"+.@castle$+"'");
 				deletearray $WOE_CONTROL[.@i*4],4;
 				set .Size, getarraysize($WOE_CONTROL);
 				mes "Session deleted.";

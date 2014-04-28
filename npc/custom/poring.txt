@@ -1,0 +1,282 @@
+//===== eAthena Script =======================================
+//= Poring Event
+//===== By: ==================================================
+//= Wild Karrd, alexx
+//===== Current Version: =====================================
+//= 3.0
+//===== Compatible With: =====================================
+//= eAthena 12426
+//===== Description: =========================================
+//= Find correct poring Event
+//===== Additional Comments: =================================
+//= 3.0 Bug fixed and totaly modified [alexx]
+//============================================================
+
+
+-	script	poring_event_on	-1,{
+
+Onclock0100:
+Onclock0300:
+Onclock0500:
+Onclock0700:
+Onclock0900:
+Onclock1100:
+Onclock1300:
+Onclock1500:
+Onclock1700:
+Onclock1900:
+Onclock2100:
+Onclock2300:
+	enablenpc "Poring Catcher";
+	sleep 6000;
+	announce "Es hora de atrapar porings! Jaja",bc_all,0xF49AC1;
+
+}
+
+-	script	poring_event_off	-1,{
+
+Onclock0000:
+Onclock0200:
+Onclock0600:
+Onclock0800:
+Onclock1000:
+Onclock1200:
+Onclock1400:
+Onclock1600:
+Onclock1800:
+Onclock2000:
+Onclock2200:
+	if ($@EventEnd == 0) {
+		disablenpc "Poring Catcher";
+		sleep 6000;
+		announce "Estas tarde !, El evento de poring finalizo.",bc_all,0xF49AC1;
+	}
+
+}
+
+prontera,153,182,5	script	Evento poring	3204,{
+
+OnTouch:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Hola, "+strcharinfo(0)+"! Me gusta jugar con los porings ! . es muy divertido!";
+	next;
+	menu "Me gusta tambien!",L_enter,"Dime mas?",L_info,"Tienes algunos coins.",N_Shop,"Nah... Adios.",L_bye;
+	close;
+
+L_enter:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Diviertete!";
+	next;
+	if ($@PoringsSummoned == 0) {
+		initnpctimer;
+		donpcevent "Poringsummoner::OnSummon";
+		set $@PoringsSummoned,1;
+	}
+	warp "poring_w01",100,100;
+	end;
+
+OnTimer600000:
+	stopnpctimer;
+	disablenpc "Poring Catcher";
+	killmonster "poring_w01","All";
+	set $@PoringsSummoned,0;
+	mapwarp "poring_w01","prontera",137,234;
+	announce "Estas Tarde !. El evento de porings termino :( ...",bc_all,0xF49AC1;
+	set $@EventEnd,1;
+	end;
+
+L_info:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Habran 100 porings o mas en el mapa.";
+	mes "Pero unicamente 1 es real. debes atraparlo";
+	mes "Seres recompenzado con un poring coin, que te sirve para cambiar por premios.";
+	mes "Buena Suerte!";
+	close;
+
+L_coin:
+	callsub S_BonusReward;
+	end;
+
+L_bye:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Bye-bye!";
+	close;	
+
+OnInit:
+	disablenpc "Poring Catcher";
+	set $@PoringsSummoned,0;
+	end;
+
+OnWarp:
+	initnpctimer;
+	enablenpc "Poring Catcher";
+	donpcevent "Poringsummoner::OnSummon";
+	end;
+	
+N_Shop:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Quieres intercambiar tus poring coins por premios?";
+	next;
+	menu "Cambiar por premios",-,"Nah",N_NVM;
+
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Premios? Esto es lo que tengo ahora mismo...";
+	next;
+	menu "^000090Guild Recruiting Hat^000000 - 50PC",-,
+	     "^000090Party Hat^000000 - 50PC",N_Hat2,
+	     "^000090Boyfriend Hat^000000 - 50PC",N_Hat3,
+	     "^000090Friend Hat^000000 - 50PC",N_Hat4,
+	     "^000090Girlfriend Hat^000000 - 50PCs",N_Hat5,
+		 "??????",N_NVM;
+
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Quieres cambiar 50 Poring Coins por Guild Recruiting Hat?";
+	next;
+	menu "Si",-,"No",N_NVM;
+	if (countitem(7539) < 50) goto N_NeedCoins;
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Recruiting Hat!";
+	delitem 7539,50;
+	getitem 5336,1;
+	logmes "Chatch the Poring: Guild Recruiting Hat";
+	close;
+N_Hat2:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Quieres cambiar 50 Poring Coins por Party Hat?";
+	next;
+	menu "Si",-,"No",N_NVM;
+	if (countitem(7539) < 50) goto N_NeedCoins;
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Here, get yourParty Hat!";
+	delitem 7539,50;
+	getitem 5337,1;
+	logmes "Chatch the Poring: Party Hat";
+	close;
+N_Hat3:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Quieres cambiar 50 Poring Coins por Boyfriend Hat?";
+	next;
+	menu "Si",-,"No",N_NVM;
+	if (countitem(7539) < 50) goto N_NeedCoins;
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Here, get yourBoyfriend Hat!";
+	delitem 7539,50;
+	getitem 5338,1;
+	logmes "Chatch the Poring: Boyfriend Hat";
+	close;
+N_Hat4:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Quieres cambiar 50 Poring Coins por Friend Hat?";
+	next;
+	menu "Si",-,"No",N_NVM;
+	if (countitem(7539) < 50) goto N_NeedCoins; 
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Here, get yourFriend Hat!";
+	delitem 7539,50;
+	getitem 5339,1;
+	logmes "Chatch the Poring: Friend Hat";
+	close;
+N_Hat5:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Quieres cambiar 50 Poring Coins por Girlfriend Hat?";
+	next;
+	menu "Si",-,"No",N_NVM;
+	if (countitem(7539) < 50) goto N_NeedCoins; 
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Here, get yourGirlfriend Hat!";
+	delitem 7539,50;
+	getitem 5346,1;
+	logmes "Chatch the Poring: Girlfriend Hat";
+	close;
+
+N_NeedCoins:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Necesitas mas poring coins. No tienes suficientes.";
+	close;  
+	
+N_NVM:
+	mes "[^2E3192Poring Catcher^000000]";
+	mes "Como desees...";
+	close;
+
+}
+
+-	script	Poringsummoner	-1,{
+
+OnSummon:
+	initnpctimer;
+OnTimer1000:
+	mapannounce "poring_w01","5    ...",1;
+	end;
+OnTimer2000:
+	mapannounce "poring_w01","4    ...",1;
+	end;
+OnTimer3000:
+	mapannounce "poring_w01","3    ...",1;
+	end;
+OnTimer4000:
+	mapannounce "poring_w01","2    ...",1;
+	end;
+OnTimer5000:
+	mapannounce "poring_w01","1    ...",1;
+	end;
+OnTimer6000:
+	stopnpctimer;
+	mapannounce "poring_w01","VAMOS ! GO GO GO GO GO!",1;
+	areamonster "poring_w01",84,119,121,90,"Poring",1002,1,"poringwin::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Pouring",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Proing",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Poiring",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Poing",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"I am not Poring",1002,5,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Gniriop",1002,1,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Poring",1113,1,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Poring",1062,1,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Poriiing",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"PoriNg",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Porong",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"P0ring",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Por1ng",1002,10,"poringlose::OnMobKilled";
+	areamonster "poring_w01",84,119,121,90,"Porng",1002,1,"poringlose::OnMobKilled";
+	end;
+
+}
+
+-	script	poringwin	-1,{
+
+OnMobKilled:
+	dispbottom "Felicidades. Me atrapastes!.";
+	set .@PoringItemVar,rand(10);
+	if (.@PoringItemVar == 9) {
+		getitem 617,1;	
+	}
+	if (.@PoringItemVar >= 4 && .@PoringItemVar < 9) {
+		getitem 603,1;	
+	}
+	getitem 7539,1;
+	killmonster "poring_w01","All";
+	donpcevent "Poringsummoner::OnSummon";
+	end;
+
+}
+
+-	script	poringlose	-1,{
+
+OnMobKilled:
+	dispbottom "Wahaha, perdedooooooor!";
+	percentheal -100,-100;
+	sleep 1000;
+	warp "prontera",137,234;
+	end;
+
+}
+
+poring_w01	mapflag	nopenalty
+poring_w01	mapflag	noloot
+poring_w01	mapflag	noskill
+poring_w01	mapflag	nowarpto
+poring_w01	mapflag	nowarp
+poring_w01	mapflag	noteleport
+poring_w01	mapflag	nomemo
+poring_w01	mapflag	nosave	SavePoint
+poring_w01	mapflag	nobranch

@@ -720,9 +720,9 @@
 5597,507,100	// Bubble Gum In Mouth
 6046,507,100	// Clothing Dye Coupon
 6047,507,100	// Clothing Dye Coupon II
-7619,475,100	// Enriched Elunium
-7620,475,100	// Enriched Oridecon
-7621,475,100	// Token Of Siegfried
+//7619,475,100	// Enriched Elunium
+//7620,475,100	// Enriched Oridecon
+//7621,475,100	// Token Of Siegfried
 7622,73,100	// Hairstyle Coupon
 7766,475,100	// Bok Choy
 7767,475,100	// Green Maiden's Cake
@@ -742,7 +742,7 @@
 12209,475,100	// Life Insurance
 12210,475,100	// Bubble Gum
 12211,475,100	// Kafra Card
-12212,475,100	// Giant Fly Wing
+//12212,475,100	// Giant Fly Wing
 12213,475,100	// Neuralizer
 12214,475,100	// Convex Mirror
 12215,475,100	// LV10 Blessing Scroll
@@ -845,8 +845,8 @@
 12910,457,100	// Giant Fly Wing Box
 12911,457,100	// Neuralizer Box
 12912,457,100	// Convex Mirror Box
-12913,457,100	// Blessing 10 Scroll Box
-12914,457,100	// Increase AGI 10 scroll Box
+//12913,457,100	// Blessing 10 Scroll Box
+//12914,457,100	// Increase AGI 10 scroll Box
 12915,457,100	// Aspersio 5 Scroll Box
 12916,457,100	// Assumptio 5 Scroll Box
 12917,457,100	// Wind Walk 10 Scroll Box
@@ -1085,7 +1085,7 @@
 13986,475,100	// JJangu Magic Powder Box 30 Days
 13987,475,100	// Rough Oridecon 5 Box
 13988,475,100	// Rough Oridecon 50 Box
-13989,475,100	// Acid Bomb 10 Box
+//13989,475,100	// Acid Bomb 10 Box
 13990,475,100	// JOB Battle Manual Box
 13991,475,100	// Tiger Mask Box
 13992,475,100	// Pussy Cat Bell Box
@@ -1100,8 +1100,8 @@
 14001,475,100	// Recruit Siege Supply Box
 14002,475,100	// Veteran Siege Supply Box
 14003,475,100	// Elite Siege Supply Box
-14004,475,100	// Poison Bottle 10 Box
-14005,475,100	// Poison Bottle 5 Box
+//14004,475,100	// Poison Bottle 10 Box
+//14005,475,100	// Poison Bottle 5 Box
 14006,475,100	// Evolved Drooping Cat Box
 14007,475,100	// Evolved Rabbits Headband Box
 14008,475,100	// Evolved Helmet Of Orc Hero Box
@@ -1245,8 +1245,8 @@
 14149,475,100	// Vigorgra Box6
 14150,475,100	// Vigorgra Box7
 14151,475,100	// Vigorgra Box8
-14152,475,100	// Start your Journey Pack
-14153,475,100	// Siege Mode Pack
+//14152,475,100	// Start your Journey Pack
+//14153,475,100	// Siege Mode Pack
 14154,475,100	// 1 Hour Survival Pack
 14155,475,100	// Weekend Hunting Pack
 14156,475,100	// Battle Manual Box
@@ -1616,8 +1616,8 @@
 6206,499,100	// I Love You
 6207,499,100	// Thank You
 6208,499,100	// I Respect Yo
-6225,475,100	// HD Carnium
-6226,475,100	// HD Bradium
+//6225,475,100	// HD Carnium
+//6226,475,100	// HD Bradium
 6228,475,100	// Guarantee Weapon 9Up
 6229,475,100	// Guarantee Weapon 8Up
 6230,475,100	// Guarantee Weapon 7Up
@@ -1629,8 +1629,8 @@
 6236,499,100	// Blue Card 7
 6238,475,100	// Guarantee Weapon 11Up
 6239,475,100	// Guarantee Armor 11Up
-6240,475,100	// Purified Oridecon
-6241,475,100	// Purified Elunium
+//6240,475,100	// Purified Oridecon
+//6241,475,100	// Purified Elunium
 6242,457,100	// Midgard Coinu
 6296,499,100	// Training Notice
 6298,499,100	// Pumpkin Head Crushed

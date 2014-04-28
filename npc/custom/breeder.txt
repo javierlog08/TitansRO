@@ -10,9 +10,12 @@
 //= Fixed 'close' issues. [Joseph]
 //============================================================
 
-prontera,124,201,1	script	Universal Rental NPC	4_F_JOB_BLACKSMITH,{
+prontera,164,188,4	script	Universal Rental NPC	873,{
+	soundeffect "vallentine.wav",0;
+	cutin "fly_felrock",2;
 	if (ismounting()) {
 		message strcharinfo(0),"You must first remove your mount.";
+		cutin "",255;
 		end;
 	}
 	else if ((eaclass()&EAJ_THIRDMASK) == EAJ_RANGER && !countitem(6124)) {
@@ -20,18 +23,26 @@ prontera,124,201,1	script	Universal Rental NPC	4_F_JOB_BLACKSMITH,{
 			if(select(" ~ Falcon: ~ Warg")==1) setfalcon;
 			else getitem 6124,1;
 			specialeffect2 EF_TEIHIT3;
-			close;
+			close2;
+			cutin "",255;
+			end;
 		}
 		else getitem 6124,1;
 	}
 	else if ((eaclass()&EAJ_THIRDMASK) == EAJ_MECHANIC && !checkcart() && getskilllv("MC_PUSHCART")) {
 		if (!checkmadogear() && getskilllv("NC_MADOLICENCE")) {
-			if(select(" ~ Cart: ~ Mado")==1) setcart;
-			else setmadogear;
+			if(select(" ~ Cart: ~ Mado")==1){
+			   setcart;
+			} else {
+		          setmadogear;
+			}
 			specialeffect2 EF_TEIHIT3;
-			close;
+			close2;
+			cutin "",255;
+			end;
+		} else {
+	  	  setcart;
 		}
-		else setcart;
 	}
 	else if (!checkcart() && getskilllv("MC_PUSHCART")) setcart;
 	else if (!checkfalcon() && getskilllv("HT_FALCON") && !checkoption(Option_Wug) && !checkoption(Option_Wugrider)) setfalcon;
@@ -42,9 +53,11 @@ prontera,124,201,1	script	Universal Rental NPC	4_F_JOB_BLACKSMITH,{
 	else if (!checkmadogear() && getskilllv("NC_MADOLICENCE")) setmadogear;
 	else {
 		message strcharinfo(0),"You do not meet requirements to rent.";
+		cutin "",255;
 		end;
 	}
 	specialeffect2 EF_TEIHIT3;
+	cutin "",255;
 	end;
 }
 

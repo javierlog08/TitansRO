@@ -13,14 +13,15 @@
 //= 1.3 All statuses removed upon skill reset. [Euphy]
 //============================================================
 
-prontera,150,193,4	script	Reset Girl	4_F_TELEPORTER,{
-
+prontera,149,188,6	script	Reset Boy	4_M_OLIVER,{
+	soundeffect "vallentine.wav",0;
+	cutin "bu_oliver1",2;
 	set .@ResetStat,5000;	// Zeny for stat reset
 	set .@ResetSkill,5000;	// Zeny for skill reset
 	set .@ResetBoth,9000;	// Zeny for resetting both together
 
-	mes "[Reset Girl]";
-	mes "I am the Reset Girl.";
+	mes "[Reset Boy]";
+	mes "I am the Reset Boy.";
 	mes "Reset Stats: "+ .@ResetStat +"z";
 	mes "Reset Skills: "+ .@ResetSkill +"z";
 	mes "Reset Both: "+ .@ResetBoth +"z";
@@ -28,39 +29,53 @@ prontera,150,193,4	script	Reset Girl	4_F_TELEPORTER,{
 	next;
 	switch(select("^FF3355Reset Skills:Reset Stats:Reset Both^000000:Cancel")) {
 	case 1:
-		mes "[Reset Girl]";
+		mes "[Reset Boy]";
 		if (Zeny < .@ResetSkill) {
 			mes "Sorry, you don't have enough Zeny.";
-			close;
+			close2;
+			cutin "",255;
+			end;
 		}
 		Zeny -= .@ResetSkill;
 		sc_end SC_ALL;
 		resetskill;
 		mes "There you go!";
-		close;
+		close2;
+		cutin "",255;
+		end;
 	case 2:
-		mes "[Reset Girl]";
+		mes "[Reset Boy]";
 		if (Zeny < .@ResetStat) {
 			mes "Sorry, you don't have enough Zeny.";
-			close;
+			close2;
+			cutin "",255;
+			end;
 		}
 		Zeny -= .@ResetStat;
 		resetstatus;
 		mes "There you go!";
-		close;
+		close2;
+		cutin "",255;
+		end;
 	case 3:
-		mes "[Reset Girl]";
+		mes "[Reset Boy]";
 		if (Zeny < .@ResetBoth) {
 			mes "Sorry, you don't have enough Zeny.";
-			close;
+			close2;
+			cutin "",255;
+			end;
 		}
 		Zeny -= .@ResetBoth;
 		sc_end SC_ALL;
 		resetskill;
 		resetstatus;
 		mes "There you go!";
-		close;
+		close2;
+		cutin "",255;
+		end;
 	case 4:
-		close;
+		close2;
+		cutin "",255;
+		end;
 	}
 }

@@ -1,0 +1,421 @@
+-	script	kafrashopmonsters	-1,{
+	OnInit:
+		set .MVP_PAY,5;
+		set .MINI_PAY,1;
+	end;
+	OnNPCKillEvent:
+		switch(killedrid) {
+			//---------------------------------------------------------------------------------------
+			//----INSTANCCES------------------------------------------------------------------------
+			//---------------------------------------------------------------------------------------
+			case 1956://naugh seiger
+				callfunc "KafraPluginPayInstance",100,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1929://bapho seal 
+				callfunc "KafraPluginPayInstance",50,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2022://nid
+				callfunc "KafraPluginPayInstance",100,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2320://bakan
+				callfunc "KafraPluginPayInstance",100,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2131://hazy
+				callfunc "KafraPluginPayInstance",40,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2317: //bangun
+				callfunc "KafraPluginPayInstance",100,getcharid(1),getmonsterinfo(killedrid,MOB_NAME)+" INSTANCIA";
+			break;
+			
+			case 2094: //orc hero
+				callfunc "KafraPluginPayInstance",30,getcharid(1),getmonsterinfo(killedrid,MOB_NAME)+" INSTANCIA";
+			break;
+			
+			case 2319: //buyawa
+				callfunc "KafraPluginPayInstance",50,getcharid(1),getmonsterinfo(killedrid,MOB_NAME)+" INSTANCIA";
+			break;
+			
+			
+			//---------------------------------------------------------------------------------------
+			//----MINI BOSSES------------------------------------------------------------------------
+			//---------------------------------------------------------------------------------------
+			case 1096:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1388:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1641:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1873:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1307:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2231:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2233:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2229:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1582:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1093:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1957:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1120:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2234:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1990:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+
+			
+			case 1643:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1645:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+		
+			
+			case 1640:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1090:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1289:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1262:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2228:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2230:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1644:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2232:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1991:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1089:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1642:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2208:
+				callfunc "KafraPluginPayInstance",.MINI_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			//---------------------------------------------------------------------------------------
+			//----MVP MONSTERS------------------------------------------------------------------------
+			//---------------------------------------------------------------------------------------
+			
+			case 1511://amon ra
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1647://Assassin Cross Eremes
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1785://Atroce
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1630://Bacsojin
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1039://Baphomet
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1874://Beelzebub
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2068://Boitata
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2238://Champion Chen
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2240://Clown
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2236://Creator
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1272://Dark lord
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1719://Detale
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1046://Doppelganger
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1389://Dracula
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1112://Drake
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1115://Eddga
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1418://Evil Snake Lord
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1871://Bishop Fallen
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1252://Garm
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1768://Gloom
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2165://Gold Queen Scaraba
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1086://Golden Thief Bug
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1885://Gopinich
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2241://Gypsy
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1649://High Priest
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1651://High Wizard
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1832://Ifrit
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1492://Inc Samurai
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1734://kiel
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1251://Stormy Knight
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2202://kraken
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1779://Ktullanux
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1688://Lady Tanee
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2156://Leak
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1646://Lord Knight
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1373://Lord of Death
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1147://Maya
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1059://Mistress
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1150://Moonlight
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1087://Orc Hero
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1190://Orc Lord
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1038://Osiris
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2235://Paladin
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1157://Pharaoh
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1159://Phreeoni
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2237://Professor
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2087://Queen Scaraba
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1623://RSX
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1650://Sniper
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 2239://Stalker
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1583://Tao Gunka
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1708://Thanatos
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1312://Turtle General
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1751://Randgris
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1685://Vesper
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1648://Whitesmith
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1658://Ygnizem
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+			
+			case 1917://Wounded Morroc
+				callfunc "KafraPluginPayInstance",.MVP_PAY,getcharid(1),getmonsterinfo(killedrid,MOB_NAME);
+			break;
+		}
+	end;
+}
+
+
+function	script	KafraPluginPayInstance	{
+	set .@reward,getarg(0);
+	getpartymember getarg(1),0;
+	set .@count, $@partymembercount;
+	
+	if(.@count >= 1) {
+		copyarray .@name$[0], $@partymembername$[0], $@partymembercount;
+		// list the party member names to pay it
+		for (set .@i,0; .@i < .@count; set .@i, .@i+1) {
+			charcommand "#cash \""+.@name$[.@i]+"\" "+.@reward;
+		}
+		announce "Hey! El equipo  \""+strcharinfo(1)+"\" acaba de derrotar al "+getarg(2)+" !!!..... Todos ganaron "+.@reward+" Kafra Points!",bc_blue|bc_map;
+		//Set LOG Variable per account
+		logmes "El ultimo monstruo que mato la party "+strcharinfo(1)+" y Fue "+getarg(2)+" Gano "+.@reward+" pts";
+	} else {
+		announce "Hey! \""+strcharinfo(0)+"\" acaba de derrotar al "+getarg(2)+" !!!..... Gano "+.@reward+" Kafra Points!",bc_blue|bc_map;
+		charcommand "#cash \""+strcharinfo(0)+"\" "+.@reward;
+		logmes "El ultimo monstruo que mato el user "+strcharinfo(0)+" y Fue "+getarg(2)+" Gano "+.@reward+" pts";
+	}
+	
+}

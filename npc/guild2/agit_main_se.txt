@@ -73,7 +73,7 @@ OnGuildBreak:
 	disablenpc "Kafra Employee#"+substr(strnpcinfo(2),0,1)+substr(strnpcinfo(2),8,9);
 	setcastledata strnpcinfo(2),1,0;
 	sleep 7000;
-	announce "Guild Base ["+getcastlename(strnpcinfo(2))+"] has been abandoned.",0;
+	announce "El castillo ["+getcastlename(strnpcinfo(2))+"] fue abandonado.",0;
 	donpcevent strnpcinfo(0)+"::OnRecvCastle2";
 	end;
 
@@ -618,16 +618,16 @@ OnStartArena:
 	// Disable Kafra
 	disablenpc "Kafra Employee#"+strnpcinfo(2);
 
-	announce "The ["+getguildname(.@GID)+"] guild conquered the ["+.@region$+" "+charat(strnpcinfo(2),3)+"] stronghold of "+getcastlename(strnpcinfo(4))+"!",bc_all|bc_woe;
-	mapannounce strnpcinfo(4),"The emperium has been shattered!",bc_map,"0x00FF00",FW_NORMAL,20,0,40;
+	announce "La guild ["+getguildname(.@GID)+"] gano el castillo de ["+.@region$+" "+charat(strnpcinfo(2),3)+"] fortaleza de  "+getcastlename(strnpcinfo(4))+"!",bc_all|bc_woe;
+	mapannounce strnpcinfo(4),"El emperium ha sido destrozado!",bc_map,"0x00FF00",FW_NORMAL,20,0,40;
 	donpcevent "Manager#"+strnpcinfo(4)+"::OnReset";
 	maprespawnguildid strnpcinfo(4),getcastledata(strnpcinfo(4),1),2;
 	donpcevent "Manager#"+strnpcinfo(4)+"::OnRecvCastle2";
-	donpcevent "::OnRecvCastle"+ strtoupper( substr( strnpcinfo(2), 0, 0 ) ) + substr( strnpcinfo(2), 1, getstrlen( strnpcinfo(2) ) -1 );
+	donpcevent "::OnRecvCastle"+strnpcinfo(2);
 	sleep 10000;
 	if (agitcheck2()) {
 		donpcevent "Manager#"+strnpcinfo(4)+"::OnChange";
-		mapannounce strnpcinfo(4),"Rebuild this stronghold's Guardian Stones and Fortress Gates to secure your guild's new aquisition!",bc_map,"0x00FF00",FW_NORMAL,20,0,40;
+		mapannounce strnpcinfo(4),"Reconstruye su fortaleza para asegurar su nuevo dominio!",bc_map,"0x00FF00",FW_NORMAL,20,0,40;
 	}
 	end;
 }
@@ -1057,10 +1057,10 @@ OnInit:
 						setd .@var$+"["+(.@num-1)+"]",0;
 						set .@df_all,getd(.@var$+"[0]")+getd(.@var$+"[1]");
 						if (!.@df_all) {
-							mapannounce strnpcinfo(4),"Both Guardian Stones have been erected, bolstering this stronghold's defenses!",bc_map,"0x00ff00";
+							mapannounce strnpcinfo(4),"Ambos Guardian Stones se han erigido, reforzando las defensas de esta fortaleza!",bc_map,"0x00ff00";
 							donpcevent "RL0#"+strnpcinfo(4)+"::OnEnable";
 						}
-						else mapannounce strnpcinfo(4),"The "+strnpcinfo(1)+" has been repaired successfully.",bc_map,"0x00ff00";
+						else mapannounce strnpcinfo(4),"El "+strnpcinfo(1)+" ha sido reparado satisfactoriamente!.",bc_map,"0x00ff00";
 						if (getd(.@var$+"[5]") == 1)
 							donpcevent "gard"+.@num+"#"+strnpcinfo(4)+"::OnEnable";
 						end;
@@ -1299,7 +1299,7 @@ OnEnable:
 							if (.@num == 1) set .@str$,"1st";
 							else if (.@num == 2) set .@str$,"2nd";
 							else if (.@num == 3) set .@str$,"3rd";
-							mapannounce strnpcinfo(4),"The "+.@str$+" Fortress Gate has been reconstructed!",bc_map,"0x00ff00";
+							mapannounce strnpcinfo(4),"El "+.@str$+" ha sido reconstruido!",bc_map,"0x00ff00";
 							if (.@num == 1) setd .@var$+"[2]",0;
 							else {
 								setarray getd(.@var$+"["+.@num+"]"),2,0;
@@ -1418,7 +1418,7 @@ OnTimer3600000:
 	set getd(".MyMobCount_"+charat(strnpcinfo(1),4)+strnpcinfo(2)),getd(".MyMobCount_"+charat(strnpcinfo(1),4)+strnpcinfo(2))+1;
 	callsub OnSummon,getd(.@var$);
 	setarray .count$[5],"1st","2nd","3rd","4th","5th";
-	mapannounce strnpcinfo(2),"The "+.count$[getd(.@var$)]+" Guardian has been summoned from the Gate House.",bc_map,"0xff4500";
+	mapannounce strnpcinfo(2),"El guardian "+.count$[getd(.@var$)]+" ha sido invocado en  Gate House.",bc_map,"0xff4500";
 	if (getd(.@var$) == 9) {
 		setd .@var$,0;
 		stopnpctimer;
@@ -1494,10 +1494,10 @@ OnGuardianStoneDied:
 	if (getd(.@var$+"[0]") == 1 || getd(.@var$+"[0]") == 2) set .@destroyed, .@destroyed+1;
 	if (getd(.@var$+"[1]") == 1 || getd(.@var$+"[1]") == 2) set .@destroyed, .@destroyed+1;
 	if (.@destroyed == 2) {
-		mapannounce strnpcinfo(2),"All of the Guardian Stones have been destroyed!",bc_map,"0x00ff00";
+		mapannounce strnpcinfo(2),"Todos los guardianes de piedras han sido destruidos!",bc_map,"0x00ff00";
 		donpcevent "RL0#"+strnpcinfo(2)+"::OnDisable";
 	}
-	else mapannounce strnpcinfo(2),"The "+((.@num == 1)?"1st":"2nd")+" Guardian Stone has been destroyed!",bc_map,"0x00ff00";
+	else mapannounce strnpcinfo(2),"El Guadian de piedra"+((.@num == 1)?"1st":"2nd")+"  fue destruido!",bc_map,"0x00ff00";
 	donpcevent "gard"+.@num+"#"+strnpcinfo(2)+"::OnReset";
 	initnpctimer;
 	end;
@@ -1676,7 +1676,7 @@ OnBarrierDestroyed:
 		set .@var$,substr(strnpcinfo(2),0,1)+substr(strnpcinfo(2),8,9);
 		setd "$agit_"+.@var$+"["+(.@num+1)+"]",1;
 		setarray .@count$[0],"1st","2nd","3rd";
-		mapannounce strnpcinfo(2),"The "+.@count$[.@num-1]+" Fortress Gate is destroyed.",bc_map,"0x00ff00";
+		mapannounce strnpcinfo(2),"La puerta reforzada "+.@count$[.@num-1]+" es destruida.",bc_map,"0x00ff00";
 		delwall .@var$+"_"+strnpcinfo(1);
 	}
 	end;

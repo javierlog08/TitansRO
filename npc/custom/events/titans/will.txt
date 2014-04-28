@@ -1,0 +1,54 @@
+//*******************************
+//		Noob NPC
+//	@autor: Antonio (Noob)
+//	@Description-----------------
+//	Say hi and kill you
+//	-----------------------------
+//	@Features:
+//	-Multi Languages
+//	-Friendly paramenter Config
+//******************************
+
+//***********************
+//Npc Talk
+//***********************
+prontera,156,177,4	script	Hola Mundo	519,{
+	
+	mes"[Hola Mundo]";
+	mes "...";
+	next;
+	mes "alejate tengo una resaca!";
+	menu "Irse",-,"Me quedo",first,"Lo Siento",second;
+	mes "Gracias";
+	close;
+	
+		first:
+		mes "^#F72020 CHAO ^000000 noob.";
+		next;
+		mes "No devistes hacerlo!!!!!!!";
+		monster "prontera",156,177,"Odin",1904,2;
+		close;
+	
+		second:
+		mes "Valiente elije una opcion:";
+		menu "Primera",uno,"Segunda",dos;
+		close;
+		
+			uno:
+			mes "te ganastes un premio!";
+			getitem 938,20; //Ten Sticky Mucus
+			close;
+			
+			dos:
+			mes "te ganastes un premio!";
+			next;
+			mes "...";
+			next;
+			mes "...";
+			next;
+			emotion 18;
+			mes "Ah, Lo siento me quede dormido";
+			getitem 512,5; //get five apple
+			close;
+			}
+	
