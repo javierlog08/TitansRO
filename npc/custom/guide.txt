@@ -1,0 +1,246 @@
+titans,143,163,4	script	titans_guide	-1,{
+
+OnInit:
+	bindatcmd "guide",strnpcinfo(3)+"::OnCommand";
+end;
+
+OnPCLoadMapEvent:
+		sleep2 1;
+		if(#FIRST_TIME_SERVER < 1) {
+			set #FIRST_TIME_SERVER,1;
+			goto OnGuide;
+		}
+		
+	end;
+	
+	OnCommand:
+		sleep2 1;
+		unittalk getcharid(3),"Activar Modo Guia !";
+		specialeffect2 807;
+		specialeffect2 521;
+		specialeffect2 879;
+		goto OnGuide;
+	end;
+
+	OnGuide:
+		sleep2 1;
+		if(strcharinfo(3)=="sec_pri"){ //Si estas en prision, no puedes hablar con la guia
+			mes "                        ^ff0000[ Info ] ^000000";
+			mes "     ";
+			mes "Fuiste castigado por alguna razón.";
+			mes "Cualquiera que aya sido la razón te tendra aqui por el tiempo que diga el comando ^ff0000@jailtime^000000";
+			close2;
+			end;
+		}
+
+		if(strcharinfo(3)=="que_avan01" || strcharinfo(3)=="hunt" || strcharinfo(3)=="arena"){ //Si estas en prision, no puedes hablar con la guia
+			mes "                        ^ff0000[ Info ] ^000000";
+			mes "     ";
+			mes "Imposible contactar con la Guia en este mapa.";
+			close2;
+			end;
+		}
+
+		cutin "jpn_anni01",2;
+		mes "^336600[Guia de Titans RO]^000000";
+		mes "Bienvenido a Titans RO";
+		mes "Soy tu guia y te ayudare";
+		mes "en el proceso de integracion a nuestro server";
+		mes "Que deseas Hacer?";
+		goto OnMenu;
+	end;
+	
+	OnExit:
+		cutin "jpn_anni03",2;
+		mes "^336600[Guia de Titans RO]^000000";
+		mes "Nos veremos luego.";
+		mes "Si necesitas ayuda;";
+		mes "puedes invocarme con el comando ^FF0000@guide^000000";
+		mes "Buena suerte!";
+		close2;
+		cutin "",255;
+	end;
+
+	OnMenu:
+		switch(select("Server Info:NPCs:Configuracion:Salir")) {
+			case 1:
+				next2;
+				cutin "jpn_anni03",2;
+				mes "^336600[Guia de Titans RO]^000000";
+				mes "Que nivel de jugador tienes?";
+				if(select("Usuario Experto:Principiante")==1) {
+					next2;
+					cutin "jpn_anni02",2;
+					mes "^9933ff[Rates]^000000";
+					mes "^A0A0A0~Usa el comando @rates^000000";
+					mes "^9933ff[Cartas MVPs]^000000";
+					mes "^A0A0A0~No funcionan en BG / WOE / PVP^000000";
+					mes "^9933ff[Instant Cast]^000000";
+					mes "^A0A0A0~Solo se alcanza con 170 de DEX^000000";
+					mes "^9933ff[Horarios WOE]^000000";
+					mes "^A0A0A0~4 Dias a la semana^000000";
+					mes "^9933ff[Comandos Customs]^000000";
+					mes "^A0A0A0~@OnGuide; @kpoints^000000";
+					mes "^9933ff[Freebies]^000000";
+					mes "^A0A0A0~Son regalos que recibes^000000";
+					mes "^A0A0A0~al integrarte a nuestro server^000000";
+					mes "^A0A0A0~Justo Ahora estan en tu invetario^000000";
+				} else {
+					next2;
+					cutin "jpn_anni02",2;
+					mes "^336600[Guia de Titans RO]^000000";
+					mes "Titans RO es un servidor de Ragnarok";
+					mes "Ragnarok es un juego Multi-jugador";
+					mes "tiene su propia historia; como otros RPG";
+					mes "puedes aprender a jugar preguntando a los usuarios";
+					mes "o buscando mas informacion en sitios como ";
+					mes "^0080ffwww.iro.wiki.com^000000";
+					mes "^0080ffwww.ratemyserver.net^000000";
+					mes "^0080ffwww.rune-nifelheim.com^000000";
+					next;
+					mes "Adicional te doy algunos TIPS";
+					mes "^A0A0A0~Ver Zeny / Dinero presiona ALT+V^000000";
+					mes "^A0A0A0~Ver tus STATUS ALT+Q^000000";
+					mes "^A0A0A0~Ver tu inventario ALT+E^000000";
+				}
+				close2;
+				goto OnGuide; 
+			break;
+			
+			case 2:
+				next2;
+				cutin "jpn_anni03",2;
+				mes "^336600[Guia de Titans RO]^000000";
+				mes "Que NPC deseas ver?";
+				switch(select("^3399FFEntrenamiento^000000:^4C9900Mercado^000000:^FF3333Battlegrounds - PVP^000000:^ff8000Central del Server^000000")) {
+					case 1:
+						set ACTIVE_GUIDE,1;
+						getmapxy(@map$,@x,@y,0);
+						if(@map$ == "titans" && @x == 150 && @y == 263) {
+							atcommand "@refresh ";
+							doevent "token_training::OnNpcTalk";
+						} else {
+							if(MY_TRAINER > 0) //Si ya conoce al trainer, warp directo a el
+								warp "iz_ac01_d",100,34;
+							else
+								warp "titans",150,263;
+						}
+					break;
+
+					case 2:
+						set ACTIVE_GUIDE,1;
+						getmapxy(@map$,@x,@y,0);
+						if(@map$ == "titans" && @x == 110 && @y == 209) {
+							atcommand "@refresh ";
+							doevent "token_market::OnNpcTalk";
+						} else {
+							warp "titans",110,209;
+						}
+						
+					break;
+
+					case 3:
+						set ACTIVE_GUIDE,1;
+						getmapxy(@map$,@x,@y,0);
+						if(@map$ == "titans" && @x == 140 && @y == 203) {
+							atcommand "@refresh ";
+							doevent "token_pvp::OnNpcTalk";
+						} else {
+							if(#PVP_DIRECT_WARP)
+								warp "pvp_castle",100,106;
+							else
+								warp "titans",140,203;
+						}
+						
+					end;
+
+					case 4:
+						warp "titans",146,168;
+					end;
+
+				}
+			break;
+
+			case 3:
+				if(select("Cambiar Aura","Cambiar Estilo","On/Off Sonido de Guia")) {
+				}
+			end;
+
+			case 4:
+				next2;
+				goto OnExit;
+			break;
+		}
+	end;
+}
+
+titans,150,263,4	script	token_training	139,3,3,{
+
+	OnTouch:
+		sleep2 1;
+		if(ACTIVE_GUIDE>0) {
+			goto OnNpcTalk;
+		}
+	end;
+
+	OnNpcTalk:
+		sleep2 1;
+		set ACTIVE_GUIDE,0;
+		cutin "jpn_anni02",2;
+		mes "^336600[Guia de Titans RO]^000000";
+		mes "Aqui es donde tu aventura empieza.";
+		mes "El ^0000FFMaestro Legendario^000000 es un genio.";
+		mes "sigue al pie de la letra cada cosa que te diga.";
+		next;
+		doevent "titans_guide::OnExit";
+	end;
+}
+
+titans,110,209,4	script	token_market	139,3,3,{
+
+	OnTouch:
+		sleep2 1;
+		if(ACTIVE_GUIDE>0) {
+			goto OnNpcTalk;
+		}
+	end;
+
+	OnNpcTalk:
+		sleep2 1;
+		set ACTIVE_GUIDE,0;
+		cutin "jpn_anni02",2;
+		mes "^336600[Guia de Titans RO]^000000";
+		mes "Aqui es el mercado.";
+		mes "Puedes comprar cualquier cosa";
+		mes "que necesites aqui.";
+		next;
+		doevent "titans_guide::OnExit";
+	end;
+}
+
+titans,140,203,4	script	token_pvp	139,3,3,{
+
+	OnTouch:
+		sleep2 1;
+		if(ACTIVE_GUIDE>0) {
+			goto OnNpcTalk;
+		}
+	end;
+
+	OnNpcTalk:
+		sleep2 1;
+		set ACTIVE_GUIDE,0;
+		set #PVP_DIRECT_WARP,1; //warp directo adentro del castillo otras veces
+		cutin "jpn_anni02",2;
+		mes "^336600[Guia de Titans RO]^000000";
+		mes "Estan son las arenas de batalla.";
+		mes "Nuevos modos de Battlegrounds y PVP.";
+		mes "En cada modo podras ganar Medallas cangeables por premios.";
+		next;
+		doevent "titans_guide::OnExit";
+	end;
+}
+
+
+
+titans	mapflag	loadevent
