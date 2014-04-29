@@ -1,5 +1,5 @@
 
-prontera,164,168,4	script	Horarios de Eventos::info_npc	837,{
+titans,144,172,5	script	Horarios de Eventos::info_npc	837,{
 
 	i_start:
 	for(.@i=0;.@i<getvariableofnpc(.INFO_I_S,"npc_translation_info");++.@i) {

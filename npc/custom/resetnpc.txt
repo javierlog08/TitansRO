@@ -79,3 +79,9 @@ prontera,149,188,6	script	Reset Boy	4_M_OLIVER,{
 		end;
 	}
 }
+
+// --------------------------------------------------
+//	Duplicates:
+// --------------------------------------------------
+
+titans,139,170,5	duplicate(Reset Boy)	Reset Boy#tit	4_M_OLIVER

@@ -1710,7 +1710,7 @@ ACMD(go)
 		char map[MAP_NAME_LENGTH];
 		int x, y;
 	} data[] = {
-		{ MAP_PRONTERA,    156, 191 }, //  0=Prontera
+		{ MAP_TITANS,	   147, 168 }, //  0=Titans
 		{ MAP_MORROC,      156,  93 }, //  1=Morroc
 		{ MAP_GEFFEN,      119,  59 }, //  2=Geffen
 		{ MAP_PAYON,       162, 233 }, //  3=Payon
@@ -1750,6 +1750,7 @@ ACMD(go)
 		{ MAP_MALANGDO,    140, 114 }, // 33=Malangdo Island
 		{ MAP_MALAYA,      242, 211 }, // 34=Malaya Port
 		{ MAP_ECLAGE,      110,  39 }, // 35=Eclage
+		{ MAP_PRONTERA,    156, 191 }, // 36=Prontera
 	};
 			
 	memset(map_name, '\0', sizeof(map_name));

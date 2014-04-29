@@ -18,6 +18,7 @@
 #define MAP_DEFAULT_Y 150
 
 //Some definitions for the mayor city maps.
+#define MAP_TITANS "titans"
 #define MAP_PRONTERA "prontera"
 #define MAP_GEFFEN "geffen"
 #define MAP_MORROC "morocc"

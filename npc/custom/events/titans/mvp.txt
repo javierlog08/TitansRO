@@ -61,22 +61,22 @@
 		//PRIZE MONSTER SPAWNS
 		for(.j=0;.@j<.PRIZE_MOBS_SPAWN_TIME;++.@j) {
 			for(.@i=0;.@i<getarraysize(.PRIZE_MOBS);++.@i) {
-				monster .MAP$,0,0,"Event Crystal",.PRIZE_MOBS[.@i],1,strnpcinfo(0)+"::OnPrizeMonster";
+				monster .Map$,0,0,"Event Crystal",.PRIZE_MOBS[.@i],1,strnpcinfo(0)+"::OnPrizeMonster";
 			}
 		}
 		
 		for(.@i=0;.@i<getarraysize(.MVP_MOBS);++.@i) {
-			monster .MAP$,0,0,"Event MVP",.MVP_MOBS[.@i],1;
+			monster .Map$,0,0,"Event MVP",.MVP_MOBS[.@i],1;
 		}
 
 		for(.@i=0;.@i<getarraysize(.MINI_MOBS);++.@i) {
-			monster .MAP$,0,0,"Event MVP",.MINI_MOBS[.@i],1;
+			monster .Map$,0,0,"Event MVP",.MINI_MOBS[.@i],1;
 		}
 
 		//FLAGS
-		removemapflag .MAP$,mf_pvp;
-		setmapflag .MAP$,mf_nomemo;
-		setmapflag .MAP$,mf_nosave;
+		removemapflag .Map$,mf_pvp;
+		setmapflag .Map$,mf_nomemo;
+		setmapflag .Map$,mf_nosave;
 		
 		//sSTART ANNOUNCE
 		announce getvariableofnpc(.T_ANNOUNCE_START$,"npc_translation"), bc_all,getvariableofnpc(.ANNOUNCE_COLOR$,"npc_translation");
@@ -98,6 +98,7 @@
     end;
 
 	OnPrizeMonster:
+		sleep2 1;
 		skilleffect 693,0;
 		soundeffect "vallentine.wav",0; //Optional wav, do you must use yours
 		getitem .PRIZE_ITEM,.PRIZE_QTY;
@@ -105,16 +106,16 @@
 	
 	STOP_EVENT:
 		disablenpc "mvp_recruiter";
-		mapwarp .MAP$,"prontera",160,180;
+		mapwarp .Map$,"prontera",160,180;
 		announce getvariableofnpc(.T_ANNOUNCE_STOP$,"npc_translation"), bc_all,getvariableofnpc(.ANNOUNCE_COLOR$,"npc_translation");
-		killmonster .MAP$,"All";
-		cleanmap .MAP$;
+		killmonster .Map$,"All";
+		cleanmap .Map$;
 		stopnpctimer;	
 	end;
 
 	SETTINGS:
 		disablenpc "mvp_recruiter";
-		set .MAP$,"pvp_y_5-3";
+		set .Map$,"pvp_y_5-3";
 		set .RANDOM_MVP,0; /* look random in the mvp list? 0:no   1:yes*/
 		set .PRIZE_MOBS_SPAWN_TIME,5;
 		set .PRIZE_ITEM,7711;
@@ -199,8 +200,8 @@ prontera,162,181,3	script	Monster Hunt::mvp_recruiter	10055,{
 	next;
 	mes getvariableofnpc(.T_DO_YOU_WHISH$,"npc_translation");
 	if(select(getvariableofnpc(.T_CONFIRMATION$,"npc_translation"))==1) {
-		if(getvariableofnpc(.MAP$,"mvp_event_manager")!="")
-			warp getvariableofnpc(.MAP$,"mvp_event_manager"),0,0;
+		if(getvariableofnpc(.Map$,"mvp_event_manager")!="")
+			warp getvariableofnpc(.Map$,"mvp_event_manager"),0,0;
 	} else {
 		mes getvariableofnpc(.T_COBARD$,"npc_translation");
 		close;

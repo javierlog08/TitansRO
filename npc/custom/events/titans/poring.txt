@@ -61,19 +61,19 @@
 		set .@la$, getvariableofnpc(.tc$,"poring_es"); //map announce
 		set .@lb$, getvariableofnpc(.td$,"poring_es"); //map announce
 		set .PORING_COUNT,.REWARDED_PORING_PINK_SPAWN+.REWARDED_PORING_PINK_SPAWN; //Total rewarded poring count in map
-		setmapflag .MAP$,mf_noskill;
-		setmapflag .MAP$,mf_nomemo;
-		setmapflag .MAP$,mf_nosave;
-		setmapflag .MAP$,mf_nowarp;
-		setmapflag .MAP$,mf_noteleport;
-		removemapflag .MAP$,mf_pvp;
+		setmapflag .Map$,mf_noskill;
+		setmapflag .Map$,mf_nomemo;
+		setmapflag .Map$,mf_nosave;
+		setmapflag .Map$,mf_nowarp;
+		setmapflag .Map$,mf_noteleport;
+		removemapflag .Map$,mf_pvp;
 		enablenpc "poring_king";
 		donpcevent "poringStart::OnSpawn";
 		mapannounce "prontera",.@la$,bc_map,.ANNOUNCE_COLOR$;
 		sleep 10000;
 		mapannounce "prontera",.@lb$,bc_map,.ANNOUNCE_COLOR$;
 		sleep 600000;
-		if(mobcount(.MAP$,"poringStart::OnPoring") > 1) {
+		if(mobcount(.Map$,"poringStart::OnPoring") > 1) {
 			callfunc("poringStop");
 			goto SETDEFAULT;
 		}
@@ -85,7 +85,7 @@
 		dispbottom  .@l$;
 		getitem .REWARD_ITEM,.REWARD_ITEM_QTY;
 		atcommand "@cash "+.POINT_REWARD;
-		if(mobcount(.MAP$,"poringStart::OnPoring") < 1) {
+		if(mobcount(.Map$,"poringStart::OnPoring") < 1) {
 			callfunc("poringStop");
 			goto SETDEFAULT;
 		}
@@ -93,8 +93,8 @@
 	end;
 	
 	OnSpawn:
-		monster .MAP$,0,0,.@l$,1725,.PORING_PINK_SPAWN; // Basic porings pink
-		monster .MAP$,0,0,.@l$,1725,.REWARDED_PORING_PINK_SPAWN,strnpcinfo(0)+"::OnPoring"; // Porings pink special
+		monster .Map$,0,0,.@l$,1725,.PORING_PINK_SPAWN; // Basic porings pink
+		monster .Map$,0,0,.@l$,1725,.REWARDED_PORING_PINK_SPAWN,strnpcinfo(0)+"::OnPoring"; // Porings pink special
 	end;
 
 	OnInit:
@@ -107,7 +107,7 @@
 		set .POINT_REWARD,5; //kafrapoint
 		set .PORING_PINK_SPAWN,200; //pink poring quantity
 		set .REWARDED_PORING_PINK_SPAWN,10; //rewarded pink poring quantity
-		set .MAP$,"pvp_y_5-2"; //Event Map
+		set .Map$,"pvp_y_5-2"; //Event Map
 		set .ANNOUNCE_COLOR$,"0XCC99FF";
 	end;
 }
@@ -118,11 +118,11 @@
 function	script	poringStop	{
 	set .@l$, getvariableofnpc(.te$,"poring_es"); //map end announce
 	disablenpc "poring_king";
-	killmonster getvariableofnpc(.MAP$,"poringStart"),"All";
-	mapannounce  getvariableofnpc(.MAP$,"poringStart"),.@l$,bc_map,getvariableofnpc(.ANNOUNCE_COLOR$,"poringStart");
+	killmonster getvariableofnpc(.Map$,"poringStart"),"All";
+	mapannounce  getvariableofnpc(.Map$,"poringStart"),.@l$,bc_map,getvariableofnpc(.ANNOUNCE_COLOR$,"poringStart");
 	mapannounce  "prontera",.@l$,bc_map, getvariableofnpc(.ANNOUNCE_COLOR$,"poringStart");
 	sleep 5000;
-	mapwarp getvariableofnpc(.MAP$,"poringStart"),"prontera",160,180;
+	mapwarp getvariableofnpc(.Map$,"poringStart"),"prontera",160,180;
 	return;
 }
 
@@ -135,8 +135,8 @@ prontera,161,181,4	script	Rey Poring::poring_king	10066,{
 	}
 	close2;
 	atcommand "@pvpoff ";
-	if(getvariableofnpc(.MAP$,"poringStart")!="")
-		warp getvariableofnpc(.MAP$,"poringStart"),0,0;
+	if(getvariableofnpc(.Map$,"poringStart")!="")
+		warp getvariableofnpc(.Map$,"poringStart"),0,0;
 	end;
 
 	OnInit:
@@ -149,7 +149,7 @@ prontera,161,181,4	script	Rey Poring::poring_king	10066,{
 //******************************************
 -	script	poring_es	-1,{
 	OnInit:
-		set .MAP$,"pvp_y_5-2"; //Event Map
+		set .Map$,"pvp_y_5-2"; //Event Map
 		set .REWARD_ITEM,7711; //REward Item id
 		setarray .ta$[0],"^9933FF [Evento Poring] ^000000","Necesito Ayuda !","Tengo ^FF0000"+5+" Reveldes^000000 que se escaparon de mi reino.","Se mezclaron entre la multitud en cierto mapa","Necesito mates a cada uno de ellos.","Tienes ^00ff00"+10+" Minutos^000000 para encontrarlos!.","Si logras matar a uno traeme el ^ff0000"+getitemname(.REWARD_ITEM)+"^000000 que me robaron"," y te premiare con algo."; //NPC Initial Dialog
 		set .taSize,getarraysize(.ta$);

@@ -17,7 +17,7 @@
 
 // Information NPC
 //============================================================
-prontera,149,193,4	script	WOE Information	2_BOARD1,{
+titans,148,172,4	script	WOE Information	2_BOARD1,{
 	doevent "WOE_CONTROL::OnMenu";
 	end;
 OnAgitStart:
@@ -27,16 +27,16 @@ OnAgitStart:
 	}
 	end;
 
-OnPCLoadMapEvent:
+/*OnPCLoadMapEvent:
    getmapxy @map$,@x,@y,0;
    if (@map$ == "aldeg_cas01" || @map$ == "gefg_cas02" || @map$ == "payg_cas02" || @map$ == "prtg_cas01" || @map$ == "arug_cas02" || @map$ == "arug_cas03" || @map$ == "schg_cas01" || @map$ == "schg_cas02" ) {
 	if(countitem(4403) > 1 || checkequipedcard(4403) || countitem(4131) > 1 || checkequipedcard(4131) || countitem(4263) > 1 || checkequipedcard(4263) || countitem(4128) > 1 || checkequipedcard(4128) || countitem(4441) > 1 || checkequipedcard(4441)){
-		warp "prontera",158,178;
+		warp "titans",147,160;
 		dispbottom "NO PUEDES LLEVAR LAS CARTAS KIEL CARD/SAMURAI/GTB/FALLEN A WOE";
 	}
    }
    end;
-
+*/
 }
 
 // Script Core

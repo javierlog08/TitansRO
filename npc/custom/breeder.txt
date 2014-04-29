@@ -10,7 +10,7 @@
 //= Fixed 'close' issues. [Joseph]
 //============================================================
 
-prontera,164,188,4	script	Universal Rental NPC	873,{
+titans,155,170,4	script	Universal Rental NPC	873,{
 	soundeffect "vallentine.wav",0;
 	cutin "fly_felrock",2;
 	if (ismounting()) {

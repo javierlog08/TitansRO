@@ -2,11 +2,14 @@
 // GRF Files
 // Add as many as needed.
 //-----------------------------------------
-//grf: C:\Program Files\Gravity\RO\rdata.grf
-//grf: C:\Program Files\Gravity\RO\data.grf
-
+grf: C:\Users\Javier\Desktop\RAGNAROKRATEMYSERVER\RO\rdata.grf
+grf: C:\Users\Javier\Desktop\RAGNAROKRATEMYSERVER\RO\data.grf
+grf: C:\Users\Javier\Desktop\RAGNAROKRATEMYSERVER\RO\test.grf
+//grf: C:\Users\Administrador\Pictures\CARPA\RO\rdata.grf
+//grf: C:\Users\Administrador\Pictures\CARPA\RO\data.grf
+//grf: C:\Users\Administrador\Pictures\CARPA\RO\test.grf
 //-----------------------------------------
 // Data Directory
 // Use the base folder, not the data\ path.
 //-----------------------------------------
-//data_dir: C:\Program Files\Gravity\RO\
+data_dir: C:\Users\Javier\Desktop\RAGNAROKRATEMYSERVER\RO\
