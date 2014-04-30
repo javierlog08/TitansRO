@@ -21,8 +21,8 @@ OnInit:
 	bindatcmd "koe", strnpcinfo(0)+"::OnCommand", 99,100;
 	end;
 OnCommand:
-	if ( compare( .@atcmd_parameters$, "on" ) ) goto L_start;
-	else if ( compare( .@atcmd_parameters$, "off" ) ) goto L_end;
+	if ( compare( .@atcmd_parameters$, "on" ) ) goto L_Start;
+	else if ( compare( .@atcmd_parameters$, "off" ) ) goto L_End;
 	else {
 		dispbottom "Escribe - '@koe on' Para iniciar el evento.";
 		dispbottom "Escribe - '@koe off' Para finalizar el evento";
@@ -30,17 +30,17 @@ OnCommand:
 	end;
 
 OnStart:
-	goto L_start;
-	addtimer getvariableofnpc(.TIME,"pvp_koe_officer"),strnpcinfo(3)+"::OnStop";
+	goto L_Start;
+	addtimer getvariableofnpc(.time,"pvp_koe_officer"),strnpcinfo(3)+"::OnStop";
 end;
 
 OnStop:
-	goto L_end;
+	goto L_End;
 	addtimer 100,"pvp_koe_officer::OnDelay";
 end;
 
 //OnClock2000: // everyday 8pm starts
-L_start:
+L_Start:
 	if ( .start ) end;
 	gvgon "guild_vs1";
 	announce "El PVP King Of Emperium ha sido activado !", bc_all;
@@ -53,7 +53,7 @@ L_start:
 	monster "guild_vs1",49,49,"EMPERIUM",1288,1,"KoE::OnEmpDead";
 	end;
 //OnClock2030: // everyday 8:30pm ends
-L_end:
+L_End:
 	gvgoff "guild_vs1";
 	announce "El PVP King Of Emperium se ha desactivado!", bc_all;
 	.start = 0;

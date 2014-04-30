@@ -462,7 +462,7 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 		mes "El PVP KoE mejor conocido como King Of Emperium es un  mini torneo donde toda guild que quiera puede participar";
 		next;
 		mes "^00CCCC[ Organizador KoE]^000000";
-		mes "La KoE se activara ^ff0000"+(.TIME/60000)+" minuto(s)^000000. Despues de eso toda guild dentro del PVP tiene que pelear por conservar el emperium dentro de la sala.";
+		mes "La KoE se activara ^ff0000"+(.time/60000)+" minuto(s)^000000. Despues de eso toda guild dentro del PVP tiene que pelear por conservar el emperium dentro de la sala.";
 		next;
 		mes "^00CCCC[ Organizador KoE]^000000";
 		mes "La guild que conserve el control de la sala al final del tiempo gana el evento.";
@@ -506,7 +506,7 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 	end;
 
 	OnInit:
-		set .TIME,120000;
+		set .time,120000;
 		set .DELAY_CONF,300000;
 		set .DELAY,0;
 		delwaitingroom;
