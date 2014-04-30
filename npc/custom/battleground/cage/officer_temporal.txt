@@ -1,0 +1,59 @@
+prontera,205,175,0	script	Portal de Batalla::BATLEENTER	723,2,2,{
+		if(countitem(7919)<1)
+			end;
+		mes "El campo de batalla no es para cualquier Guerrero ";
+		mes "Tiene un costo de ^00ff00 1 silver Coin ^000000 la entrada";
+		mes "^ff0000 Asi que te sugiero que no entres solo para que no gastes tus coins^000000";
+		mes "Organiza tu equipo primero. ^0000ff Al menos que ya tengas dos equipos de 3 gerreros.... ^000000";
+		next;
+		mes "Deseas pagar 1 silver coin para entrar?";
+		if(select("No:Si")==2)
+		{
+			set $@v,getvariableofnpc(.Ocupado,"PVP");
+			if(countitem(675)>=1 && $@v == 0)
+			{
+				warp "quiz_01",230,368;
+				delitem 675,1;
+			}
+			else
+			{
+				if($@v == 1)
+					mes "La sala esta ocupada, espera a que se desocupe, se anunciara cuando eso pase.";
+				if(countitem(675)<1)
+					mes "Vamos man, no tienes ^ff0000 Silver coins ^000000";
+				mes "Sin eso no puedes entrar";
+				close;
+			}
+		}
+		else
+		{
+			mes "Regresa cuando tengas la gente para jugar entonces";
+			close;
+		}
+}
+
+//prontera,200,173,4	script	Team_A	973,{
+quiz_01,221,368,4	script	Team_A	973,{
+	OnInit:
+		waitingroom "Equipo A",$maxPVP,"PVP::OnRegister",$maxPVP;
+	end;
+
+	OnEnter:
+		set $@team_A,waitingroom2bg("guild_vs4",7,49,"PVP::OnLeave","");
+	end;
+
+}
+
+//prontera,211,173,4	script	Team_B	974,{
+quiz_01,239,368,4	script	Team_B	974,{
+
+	OnInit:
+		waitingroom "Equipo B",$maxPVP,"PVP::OnRegister",$maxPVP;
+	end;
+
+	OnEnter:
+		set $@team_B,waitingroom2bg("guild_vs4",91,49,"PVP::OnLeave","");
+	end;
+
+}
+/*   [ =================================================================================================================================== ]   */

@@ -1,0 +1,639 @@
+pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
+	function unregister;
+	function register;
+	function resetWaitingRoom;
+	function updateClock;
+	function setState;
+	function getState;
+	function sortMatch;
+	function setMatch;
+	function arenaWallOn;
+	function arenaWallOff;
+	function setWinner;
+	function nextMatch;
+	function reset;
+	function setKing;
+	function setDelay;
+	function checkUser;
+	function playerLeave;
+	function stopMatch;
+	function forfyWinner;
+	function drawMatch;
+	function validateMatch;
+	function setRanking;
+
+	OnTalk:
+		if(getState()==1) {
+			set @inQue,0;
+			if(.queue$[0]!="") {		
+				for(@i=0;@i<.Size;++@i)
+					if(getelementofarray(getvariableofnpc(.queue$,"pvp_king_register"),@i)==strcharinfo(0))
+						set @inQue,1;
+			}
+
+			if(!@inQue) {
+				mes "El player [ "+getvariableofnpc(.SPONSOR$,"pvp_king_officer")+" ] ha iniciado una convocatoria para elegir al proximo rey del PVP.";
+				mes "  ";
+				mes "^0000ffDeseas registrarte?^000000";
+				if(select("Si, Registrame!:Nah, No quiero")==1){
+					next2;
+					register();
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";;
+					mes "^0000ffAcabo de registrarte en el torneo.^000000";
+					mes "Seras llamado cuando estemos listos.";
+					mes " ";
+					mes "~ Buena suerte ~";
+					
+					close2;
+					announce "[ "+strcharinfo(0)+" ] acaba de registrarse para el torneo de PVP, las inscripciones estaran abiertas "+getvariableofnpc(.REGISTER_TIME$,"pvp_king_register_time")+" Minuto(s) mas.",bc_all;
+					cutin "",255;
+					end;
+				} else {
+					next2;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "Es de suponerse que no tienes el nivel necesario para participar en tan prestigiosa competencia.";
+					close2;
+					cutin "",255;
+					end;
+				}		
+			}	
+			
+
+			mes "^0000ffComo puedo ayudarte?^000000";
+			.@menu$ = "Ver Participantes:Sacame de la lista";
+			if(strcharinfo(0)==getvariableofnpc(.SPONSOR$,"pvp_king_officer")) {
+				.@menu$ = "Ver Participantes:^ff0000Cancelar Torneo^000000";
+			}
+			if(select(.@menu$)==2) {
+				next2;
+				if(strcharinfo(0)==getvariableofnpc(.SPONSOR$,"pvp_king_officer")) {
+					mes "Si cancelas el torneo perderas todo el dinero que invertistes";
+					mes "^ff0000Deseas cancelarlo?^000000";
+					if(select("Si:No")==1) {
+						next2;
+						mes "FLUJO CANCELADO";
+						
+					} else {
+						next2;
+						mes "Perfecto.";
+						mes "Que el torneo continue.";
+					}
+					
+					close2;
+					end;
+				}
+				mes "Enserio?";
+				mes "^ff0000Deseas dejar el torneo?^000000";
+				if(select("Seh:No")==1) {
+					next2;
+					unregister();
+					mes "Es una lastima,pero ya estas fuera.";
+					
+					
+				} else {
+					next2;
+					mes "Perfecto.";
+					mes "Esa es la actitud de un futuro campeon";
+				}
+				close2;
+				end;
+				
+			} else {
+				next2;
+				mes "Torneo PVP de";
+				mes "[ "+getvariableofnpc(.SPONSOR$,"pvp_king_officer")+" ].";
+				mes "^ff0000Lista de los participantes:^000000";
+
+				for(@i=0;@i<.Size;++@i)
+					mes "^808080~ ^000000"+.queue$[@i];
+							
+				close2;
+				cutin "",255;
+				end;
+			}
+		}  else if(getState() == 2) {
+			mes " - - - -";
+			mes "  Cuanto lo siento !.";
+			mes "  Llegas algo tarde !";
+			mes "  El torneo ya empezo.";
+			mes " - - - -";
+			close2;
+			cutin "",255;
+			end;
+		}
+	end;
+
+	
+	OnSetup:
+		sleep2 1;
+		addtimer 100,strnpcinfo(3)+"::OnRegisterClockSetup";
+		register();
+	end;
+
+	OnRegisterClockSetup:
+		doevent "pvp_king_register_time::OnStartClock"; //Solo el setup inicial de variables y el waiting room
+		while(1) {
+			if(updateClock()) {
+				if(getarraysize(.queue$)>=.STACK) {
+					donpcevent "pvp_king_register_time::OnUpdateClock";
+					goto StartTournament;
+				} else {
+					areawarp "pvp_castle",159,11,188,38,"pvp_castle",106,110;
+					announce "La convocatoria al Torneo PVP Fallo. Se necesita un numero minimo de "+.STACK+" players para iniciar un Torneo.",bc_all,0xff3333;
+					setState(0);
+					reset();
+				}
+				break;
+			}
+		}
+	end;
+
+	StartTournament:
+		delwaitingroom;
+		
+		//Borramos el item del usuario anterior. que era el rey actual del torneo y borramos al rey del torneo actual
+		set .OldKing$,$pvpking$[0]; // Gudarmaos primero una referencia del antiguo rey
+		if($pvpking$[0]!="" && isloggedin(getcharid(3,$pvpking$[0]))) {
+			attachrid getcharid(3,$pvpking$[0]);
+			if(countitem(5666)>=1 && $pvpking$[0]==strcharinfo(0))
+				delitem 5666,1,getcharid(3,$pvpking$[0]);
+		
+			detachrid;
+		}
+		deletearray $pvpking$,getarraysize($pvpking$);
+
+		announce "El tiempo de las inscripciones para el torneo termino.",bc_all;
+		setState(2); //Definimos el estado del torneo como qye ya comenzo
+		sleep2 10000;
+		announce "Los participantes estan siendo llevados a la sala de organización. Buena Suerte a todos",bc_all;
+		for(.@i=0;.@i<.Size;++.@i)
+			unitwarp getcharid(3,.queue$[.@i]),"que_avan01",25,26;
+
+		areawarp "pvp_castle",159,11,188,38,"pvp_castle",106,110;
+		initnpctimer;
+	end;
+
+	OnTimer10000:
+		sleep2 1;
+		mapannounce "que_avan01","A partir de ahora el sistema empieza el sorteo de las batallas por favor esperen....",bc_blue;
+		sortMatch(.queue$);
+	end;
+
+	OnTimer30000:
+		sleep2 1;
+		mapannounce "que_avan01","El sistema ha terminado el sorteo.",bc_blue;
+		//setMatch();
+		//stopnpctimer;
+	end;
+
+	OnTimer35000:
+		sleep2 1;
+		setMatch();
+		stopnpctimer;
+	end;
+
+	OnInit:
+		setarray .queue$[0],"";
+		setarray .winners$[0],"";
+		set .ON_FINAL,0; // en finales?
+		set .Size,0;
+		set .user1$,"";
+		set .user2$,"";
+		set .static_time,60000; // tiempo de registro statico
+		set .time,.static_time; //Tiempo de registro dynamico
+		set .STACK,2; //numero de jugadores para que exista un torneo
+		set .JAILTIME,2; //en Horas
+		set .JAIL_ON,0; //0 No activo envio a prision || 1 Envio a prision activo
+		set .MATCH,0; //Si es 1 entonces acaba de iniciar la organizacion de un match...si es 2 entonces ya acabo la cuenta regresiva del match y estan batallando
+		set .OldKing$,""; //Para referencia el viejo rey
+		set .FLAG_IGNORE_DRAW,0; //Este es un flag que evitara mensaje de empate si ahi forfy antes
+		delwaitingroom;
+		waitingroom "Registros [ "+.Size+" ]",0;
+	end;
+
+	OnPCKillEvent:
+		sleep2 1;
+		if (strcharinfo(3) == "arena") {
+			stopMatch();
+			setWinner(strcharinfo(0));
+			warpchar "pvp_castle",106,110,getcharid(0,rid2name(killedrid));
+			sleep2 2000;
+			if(.ON_FINAL) // Si estamos en la final
+				announce "[ "+strcharinfo(0)+" ] Derroto a [ "+rid2name(killedrid)+" ] Y logra con esto ganar la Final del Torneo PVP.",bc_all;
+			else
+				announce "[ "+strcharinfo(0)+" ] Derroto a [ "+rid2name(killedrid)+" ] Y logra con esto pasar a la siguiente ronda del Torneo PVP.",bc_all;
+			
+			sleep2 7000;
+			warp "que_avan01",25,26;
+			sleep2 2000;
+			nextMatch();
+		}
+	end;
+
+	OnPCLoadMapEvent:
+		if(strcharinfo(3)=="arena" || strcharinfo(3)=="que_avan01") {
+			if(FROMJAIL) { //Si viene de la prision
+				warp "titans",146,164;
+				set FROMJAIL,0;
+			}
+		}
+	end;
+
+	OnPCLogoutEvent:
+		if(getState()==1){
+			unregister();
+		}
+
+		if(getState()==2){ // El torneo inicio
+			playerLeave(strcharinfo(0));
+		}
+	end;
+
+
+	function register {
+		if(.queue$[0]=="") {
+			.queue$[0] = strcharinfo(0); // registramos al creador del evento
+			.Size = getarraysize(.queue$);
+			resetWaitingRoom();
+			end;
+		}
+		
+		.queue$[.Size] = strcharinfo(0);
+		.Size = getarraysize(.queue$);
+
+		resetWaitingRoom();
+		return;
+	}
+
+	function unregister {
+		for(@i=0;@i<.Size;++@i)
+			if(.queue$[@i]==strcharinfo(0)) {
+				deletearray .queue$[@i],1;
+				set .Size,getarraysize(.queue$);
+				resetWaitingRoom();
+			}
+		return;
+	}
+
+	function resetWaitingRoom {
+		delwaitingroom;
+		waitingroom "Registros [ "+.Size+" ]",0;
+		return;
+	}
+
+	function updateClock {
+		sleep2 1000; // cada 1 segundo actualizando relog
+		.time = .time - 1000;
+		if(.time<=1000)
+			return 1;
+
+		donpcevent "pvp_king_register_time::OnUpdateClock";
+
+		return 0;
+	}
+
+	function sortMatch	{
+		copyarray .@players$,getarg(0),getarraysize(getarg(0));
+		set .matches,0;
+		set .@x,1;
+		
+		while(getarraysize(.@players$)) {
+			if(getarraysize(.@players$)>1){
+				setarray getd(".match_"+.@x+"$"),.@players$[0],.@players$[1];
+				deletearray .@players$,2;
+				.matches=.matches+1;
+				set .@x,.@x+1;
+			} else {
+				//set .match_token$,.@players$[0]; //El jugador impar que debe esperar
+				.winners$[0] = .@players$[0];
+				deletearray .@players$,1;
+			}
+		}
+	}
+
+	function setMatch {
+		.user1$ = getd(".match_"+.matches+"$[0]"); //Player en match. 1
+		.user2$ = getd(".match_"+.matches+"$[1]"); // Player en match. 2
+		.announce_count=.announce_count+1;
+		.MATCH = 1; //Decimos que estamos organizando el match
+
+		arenaWallOn(); //paredes entre jugadores
+
+		if(!.round)
+			.round = 1;
+
+		if(.ON_FINAL)
+			mapannounce "que_avan01","Los participantes de la batalla Final estan siendo llevados a la arena en 5 segundos.",bc_blue;
+		else
+			mapannounce "que_avan01","Los participantes de la batalla No. "+.announce_count+" de la RONDA ("+.round+") estan siendo llevados a la arena en 5 segundos.",bc_blue;
+
+		sleep2 8000;
+			
+		warpchar "arena",29,48,getcharid(0,.user1$);
+		warpchar "arena",70,48,getcharid(0,.user2$);
+
+		sleep2 5000;
+		if(.ON_FINAL)
+			announce "La batalla FINAL del Torneo PVP sera entre : [ "+.user2$+" ] vs [ "+.user1$+" ]",bc_all;
+		else
+			announce "La batalla No. ["+.announce_count+"] de la RONDA ("+.round+") del Torneo PVP sera entre : [ "+.user2$+" ] vs [ "+.user1$+" ]",bc_all;
+		
+		sleep2 5000;
+		.@count_time=5;
+		mapannounce "arena","La batalla comenzara en "+.@count_time,bc_blue;
+		while(1) {
+			sleep2 2000;
+			if(.@count_time <= 0) {
+				mapannounce "arena","A PELEAR !!",bc_blue;
+				break;
+			}
+			.@count_time=.@count_time-1;
+			mapannounce "arena","La batalla comenzara en "+.@count_time,bc_blue;
+			
+		}
+		arenaWallOff();
+
+		set .MATCH,2; // A termino la cuenta regresiva , el match oficialmente comenzo 
+		sleep2 2000;
+		validateMatch(.user1$,.user2$); //Esta funcion verifica si uno de los que abandonaron
+	}
+
+	function nextMatch {
+		if(.matches >= 1) {
+			mapannounce "que_avan01","El siguiente encuentro esta siendo escojido...",bc_blue;
+			sleep2 8000;
+			setMatch();
+		} else { //Se acabaron los encuentros de la primera ronda
+			if(.ON_FINAL)
+				mapannounce "que_avan01","Ha Terminado la Final",bc_blue;
+			else
+				mapannounce "que_avan01","Han Terminado los encuentros de la RONDA ("+.round+").",bc_blue;
+			sleep2 5000;
+
+			if(getarraysize(.winners$) == 2) { //Final
+				announce "Llego la Ultima Pelea del Torneo. El jugador que Gane esta pelea sera proclamado como REY DEL PVP.",bc_all;
+				set .ON_FINAL,1;
+			} else if(getarraysize(.winners$) > 2) {
+				mapannounce "que_avan01","El sistema  esta comenzando la organizacion de la siguiente ronda.",bc_blue;
+			} else if(getarraysize(.winners$)==1) {
+				announce "Enorabuena ! [ "+.winners$[0]+" ] es el mejor peleador del server. Se ha ganado por lo tanto el titulo de REY DEL PVP. Todos muestren respeto ante su Majestad  [ "+.winners$[0]+" ]",bc_all;
+				setKing(.winners$[0]);
+				end;
+			}
+			copyarray .@p$,.winners$,getarraysize(.winners$);
+			deletearray .winners$,getarraysize(.winners$);
+			sortMatch(.@p$);
+			.round = .round+1;
+			.announce_count = 0;
+			sleep2 5000;
+			setMatch();
+		}
+	}
+
+	function setWinner {
+		.winners$[getarraysize(.winners$)] = getarg(0);
+	}
+
+	function arenaWallOn {
+		setwall "arena",35,45,7,0,0,"arenaWall01";
+		setwall "arena",64,45,7,0,0,"arenaWall02";
+	}
+
+	function arenaWallOff {
+		delwall "arenaWall01";
+		delwall "arenaWall02";
+	}
+
+	function setState {
+		set getvariableofnpc(.TORNEO,"pvp_king_officer"),getarg(0);
+		return;
+	}
+
+	function getState {
+		.@r = getvariableofnpc(.TORNEO,"pvp_king_officer");
+		return .@r;
+	}
+
+	function reset {
+		deletearray .queue$,getarraysize(.queue$);
+		deletearray .winners$,getarraysize(.winners$);
+		set .ON_FINAL,0; // en finales?
+		set .Size,0;
+		set getvariableofnpc(.SPONSOR$,"pvp_king_officer"),"";
+		//setState(0);
+		set .time,.static_time; 
+		set .MATCH,0;
+		set .user1$,"";
+		set .user2$,"";
+		set .OldKing$,""; // Viejo rey del pvp
+		set .FLAG_IGNORE_DRAW,0; //Este es un flag que evitara mensaje de empate si ahi forfy antes
+	}
+
+	function setKing {
+		set .@winner,getcharid(3,getarg(0));
+		attachrid .@winner;
+		if(.OldKing$!="" && isloggedin(getcharid(3,.OldKing$))) {
+			attachrid getcharid(3,.OldKing$);
+			if(countitem(5666)>=1 && .OldKing$!=strcharinfo(0)) //Si el campeon volvio a ganar, no borramos la corona
+				delitem 5666,1,getcharid(3,.OldKing$);
+		
+			detachrid;
+			attachrid .@winner;
+		}
+		deletearray $pvpking$,getarraysize($pvpking$);
+		setarray $pvpking$[0],getarg(0); //nuevo rey
+		setRanking(getarg(0)); //Reordenamos el ranking
+		reset(); 
+		
+		if(isloggedin(.@winner))
+			doevent "pvp_king_reward::OnKing";
+
+		setDelay();//Delay para el proximo rey del pvp
+	}
+
+	function setRanking {
+		if(getarraysize($ranking$)) {
+			copyarray .@ranking$,$ranking$,getarraysize($ranking$);
+			deletearray $ranking$,getarraysize($ranking$);
+			setarray $ranking$[0],getarg(0); //nuevo ranking empieza con el rey de primero
+
+			for(.@i=0;.@i<getarraysize(.@ranking$);++.@i) {
+				if(getarg(0)!=.@ranking$[.@i]) { //ignora al rey actual
+					if(getarraysize($ranking$) <= 5)
+						$ranking$[getarraysize($ranking$)] = .@ranking$[.@i];
+				}
+			}
+			deletearray .@ranking$,getarraysize(.@ranking$);
+		} else {
+			setarray $ranking$[0],getarg(0); //creamos por primera vez el ranking
+		}
+		
+	}
+
+
+	/*
+	*	 Define un tiempo de delay para la organizacion de otro torneo
+	*/
+	function setDelay {
+		setState(3);
+		addrid 0;
+		addtimer 1000,"pvp_king_officer::OnDelayTime"; 
+		return;
+	}
+
+	function checkUser {
+		.@uid = getcharid(3,getarg(0));
+		if(isloggedin(.@uid)) {
+			attachrid .@uid;
+			if(strcharinfo(3)=="arena") { //Puede haber error aqui...
+				return 1;
+			}
+			detachrid;
+		}
+		return 0;
+	}
+
+	/*
+	* Se mantiene valiadndo el match
+	*/
+	function validateMatch {
+		.@u1 = checkUser(getarg(0));
+		.@u2 = checkUser(getarg(1));
+
+		if(!(.@u1) && !(.@u2)) {
+			drawMatch();
+		} else if(.@u1 && !(.@u2)) {
+			forfyWinner(getarg(0),getarg(1));
+		} else if(!(.@u1) && .@u2) {
+			forfyWinner(getarg(1),getarg(0));
+		}
+	}
+
+	function stopMatch {
+		.matches = .matches-1; // se resta  al match
+	}
+
+	//Esta funcion es para un caso especial en el que  nisiquiera llegue al ganador por forfy, osea ambos abandonaron justo antes de q el match comenzara.
+	function drawMatch {
+		if(getmapusers("arena")<1 && !.FLAG_IGNORE_DRAW) { //El .FLAG_INGORE_DRAW se utiliza para evitar que se llame drawMath, si ya el forfy se llamo primero
+			stopMatch();
+			announce "La batalla N°["+.announce_count+"] Ha sido anulada. Al parecer ambos participantes abondonaron el torneo.",bc_all,0xff3333;
+			sleep2 8000;
+			if(.ON_FINAL) { //Si era la final, el nuevo rey es el anterior
+				if(.OldKing$!="") { //Habia antiguo rey
+					announce "Dado que era la batalla final. Y ambos abondonaron. El torneo decide conservar a su rey anterior. Larga vida a ["+.OldKing$+"]",bc_all;
+					setarray $pvpking$[0],.OldKing$;
+				} else {
+					announce "Dado que  era la batalla final. Y ambos abondonaron. El torneo fue anulado.",bc_all;
+				}
+				reset(); 
+				setDelay();//Delay para el proximo rey del pvp
+			} else
+				nextMatch();
+		}
+	}
+
+	function forfyWinner {
+		setWinner(getarg(0));
+		stopMatch();
+		set .FLAG_IGNORE_DRAW,1; //Esto evitara que se ejecute un empate asi ambos players ayan dejado.  Esto para que un usuario pase como fantasma.
+		if(.JAIL_ON)
+			announce "Al parecer [ "+getarg(1)+" ] ha abandonado el Torneo PVP. Fue enviado a prision por esta razon.",bc_all,0xff3333;
+		else 
+			announce "Al parecer [ "+getarg(1)+" ] ha abandonado el Torneo PVP.",bc_all,0xff3333;
+
+		sleep2 8000;
+		if(.ON_FINAL) // Si estamos en la final
+			announce "El player [ "+getarg(0)+" ] es declarado ganador por el abandono de [ "+getarg(1)+" ] y logra con esto ganar la Final del Torneo PVP.",bc_all;
+		else
+			announce "El player [ "+getarg(0)+" ] es declarado ganador por el abandono de [ "+getarg(1)+" ] y pasa a la siguiente ronda del Torneo PVP.",bc_all;
+					
+		sleep2 5000;
+		warpchar "que_avan01",25,26,getcharid(0,getarg(0));
+
+		set .FLAG_IGNORE_DRAW,0; //Esto solo evito que se diera un empate que interrupiera la secuecnia de mensajes de arriba
+		nextMatch();
+
+		end;
+	}
+
+	function playerLeave {
+		if(strcharinfo(3)=="arena" || strcharinfo(3)=="que_avan01")  {
+			if(.JAIL_ON) {
+				set FROMJAIL,1; //flag para decir estuvo en pricion - se usa  cuando sales de prision para redireccionar al mapa basico en lugar del ultimo mapa (Que asume era la arena o que_van01)
+				atcommand "@jailfor "+.JAILTIME+"h "+getarg(0);
+			} else {
+				warpchar "titans",147,168,getcharid(0,getarg(0)); //Es necesario que cambiemos el mapa de la persona para q o falle validateMatch
+			}
+			
+			if((getarg(0)==.user1$ || getarg(0)==.user2$) && .MATCH==2){ //el user esta involucrado en el match actual y el match ya comenzo
+				validateMatch(.user1$,.user2$); //si un usuario se fue, declarara ganador al otro y pasara a la siguiente ronda
+			}
+		}
+	}
+
+}
+
+/*****************************
+*Map flags necesarios para cuando el usuario se logea despues de aver quedado en prision
+/*****************************/
+arena	mapflag	loadevent
+que_avan01	mapflag	loadevent
+
+-	script	pvp_king_reward	-1,{
+	OnKing:
+		sleep2 10;
+		cutin "prt_soldier",2;
+		mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+		mes "Felicidades, eres el Campeón.";
+		mes "La corona te pertenece ahora.";
+		mes "Puedes activar su efecto especial con el comando ^ff0000@pvpking^000000";
+		close2;
+		warp "titans",146,164;
+		cutin "",255;
+	end;
+}
+
+pvp_castle,178,36,4	script	Tiempo de Registro::pvp_king_register_time	857,{
+		if(getvariableofnpc(.TORNEO,"pvp_king_officer")==1) {
+			mes "^336600[ Tiempo de Registro ]^000000";
+			mes " ";
+			mes "El torneo iniciara cuando el tiempo de registro termine.";
+			close2;
+		}
+	end;
+	
+	OnInit:
+		set .REGISTER_TIME$,"";
+	end;
+
+	OnStartClock:
+		.mm = (getvariableofnpc(.time,"pvp_king_register")/60000)-1;
+		.ss = 59;
+		delwaitingroom;
+		waitingroom "Restante [ "+.mm+":"+.ss+" ]",0;
+	end;
+
+	OnUpdateClock:
+		sleep2 1;
+		.ss = .ss-1;
+
+		if(.ss<=0) {
+			.mm = .mm-1;
+			.ss = 59;
+		}
+		if(.mm < 0) {
+			delwaitingroom;
+			end;
+		}
+		delwaitingroom;
+		.@ss$ = (.ss<10)?("0"+.ss):.ss;
+		.REGISTER_TIME$ = .mm+":"+.@ss$;
+		waitingroom "Restante [ "+.REGISTER_TIME$+" ]",0;
+	end;
+
+}
+//*************************************************************
+//Healer en sala de espera
+//*************************************************************
+que_avan01,29,32,4	duplicate(Healer)	Medico#pvpking	569

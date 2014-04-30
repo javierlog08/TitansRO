@@ -1,0 +1,79 @@
+-	script	pvp_commands	-1,{
+	OnInit:
+		bindatcmd "inviteoff",strnpcinfo(3)+"::OnPVPDisable";
+		bindatcmd "inviteon",strnpcinfo(3)+"::OnPVPEnable";
+		bindatcmd "pvpking",strnpcinfo(3)+"::OnPVPKing";
+		//setarray $pvpking$[0],"";
+		set .DELAY,1;
+	end;
+
+	OnPVPDisable:
+		message strcharinfo(0),"Invitaciones a PVP Desactivadas";
+		dispbottom "Las invitaciones a PVP han sido desactivadas, para activarlas otra vez usa @inviteon";
+		set #PVP_INVITATIONS,1;
+	end;
+
+	OnPVPEnable:
+		message strcharinfo(0),"Invitaciones a PVP Activadas";
+		dispbottom "Las invitaciones a PVP han sido activadas, para desactivarlas otra vez usa @inviteoff";
+		set #PVP_INVITATIONS,0;
+	end;
+
+	OnPVPKing:
+		//set $pvpking$,strcharinfo(0);
+		//announce $pvpking$,bc_all; 
+		if($pvpking$[0]==strcharinfo(0)){
+			
+			if(.DELAY) {
+				
+				if(!(countitem(5666)>=1)) {
+					getitem 5666,1;
+					equip 5666;
+					atcommand "@aura 822";
+				}
+				set .DELAY,0; // delay de un minuto
+				initnpctimer;
+				doevent strnpcinfo(3)+"::OnPVPKingDelay";
+				sleep2 2000;
+				announce "Todos muestren respeto frente a ["+strcharinfo(0)+"]. El campeon actual del Torneo Rey PVP. Larga Vida al Rey !",bc_map,0xff9933;
+			} else {
+				dispbottom "Solo puedes activar este efecto 1 vez cada 60 segundos.";
+			}
+			
+		} else {
+			if($pvpking$[0]!="")
+				dispbottom "El rey del PVP actual es su majestad [ "+$pvpking$[0]+" ]. Larga vida al Rey!";
+			else {
+				if(countitem(5666)>=1)
+					delitem 5666,1;
+
+				dispbottom "Actualmente no tenemos Rey del PVP. Organiza un torneo para escojerlo en el castillo de batalla.";
+			}
+		}
+	end;
+
+	OnTimer60000:
+		.DELAY=1;
+		stopnpctimer;
+	end;
+
+	OnPVPKingDelay:
+		/*while(.delay) {
+			sleep2 1000;
+			set .delay,.delay-1000;
+		}*/
+	end;
+
+	OnPCLogoutEvent:
+		if(countitem(5666)>=1) { //si es el rey del pvp se le borra el item
+			//unequip EQI_HEAD_TOP;
+			delitem 5666,countitem(5666);
+		}
+	end;
+
+	OnDeleteKing:
+			sleep2 100;
+			//unequip EQI_HEAD_TOP;
+			delitem 5666,countitem(5666);
+	end;
+}

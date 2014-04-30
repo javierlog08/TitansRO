@@ -1,0 +1,106 @@
+-	script	PVP de Cazeria::pvp_hunt_invitator	-1,{
+	OnOrganize:
+		next2;
+		cutin "prt_soldier",2;
+		mes "^00CCCC[ Organizador de Cazeria ]^000000";
+		mes "^0000ffA quien deseas invitar?^000000";
+		set #PVPMAP$,"hunt";
+		if(select("Todo el server:Lista de amigos")==2) {
+			next2;
+			mes "^00CCCC[ Organizador de Cazeria ]^000000";
+			mes "Escribe los nombres de los usuarios que deseas invitar";
+			input .@users$[0];
+			next2;
+			mes "Usuarios Invitados::";
+			mes "~ ^cc0066"+.@users$[0]+"^000000";
+			while(1){
+				if(select("Invitar otro player:No invitar mas players")==1){
+					set @tmp,getarraysize(.@users$);
+					input(.@users$[@tmp]);
+					mes "~ ^cc0066"+.@users$[@tmp]+"^000000";
+				} else {
+					set @tmp,getarraysize(.@users$);
+					callfunc("inviteToPVP",.@users$,@tmp);
+					goto OnSentInvite;
+					break;
+				}
+			}
+		} else {
+			callfunc("inviteToPVP");
+			goto OnSentInvite;
+			//addtimer 1,"bg_messages::OnInvite";
+		}
+	end;
+
+	OnSentInvite:
+		sleep2 100;
+		next2;
+		mes "^00CCCC[ INVITADOR ]^000000";
+		cutin "prt_soldier",2;
+		mes "Las invitaciones fueron enviadas.";
+		mes "Si algun amigo no recibe la invitacion es por que estaba hablando con otro npc , escribistes mal su nombre o esta dentro del area de PVP.";
+		close2;
+		cutin "",255;
+		//warp  .GUEST_MAP$,.x,.y;
+	end;
+
+	OnGuest:
+		sleep2 100;
+		set .@no_invite,0;
+		for(@i=0;@i<getarraysize(.NO_INVITE_MAPS$);++@i)
+			if(strcharinfo(3)==.NO_INVITE_MAPS$[@i])
+				set .@no_invite,1;
+
+		if(#PVP_INVITATIONS>0 || .@no_invite) // no le manda nada a las personas que no quieren invitacion o estan en mapas prohibidos para invitar
+			end;
+
+		next2;
+		mes "^00994c[ INVITACION ]^000000";
+		cutin "prt_soldier",2;
+		mes "Hola "+strcharinfo(0);
+		mes "Has sido invitado a jugar ";
+		mes "^0000ff"+strnpcinfo(0)+"^000000";
+		mes "^ff0000Deseas participar?^000000";
+		if(select("Si:No")==1) {
+			if(callfunc("F_DobleACC")){
+				next2;
+				mes "^ff0000 Tienes cuentas dobles.";
+				mes "~ ~ ~";
+				mes "Las cuentas dobles no estan permitidas dentro del PVP";
+				mes "~ ~ ~";
+				mes "Debes cerrarlas para entrar al PVP.";
+				close2;
+				cutin "",255;
+				end;
+			}
+
+			if(getvariableofnpc(.HUNT_PVP_DELAY,"hunt_summoner")){
+				next2;
+				mes "^00994c[ INVITACION ]^000000";
+				mes "^ff0000Has tomado mucho tiempo en contestar.";
+				mes "El PVP Hunt esta en delay.^000000";
+				close2;
+				cutin "",255;
+				end;
+			}
+
+			warp  .GUEST_MAP$,.x,.y;
+		} else {
+			next2;
+			cutin "prt_soldier",2;
+			mes "^00994c[ INVITACION ]^000000";
+			mes "Entiendo, Justo ahora estas ocupado.";
+			mes "Para desactivar invitaciones usa ^0000ff@inviteoff^000000";
+			mes "Para reactivarlas usa ^0000ff@inviteon^000000";
+			close2;
+			cutin "",255;
+		}
+	end;
+
+	OnInit:
+		set .GUEST_MAP$,"hunt";
+		set .x,107;
+		set .y,28;
+		setarray .NO_INVITE_MAPS$[0],"hunt","que_avan01","arena","pvp_castle","sec_pri";
+	end;
+}

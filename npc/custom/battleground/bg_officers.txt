@@ -1,0 +1,599 @@
+pvp_castle,79,114,4	script	BG Flavius::flavius_officer	105,{
+	cutin "prt_soldier",2;
+	mes "^00CCCC[ Organizador de Flavius ]^000000";
+	mes "Hola, Flavius es un Campo de Batalla en el que puedes jugar con tus amigos.";
+	mes "Te ofresco dos modos de juego en flavius.";
+	switch(select("Flavius 5vs5 :Flavius 10vs10:Salir")) {
+		case 1:
+			.@valid = callfunc("F_ValidateBG",$@FlaviusBG1,$@FlaviusBG2,2070,"bat_b02");
+			if( .@valid < 6 )
+			{
+				next2;
+				mes "^00CCCC[ Organizador de Flavius ]^000000";
+				callfunc("F_MessageBG",.@valid);
+			}else {
+				warp "pvp_castle",27,178;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador de Flavius ]^000000";
+				doevent "bg_messages::OnAccept";
+			}
+			
+		break;
+
+		case 2:
+			.@valid = callfunc("F_ValidateBG",$@FlaviusBG1,$@FlaviusBG2,2070,"bat_b02");
+			if( .@valid < 6 )
+			{
+				next2;
+				mes "^00CCCC[ Organizador de Flavius ]^000000";
+				callfunc("F_MessageBG",.@valid);
+			}else {
+				warp "pvp_castle",29,133;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador de Flavius ]^000000";
+				doevent "bg_messages::OnAccept";
+			}
+		break;
+
+		case 3:
+			mes "^00CCCC[ Organizador de Flavius ]^000000";
+			mes "Espero verte pronto por aqui.";
+			close2;
+			cutin "",255;
+		break;
+	}
+OnInit:
+	delwaitingroom;
+	waitingroom "BG Flavius",0;
+end;
+	
+}
+
+pvp_castle,86,114,4	script	BG Tierra::tierra_officer	105,{
+	cutin "prt_soldier",2;
+	mes "^00CCCC[ Organizador Tierra de Gorge ]^000000";
+	mes "Hola, Tierra es un Campo de Batalla en el que puedes jugar con tus amigos.";
+	mes "Te ofresco dos modos de juego en Tierra Gorge.";
+	switch(select("Tierra 5vs5 :Tierra 10vs10:Salir")) {
+		case 1:
+			.@valid = callfunc("F_ValidateBG",$@TierraBG1,$@TierraBG1,2069,"bat_a01");
+			if( .@valid < 6 )
+			{
+				next2;
+				mes "^00CCCC[ Organizador Tierra de Gorge ]^000000";
+				cutin "prt_soldier",2;
+				callfunc("F_MessageBG",.@valid);
+			}else {
+				warp "pvp_castle",30,86;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador Tierra de Gorge ]^000000";
+				doevent "bg_messages::OnAccept";
+			}
+		break;
+
+		case 2:
+			.@valid = callfunc("F_ValidateBG",$@TierraBG1,$@TierraBG1,2069,"bat_a01");
+			if( .@valid < 6 )
+			{
+				next2;
+				mes "^00CCCC[ Organizador Tierra de Gorge ]^000000";
+				cutin "prt_soldier",2;
+				callfunc("F_MessageBG",.@valid);
+			}else {
+				warp "pvp_castle",29,45;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador Tierra de Gorge ]^000000";
+				doevent "bg_messages::OnAccept";
+			}
+		break;
+
+		case 3:
+			next2;
+			mes "^00CCCC[ Organizador de Flavius ]^000000";
+			mes "Espero verte pronto por aqui.";
+			close2;
+			cutin "",255;
+		break;
+	}
+
+OnInit:
+	delwaitingroom;
+	waitingroom "BG Tierra Gorge",0;
+end;
+	
+}
+
+pvp_castle,93,114,4	script	BG KVM::kvm_officer	105,{
+	cutin "prt_soldier",2;
+	mes "^00CCCC[ Organizador de KVM ]^000000";
+	mes "Hola, KVM es un Campo de Batalla en el que puedes jugar con tus amigos.";
+	mes "Te ofresco estos modos de juego en KVM.";
+	switch(select("KVM 3vs3")) {
+		case 1:
+			.@valid = callfunc("F_ValidateBG",$@KvM01BG,$@KvM01BG,6025,"bat_c01");
+			if( .@valid < 6 )
+			{
+				next2;
+				mes "^00CCCC[ Organizador de KVM ]^000000";
+				cutin "prt_soldier",2;
+				callfunc("F_MessageBG",.@valid);
+			}else {
+				warp "pvp_castle",101,26;
+				mes "^00CCCC[ Organizador de KVM ]^000000";
+				cutin "prt_soldier",2;
+				doevent "bg_messages::OnAccept";
+			}
+		break;
+
+		case 3:
+			mes "^00CCCC[ Organizador de Flavius ]^000000";
+			mes "Espero verte pronto por aqui.";
+			close2;
+			cutin "",255;
+		break;
+	}
+OnInit:
+	delwaitingroom;
+	waitingroom "BG KVM",0;
+end;
+
+}
+
+pvp_castle,100,114,4	script	PVP HUNT::pvp_hunt_officer	105,{
+	OnStart:
+		cutin "prt_soldier",2;
+		mes "^00CCCC[ Organizador de Cazeria ]^000000";
+		mes "Hola, este es el PVP Modo Cazeria.";
+		mes "Que deseas?";
+		
+		switch(select("Info:Entrar al PVP:Ver ^0000ffHunt Points^000000")) {
+			case 1:
+				next2;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "En el mapa se puede invocar a un  ^FF0000 MVP ^000000 especial como objeto de cazeria.";
+				next;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "Dicho ^FF0000 MVP ^000000  no hace mucho daño pero tiene una increible resistencia y es muy dificil de atrapar.";
+				next;
+				cutin "prt_soldier",2;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "El player que caze al ^FF0000 MVP ^000000 ganara ^0000ffHunt Points^000000.";
+				mes "^808080~ ~^000000";
+				mes "Los  ^0000ffHunt Points^000000 pueden ser usados para adquirir ^0000ffMedallas de BG^000000 con el ^0000ff PVP Points Trader^000000 del castillo";
+				next;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "Para activar el modo cazeria en este PVP necesitas cierto numero de usuarios en el mapa";
+				next;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "Luego de ser activado todo usuario que lo desee puede entrar a particiar.";
+				next;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "Dentro del juego tambien existe un modo llamado ^ff0000BAD LUCKY BRIAN^000000 en el cual el usuario que logre cazar al MVP tiene una posibilidad del 50% de no recibir los ^0000ffHunt Points^000000.";
+				next;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "En lugar de eso aparecera un letrero de ^FF0000 MVP ^000000 en su cabeza. Entonces el usuario debera correr al centro del mapa, para hablar con el NPC de Salida";
+				next;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "Si logra llegar al centro sin ser asesinado, entonces ganara los ^0000ffHunt Points^000000 prometidos. Si no el usuario que lo mate se los llevará";
+				next;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "^ff0000Nota:^000000";
+				mes "   ";
+				mes "Si el usuario  ^ff0000BAD LUCKY BRIAN^000000 Desloguea, no recibira nada y sera enviado a prision "+getvariableofnpc(.JAILTIME,"hunt_summoner")+" Dias.";
+				close2;
+				goto OnStart;
+			end;
+
+			case 2:
+				if(getvariableofnpc(.HUNT_PVP_DELAY,"hunt_summoner")) {
+					goto OnDelay;
+				}
+				if(BaseLevel >= 99) {
+					warp  .GUEST_MAP$,.x,.y;
+				} else {
+					next2;
+					cutin "prt_soldier",2;
+					mes "^00CCCC[ Organizador de Cazeria ]^000000";
+					mes "No es posible para novatos entrar a este PVP.";
+					mes "- - -";
+					mes "Necesitas ser nivel ^0000ff175^000000";
+					close2;
+					goto OnStart;
+				}
+			end;
+
+			case 3:
+				next2;
+				
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes "- - - - - - - - - - - - - - - -";
+				mes "Tienes un total de:";
+				mes "^808080~ "+#HUNTPOINTS+" Hunt Points ^000000";
+				mes "- - - - - - - - - - - - - - - -";
+				close2;
+				cutin "",255;
+				end;
+			end;
+		}
+	end;
+
+	OnInit:
+		set .GUEST_MAP$,"hunt";
+		set .x,107;
+		set .y,28;
+		delwaitingroom;
+		waitingroom "PVP HUNT",0;
+		
+	end;
+	
+	OnDelay:
+		sleep2 100;
+		next2;
+		cutin "prt_soldier",2;
+		mes "^00CCCC[ Organizador de Cazeria ]^000000";
+		mes "El pvp ya fue usado.";
+		mes "Es necesario esperar ^ff0000"+((.CURRENT_DELAY / 60000)+1)+"^000000 Minuto(s)";
+		close2;
+		cutin "",255;
+		end;
+	end;
+
+	OnSetDelayMessage:
+		sleep2 100;
+		set .CURRENT_DELAY,getvariableofnpc(.HUNT_PVP_DELAY,"hunt_summoner");
+		while(getvariableofnpc(.HUNT_PVP_DELAY,"hunt_summoner")) {
+			sleep2 1000;
+			set .CURRENT_DELAY,.CURRENT_DELAY-1000;
+		}
+	end;
+
+}
+
+
+pvp_castle,107,114,4	script	PVP KING::pvp_king_officer	105,{
+	function setDelayClock;
+
+	OnStart:
+		cutin "prt_soldier",2;
+		mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+		mes "Hola, este es el PVP en modo Torneo.";
+		mes "Que deseas?";
+		
+		set .@menu$,"";
+		while(1) {
+			if(.TORNEO==1 || .TORNEO==2) {
+				.@menu$ ="Info:^0000ffParticipar en Torneo^000000:Ver Ranking";
+
+			}else if(.TORNEO == 0 || .TORNEO==3 )
+				.@menu$ ="Info:Organizar Torneo:Ver Ranking";
+
+			switch(select(.@menu$)) {
+				case 1:
+					next2;
+					cutin "prt_soldier",2;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "Determinado numero de usuarios pueden participar en un torneo para definir al mejor jugador 1vs1 de este server.";
+					next;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "Para organizar dicho torneo un usuario debe pagar determinada cantidad de zeny.";
+					next;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "Se enviara entonces invitacions a todo el server, anunciando que dicho usuario ha convocado un torneo para definir al mejor jugador 1vs1 en este server.";
+					next;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "Luego de esto.";
+					mes "todos los que deciden participar son llevados a la sala de espera, donde deben inscribirse en con el npc de registro.";
+					next;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "El sistema automaticamente ira llamando a cada jugador registrado 1 por 1. El usuario que pierda no pasara a la siguiente ronda y sera sacado de la clasificatoria";
+					next;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "El ganador de este torneo obtiene el item ^0000ff King Crown^000000.";
+					mes "^0000ff King Crown^000000 no es tradeable, no es vendible , no va al inventario y desparece si deslogueas.";
+					next; 
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "Se equipa solamente mediante el comando ^ff0000@pvpking^000000";
+					mes "Dicho comando estara disponible solo para el ganador del torneo.";
+					next;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					mes "El Ganador del torneo podra usar la corona la cantidad de veces que quiera, hasta que un usuario organize otro torneo y la corona pase a un nuevo campeon";
+					close2;
+					goto OnStart;
+				end;
+
+				case 2:
+					next2;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					if(.TORNEO==3) {
+						mes "Ya un torneo se realizó en el server.";
+						mes "Solo se puede organizar un torneo cada "+(.config_delay/3600000)+" Horas.";
+						mes "^808080~ Tiempo restante: ~^000000";
+						mes "      ^ff0000[ "+.DELAY_CLOCK$+" ]^000000";
+						close2;
+						cutin "",255;
+						end;
+					}
+
+					if(.TORNEO==2) {
+						mes " - - - -";
+						mes "  Cuanto lo siento !.";
+						mes "  Llegas algo tarde !";
+						mes "  El torneo ya empezo.";
+						mes " - - - -";
+						close2;
+						cutin "",255;
+						end;
+					}
+
+					if(.TORNEO==1) {
+						warp getvariableofnpc(.GUEST_MAP$,"pvp_king"),
+								 getvariableofnpc(.x,"pvp_king"),
+									 getvariableofnpc(.y,"pvp_king");
+						end;
+					} 
+
+					mes "Organizar un torneo tiene un precio de ^0000ff"+.PRICE+"^000000 Zeny por convocatoria";
+					//mes "Hola, la sala esta disponible para la organización de un torneo";
+					mes "^808080~ ~ ~^000000";
+					mes "Estas de acuerdo?";
+					//mes "Deseas organizar un Torneo?";
+					if(select("Si:No")==1) {
+						next2;
+						mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+						if(Zeny >= .PRICE) {
+							set .SPONSOR$,strcharinfo(0);
+							mes "^0000ffExelente !^000000";
+							mes "He recibido tus instrucciones.";
+							mes "Avisare a todo el server que has Organizado un torneo.";
+							set Zeny,Zeny-.PRICE;
+							doevent "pvp_king::OnOrganize";
+						} else {
+							mes "Vamos hombre !";
+							mes "No tienes la cantidad de zeny necesaria para organizar un torneo.";
+							mes "  ";
+							mes "^ff0000Regresa cuando la tengas^000000";
+						}
+	
+					} else {
+						next2;
+						mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+						mes "Regresa cuando quieras.";
+						mes "Pero el servicio podria no estar disponible en otro momento.";
+					}
+
+					close2;
+					cutin "",255;
+				end;
+
+				case 3:
+					next2;
+					mes "^00CCCC[ Organizador Rey del PVP ]^000000";
+					
+					if(getarraysize($ranking$)) {
+						mes "^806ab0::Ultimos Campeones::^000000";
+						for(.@i=0;.@i<getarraysize($ranking$);++.@i) {
+							.@sig$ ="";
+							if(!.@i)
+								.@sig$ = "^ff9933El Rey ^000000";
+
+							mes "^0000ff[ "+(.@i+1)+" ]^000000 "+.@sig$+$ranking$[.@i];
+						}
+					} else {
+						mes "^ff0000 No tenemos ganadores del torneo actualmente.^000000";
+					}
+					close2;
+					cutin "",255;
+					end;
+				end;
+			}
+		}
+		
+	end;
+
+	/*OnTournamentDelay:
+	end;*/
+
+	OnInit:
+		set .TORNEO,0; // 0 NO TORNEO / 1 TORNEO ORGANIZANDOSE / 2 TORNEO INICIDDO / 3 TORNEO EN DELAY
+		set .SPONSOR$,"";  //Patrocinador o organizador del torneo
+		set .PRICE,10000;
+		set .INSCRIPTION,100000; //Cuota de la inscripcion
+		set .config_delay,18000000; // delay statico 18000000 = 5 Horas Default
+		set .DELAY,.config_delay; // delay dinamico para torneo
+		set .DELAY_CLOCK$,"";
+		.ss = 59;
+		.mm = 59;
+		.hh = (.DELAY / 3600000)-1;
+		delwaitingroom;
+		waitingroom "PVP KING",0;
+	end;
+	
+	OnDelayTime:
+		sleep2 1;
+		while(1){
+			sleep2 1000;
+			.DELAY = .DELAY-1000;
+			if(.DELAY <=0) {
+				set .TORNEO,0;
+				set .DELAY,.config_delay;
+				.hh = (.DELAY / 3600000)-1; //se resetea la hora
+				break;
+				end;
+			}
+			setDelayClock(); //Solo define un texto con cuenta regresiva del tiempo
+		}
+	end;
+
+	function setDelayClock	{
+		.ss = .ss-1;
+		if(.ss<=0) {
+			.mm = .mm-1;
+			.ss = 59;
+		}
+		if(.mm <= 0) {
+			.hh = .hh-1;
+			.mm = 59;
+		}
+		.@ss$ = (.ss<10)?("0"+.ss):.ss;
+		.@hh$ = (.hh<10)?("0"+.hh):.hh;
+		.@hh$ = (.DELAY <= 3600000)?"00":.@hh$; //Si solo queda una hora....
+		.@mm$ = (.mm<10)?("0"+.mm):.mm;
+		.@mm$ = (.DELAY <= 60000)?"00":.@mm$; //Si solo queda un minuto....
+		.DELAY_CLOCK$ = .@hh$+":"+.@mm$+":"+.@ss$;
+	}
+
+}
+
+pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
+	function setDelayClock;
+
+	cutin "prt_soldier",2;
+	mes "^00CCCC[ Organizador KoE]^000000";
+	if(.DELAY) {
+		mes "Antes de activar nuevamente una KoE es necesario esperar ^ff0000"+.DELAY_CLOCK$+"^000000 minuto(s)";
+		close2;
+		cutin "",255;
+		end;
+	}
+
+	if(!getvariableofnpc(.start,"KoE")) {
+		mes "El PVP KoE mejor conocido como King Of Emperium es un  mini torneo donde toda guild que quiera puede participar";
+		next;
+		mes "^00CCCC[ Organizador KoE]^000000";
+		mes "La KoE se activara ^ff0000"+(.TIME/60000)+" minuto(s)^000000. Despues de eso toda guild dentro del PVP tiene que pelear por conservar el emperium dentro de la sala.";
+		next;
+		mes "^00CCCC[ Organizador KoE]^000000";
+		mes "La guild que conserve el control de la sala al final del tiempo gana el evento.";
+		mes " ";
+		mes "^0000ff Deseas activar la KoE?^000000";
+		if(select("No:Si")==2) {
+			doevent "KoE::OnStart";
+			atcommand "@refresh ";
+			end;
+		} else {
+			next2;
+			mes "^00CCCC[ Organizador KoE]^000000";
+			mes "Vale, regresa luego entonces...";
+			close2;
+			cutin "",255;
+			end;
+		}
+	}
+	
+
+	if ( !getcharid(2) ) {
+		mes "Debes tener una guild para participar en el Torneo ^FF0000King of Emperium^000000.";
+		close2;
+		cutin "",255;
+		end;
+	}
+    mes "Hola.";
+    mes "Te gustaria particiar en el torneo ^FF0000King of Emperium Hill^000000?";
+	if ( select ( "Si", "No" ) == 1 ){ 
+		 switch( rand(1,4) ){
+			case 1:	warp "guild_vs1", 50, 88; end;
+			case 2:	warp "guild_vs1", 88, 50; end;
+			case 3:	warp "guild_vs1", 50, 11; end;
+			case 4:	warp "guild_vs1", 11, 50; end;
+		}
+	}
+   
+
+	close2;
+	cutin "",255;
+	end;
+
+	OnInit:
+		set .TIME,120000;
+		set .DELAY_CONF,300000;
+		set .DELAY,0;
+		delwaitingroom;
+		waitingroom "PVP KoE",0;
+	end;
+
+	OnDelay:
+		sleep2 1;
+		set .DELAY,.DELAY_CONF;
+		while(1){
+			sleep2 1000;
+			.DELAY = .DELAY-1000;
+			if(.DELAY <=0) {
+				.mm = (.DELAY / 60000)-1; 
+				break;
+				end;
+			}
+			setDelayClock(); //Solo define un texto con cuenta regresiva del tiempo
+		}
+	end;
+
+	function setDelayClock	{
+		.ss = .ss-1;
+		if(.ss<=0) {
+			.mm = .mm-1;
+			.ss = 59;
+		}
+		if(.mm <= 0) {;
+			.mm = 59;
+		}
+		.@ss$ = (.ss<10)?("0"+.ss):.ss;
+		.@mm$ = (.mm<10)?("0"+.mm):.mm;
+		.@mm$ = (.DELAY <= 60000)?"00":.@mm$; //Si solo queda un minuto....
+		.DELAY_CLOCK$ = .@mm$+":"+.@ss$;
+	}
+}
+
+-	script	bg_messages	-1,{
+
+	OnWeight:
+		sleep2 100;
+		mes "- Espera un minuto ! -";
+		mes "- estas llevando  -";
+		mes "- demaciadas cosas contigo. -";
+		mes "- Por favor trata otra vez -";
+		mes "- luego de arreglar eso. -";
+		close2;
+		cutin "",255;
+	end;
+
+	OnJob:
+		sleep2 100;
+		mes "Seria un Honor para mi dejarte jugar a los battlegrounds. Pero tristemente no tienes el nivel necesario para ir a jugar.";
+		close2;
+		cutin "",255;
+	end;
+
+	OnAgain:
+		sleep2 100;
+		mes "Parece que apenas y acabas de regresar de una pelea.";
+		mes "Es demaciado pronto para regresar al campo de batalla. Descansa y regresa en 5 Minutos!";
+		close2;
+		cutin "",255;
+	end;
+
+	OnUse:	
+		sleep2 100;
+		mes "Al parecer ya se esta utilizando la sala de Battleground.";
+		mes "Tendras que esperar a que es disponible para intentarlo nuevamente.";
+		close2;
+		cutin "",255;
+	end;
+
+	OnIntro:
+		sleep2 100;
+		mes "Ya un equipo esta organizandose dentro de la sala, para ir a jugar a los Battlegrounds..";
+		mes "Tendras que esperara a que terminen, intenta nuevamente luego.";
+		close2;
+		cutin "",255;
+	end;
+
+	OnAccept:
+		sleep2 100;
+		mes "Bueno, listo para la batalla!";
+		mes "Demuestra lo fuerte que eres !";
+		mes "Gritaremos victoria gracias a ti !";
+		close2;
+		cutin "",255;
+	end;
+}

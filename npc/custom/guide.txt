@@ -1,7 +1,11 @@
 titans,143,163,4	script	titans_guide	-1,{
+	function checkMapFlags;
 
 OnInit:
 	bindatcmd "guide",strnpcinfo(3)+"::OnCommand";
+	//auras
+	setarray getd(".aura_1"),362,200,201; //azul
+	setarray getd(".aura_2"),679,680; //verde
 end;
 
 OnPCLoadMapEvent:
@@ -16,9 +20,10 @@ OnPCLoadMapEvent:
 	OnCommand:
 		sleep2 1;
 		unittalk getcharid(3),"Activar Modo Guia !";
-		specialeffect2 807;
 		specialeffect2 521;
 		specialeffect2 879;
+		if(!#GUIDE_SOUND)
+			specialeffect2 807;
 		goto OnGuide;
 	end;
 
@@ -33,7 +38,7 @@ OnPCLoadMapEvent:
 			end;
 		}
 
-		if(strcharinfo(3)=="que_avan01" || strcharinfo(3)=="hunt" || strcharinfo(3)=="arena"){ //Si estas en prision, no puedes hablar con la guia
+		if(checkMapFlags()){ //Si estas en prision, no puedes hablar con la guia
 			mes "                        ^ff0000[ Info ] ^000000";
 			mes "     ";
 			mes "Imposible contactar con la Guia en este mapa.";
@@ -162,8 +167,40 @@ OnPCLoadMapEvent:
 			break;
 
 			case 3:
-				if(select("Cambiar Aura","Cambiar Estilo","On/Off Sonido de Guia")) {
+				while(1) {
+					//.@_aura = getd("aura_"#AURA);
+					.@g_sound$ = (!#GUIDE_SOUND)?"Sonido de Guia ^0000ff[ ON ]^000000":"Sonido de Guia ^ff0000[ OFF ]^000000";
+					.@g_pvp$ = (!#PVP_INVITATIONS)?"Invitaciones PVP ^0000ff[ ON ]^000000":"Invitaciones PVP ^ff0000[ OFF ]^000000";
+					.@config$ = "Cambiar Aura:Guardar Punto:"+.@g_sound$+":"+.@g_pvp$;
+					switch(select(.@config$)) {
+						case 1:
+							next2;
+							mes "^ff0000[Guia de Titans RO]^000000";
+							mes "Puedes cambiar el tipo de aura en el server.";
+							mes "Tienes dos tipos disponibles.";
+							mes " ~ ~";
+							mes "^808080Selecciona el aura que deseas^000000";
+							switch(select("^004c99Guardian del Cielo^000000:^006600Guardian del Bosque Desolado^000000")) {
+								case 1: set #AURA,1; break;
+								case 2: set #AURA,2; break;
+							}
+							.@cmd$ = "@aura ";
+							for(.@i=0;.@i<getarraysize(getd(".aura_"+#AURA));++.@i)
+								.@cmd$ = .@cmd$+getd(".aura_"+#AURA+"["+.@i+"]")+" ";
+
+							atcommand .@cmd$;
+							end;
+						break;
+						case 2:
+						case 3:
+							set #GUIDE_SOUND,(!#GUIDE_SOUND);
+						break;
+						case 4:
+							set #PVP_INVITATIONS,(!#PVP_INVITATIONS);
+						break;
+					}
 				}
+				
 			end;
 
 			case 4:
@@ -172,6 +209,19 @@ OnPCLoadMapEvent:
 			break;
 		}
 	end;
+
+	function checkMapFlags {
+		if(getmapflag( strcharinfo(3),mf_nowarp) ||
+			getmapflag( strcharinfo(3),mf_warpto) ||
+			getmapflag( strcharinfo(3),mf_noteleport) ||
+			getmapflag( strcharinfo(3),mf_nomemo) || 
+			getmapflag( strcharinfo(3),mf_pvp) ||
+			getmapflag( strcharinfo(3),mf_nosave)) {
+			return 1;
+		}
+			
+		return 0;
+	}
 }
 
 titans,150,263,4	script	token_training	139,3,3,{

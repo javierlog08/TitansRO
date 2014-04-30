@@ -1,0 +1,318 @@
+hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
+	mes "^00CCCC[ Organizador de Cazeria ]^000000";
+	cutin "prt_soldier",2;
+	if(.HUNT_ON)  {
+		mes "El modo de cazeria fue activado por ^0000ff"+.SUMMONER$+"^000000";
+		mes "^808080~ ~^000000";
+		mes "Desas formar parte de la cazeria?";
+		if(select("Si Por favor:No. sacame de aqui.")==1) {
+			doevent strnpcinfo(3)+"::OnWarpRandom";
+			end;
+		} else {
+			warp "pvp_castle",100,110;
+			end;
+		}
+	}
+	
+	mes "Puedo invocar al modo Cazeria si me pagas por ello.";
+	mes "~ ~";
+	mes "Deseas activar el modo cazeria por ^0000ff"+.PRICE+"^000000 zeny ?";
+	if(select("Si Por favor:No. Sacame de aqui.")==1) {
+		if(getmapusers("hunt")>=.STACK){
+			if(.HUNT_PVP_DELAY) {
+				doevent "pvp_hunt_officer::OnDelay";
+			}
+
+			if(Zeny >= .PRICE)
+				goto OnActivate;
+			else {
+				next2;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				cutin "prt_soldier",2;
+				mes "~ ~";
+				mes "^ff0000No tienes suficiente Zeny para activar el Modo Hunt^000000";
+				mes "~ ~";
+			}
+		} else {
+			next2;
+			mes "^00CCCC[ Organizador de Cazeria ]^000000";
+			cutin "prt_soldier",2;
+			mes "Se necesitan  ^ff0000"+.STACK+" players ^000000 o mas en el mapa para invocar el modo cazeria";
+			next;
+			mes "^00CCCC[ Organizador de Cazeria ]^000000";
+			mes "^0000ffDeseas invitar a alguien?^000000";
+			mes " ";
+			mes "^808080~ Nota ~";
+			mes "Recuerda que las invitaciones solo llegan a las personas con invitaciones activadas mediante el comando @inviteon. Tampoco llegaran a personas dentro del castillo.^000000";
+			menu "Si",Menu_Invite_Yes,"No",Menu_Invite_No;
+			/*if(select("Si:No")==1) {
+				addtimer 1,"pvp_hunt_invitator::OnOrganize";
+			} else {
+				next2;
+				mes "^00CCCC[ Organizador de Cazeria ]^000000";
+				mes " ";
+				mes "^ff00000Bueno, sin personas no se puede jugar...^000000";
+			}*/
+			
+		}
+		
+	} else {
+		warp "pvp_castle",100,110;
+	}
+
+	close2;
+	cutin "",255;
+	end;
+	
+	Menu_Invite_Yes:
+		addtimer 1,"pvp_hunt_invitator::OnOrganize";
+	end;
+
+	Menu_Invite_No:
+		next2;
+		cutin "prt_soldier",2;
+		mes "^00CCCC[ Organizador de Cazeria ]^000000";
+		mes " ";
+		mes "^ff0000Bueno, sin personas no se puede jugar...^000000";
+		close2;
+		cutin "",255;
+	end;
+
+	OnWarpRandom:
+		sleep2 100;
+		while(1) {
+			set @rand,rand(2,89);
+			if((@rand%2)!=0)
+			{
+				warp "hunt",.WARPS[@rand],.WARPS[@rand+1];
+				break;
+			}
+		}
+	end;
+	
+	OnActivate:
+		sleep2 100;
+		if(.HUNT_ON) {
+			next2;
+			mes "^00CCCC[ Organizador de Cazeria ]^000000";
+			cutin "prt_soldier",2;
+			mes "Cuanto lo siento.";
+			mes "El modo cazeria ya fue activado por [ "+.SUMMONER$+" ].";
+			close2;
+			cutin "",255;
+			end;
+		}
+		next2;
+		//addtimer 100,"pvp_hunt_invitator::OnOrganize";
+		mes "^00CCCC[ Organizador de Cazeria ]^000000";
+		mes "^ff0000 Modo de cazeria iniciado.^000000";
+		mes "~ ~";
+		mes "En algun lugar del mapa acaba de ser invocado el ^0000ffMVP^000000 de Cazeria.";
+		set .SUMMONER$,strcharinfo(0);
+		set .HUNT_ON,1;
+		set .HUNT_MOB_GID,areamonster("this", 49, 61, 147, 51, "MVP de Cazeria", 3150, 1, strnpcinfo(3)+"::OnMobHunted");
+		doevent strnpcinfo(3)+"::OnWarpRandom";
+		close2;
+		announce "El Player [ "+strcharinfo(0)+" ] ha activado el PVP en Modo de cazeria",bc_all,0xff9933;
+		initnpctimer;
+		cutin "",255;
+		addtimer 1,strnpcinfo(3)+"::OnEventTime"; //Activa un relog y el mensaje de que el mvp esta activo
+		addtimer 1,strnpcinfo(3)+"::OnMobTeleportSystem";
+	end;
+	
+	OnTimer8000:
+		announce "El Player en el PVP Hunt, que de caza al monstruo especial ganara "+.Reward+" Hunt Points",bc_all,0xff9933;
+	end;
+
+	OnTimer900000:
+		if(.HUNT_ON)
+			if(.BADLUCKYBRIAN$=="")
+				announce "El PVP Hunt todavia esta activado. El MVP de cazeria no ha sido cazado.",bc_all,0xff9933;
+	end;
+
+	OnTimer1800000:
+		if(.HUNT_ON){
+			if(.BADLUCKYBRIAN$=="") {
+				announce "El PVP Hunt todavia esta activado. El MVP de cazeria no ha sido cazado.",bc_all,0xff9933;
+				stopnpctimer;
+				initnpctimer;
+			}
+			
+		}
+	end;
+	
+	OnMobHunted:
+		sleep2 100;
+		if(rand(0,1)) //Bad lucky brian :D jaja
+		{
+			addtimer 1,strnpcinfo(3)+"::OnBadLuckyBrian";
+			set .BADLUCKYBRIAN$,strcharinfo(0);
+			announce "BAD LUCKY BRIAN ! El player [ "+strcharinfo(0)+" ] cazo al MVP pero no ganara nada al menos que hable con el NPC de Salida",bc_all,0xff3333;
+			sleep2 5000;
+			announce "Para su desgracia el Player que mate a [ "+strcharinfo(0)+" ]. Le quitara los puntos y se declarara ganador.",bc_all,0x00cccc;
+			end;
+		}
+		set .HUNT_ON,0;
+		announce "El player [ "+strcharinfo(0)+" ] gano "+.Reward+" Hunt Points al lograr cazar al Monstruo en el PVP de Cazeria.",bc_all,0xff9933;
+		doevent strnpcinfo(3)+"::OnEndEvent";
+	end;
+
+	OnMobTeleportSystem:
+		sleep2 100;
+		while(.HUNT_ON) {
+			set @rand,rand(2,89);
+			if((@rand%2)!=0)
+			{
+				sleep2 .HUNT_MOB_TELEPORT_TIME;
+
+                if(.BADLUCKYBRIAN$ != "") //Si esta en modo badlucky brian, no mas MVP
+					break;
+
+				if(!.HUNT_ON)
+					break;
+				mapannounce "hunt","El monstruo se movio a otro lado del mapa. Tienen "+(.HUNT_MOB_TELEPORT_TIME/60000)+" Minuto(s) antes de que lo haga nuevamente.",bc_map,0x66cc00;
+				unitwarp .HUNT_MOB_GID,"hunt",.WARPS[@rand],.WARPS[@rand+1];
+			}
+		}
+	end;
+
+	OnEndEvent:
+		sleep2 100;
+		set #HUNTPOINTS,#HUNTPOINTS+.Reward;
+		sleep2 10000;
+		doevent strnpcinfo(3)+"::OnResetState";
+		sleep2 5000;
+		announce "El PVP el modo de cazeria estara disponible para otra invocación en 2 minutos",bc_all,0xffff33;
+	end;
+
+	OnBadLuckyBrian:
+		sleep2 100;
+		while(.BADLUCKYBRIAN$ != "") {
+			specialeffect2 68;
+			sleep2 2000;
+		}
+	end;
+
+	OnSetDelay:
+		sleep2 100;
+		set .HUNT_PVP_DELAY,0;
+	end;
+
+	OnEventTime:
+		sleep2 100;
+		while(.HUNT_ON) {
+			delwaitingroom;
+			waitingroom "MVP-ON "+gettimestr("%H:%M:%S",21 ),0;
+			sleep 1000;
+		}
+	end;
+
+
+	OnPCDieEvent:
+	sleep2 100;
+	if (strcharinfo(3) == "hunt") {
+		warp "pvp_castle",100,110;
+		sleep2 2000;
+		specialeffect2 EF_HEAL2; percentheal 100,100;
+		atcommand "@raise";
+	}
+	end;
+
+	OnPCLogoutEvent:
+		//sleep2 1;
+		if(strcharinfo(0) == .BADLUCKYBRIAN$) {
+			set .HUNT_ON,0; //termina en cuanto se desloguea
+			atcommand "@jailfor "+.JAILTIME+"d "+strcharinfo(0);
+			announce "El player [ "+strcharinfo(0)+" ]. Se deslogueo. Fue enviado a prisión durante "+.JAILTIME+" Dias por la mala acción.",0xff3333;
+			doevent strnpcinfo(3)+"::OnResetState";
+			sleep2 5000;
+			announce "El PVP el modo de cazeria estara disponible para otra invocación en "+(.HUNT_PVP_DELAY/60000)+" minutos",bc_all,bc_blue;
+		}
+	end;
+
+	OnPCKillEvent:
+		sleep2 100;
+		if (strcharinfo(3) == "hunt" && rid2name(killedrid) == .BADLUCKYBRIAN$) {
+			set .HUNT_ON,0; //terminamos 
+			announce "El player [ "+strcharinfo(0)+" ] mato a [ "+rid2name(killedrid)+" ] y le quito la recompenza de "+.Reward+" Hunt Points.",bc_all,0xff9933;
+			set #HUNTPOINTS,#HUNTPOINTS+.Reward;
+			doevent strnpcinfo(3)+"::OnResetState";
+			sleep2 5000;
+			announce "El PVP el modo de cazeria estara disponible para otra invocación en 2 minutos",bc_all,0xffff33;
+		}
+	end;
+
+	OnResetState:
+		sleep2 100;
+		//set .HUNT_ON,0;
+		set .SUMMONER$,"";
+		set .BADLUCKYBRIAN$,"";
+		set getvariableofnpc(.SANDMONSTER,"danger_monster_summoner"),0; 	//Killing sand monster from main.txt npc
+		killmonster "hunt","All";
+		delwaitingroom;
+		stopnpctimer;
+		set .HUNT_PVP_DELAY,120000; //Delay de 2 Minutos
+		addtimer 1,"pvp_hunt_officer::OnSetDelayMessage";
+		mapwarp "hunt","pvp_castle",100,110;
+		addtimer .HUNT_PVP_DELAY,strnpcinfo(3)+"::OnSetDelay";
+	end;
+
+	OnInit:
+		set .STACK,3; //Numero de usuarios en el mapa de hunt, requeridos para la activacion del juego
+		set .PRICE,1000000;
+		set .HUNT_ON,0;
+		set .HUNT_MOB_GID,0;
+		set .HUNT_MOB_TELEPORT_TIME,60000; //Cada que tiempo en milisegundos el monstruo se teletransporta
+		set .SUMMONER$,"";
+		set	.Reward,10;
+		set .HUNT_PVP_DELAY,0;
+		set .BADLUCKYBRIAN$,"";
+		set .JAILTIME,2; // Dias baneado por dejar el pvp en modo lucky brian
+		setarray .WARPS[0] = 0,0, // Areas seleccionadas del mapa, donde se puede warpear el MVP y los usuarios aleatoreamente.
+							133,165,  
+							98,169,
+							58,151,
+							75,118,
+							89,118,
+							106,136,
+							108,116,
+							106,86,
+							120,101,
+							130,86,
+							120,58,
+							109,58,
+							89,62,
+							77,89,
+							57,90,
+							132,118,
+							146,114,
+							163,107,
+							133,87,
+							133,170,
+							90,174,
+							107,49,
+							85,51,
+							134,51,
+							137,69,
+							139,80,
+							156,79,
+							170,91,
+							139,99,
+							117,101,
+							99,102,
+							76,98,
+							108,138,
+							117,158,
+							103,158,
+							83,153,
+							68,144,
+							56,137,
+							96,122,
+							83,108,
+							72,117,
+							149,111,
+							128,108,
+							121,121,
+							135,127;
+	end;
+}

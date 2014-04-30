@@ -1,0 +1,405 @@
+quiz_01,231,375,4	script	Batallas::PVP	966,{
+mes "El campo de batalla es exclusivo para ciertas personas";
+mes "Entra del lado del equipo a el que desees pertenecer";
+mes "Este estilo de batalla es ^0000ff WOE 2.0 ^000000";
+mes "No ahi mas nada que explicar... Tan solo te deseo suerte...";
+close;
+end;
+
+function Armar1;
+function Armar2;
+function ActWarps;
+function DesWarps;
+function QuitBarAux;
+
+OnLeave:
+	if(@teamPVP==1)
+	{
+		for( set .@i,0; .@i <= getarraysize($@membersA); set .@i,.@i +1 )
+		{
+				if($@membersA[.@i] == getcharid(3))
+					deletearray $@membersA[.@i],1;
+		}
+		bg_leave;
+		if(bg_get_data($@team_A,0)<1)
+		{
+			mapannounce "guild_vs4","El equipo A se retiro del campo. la batalla llega a su fin.",0,0xB40404;
+			killmonsterall "guild_vs4";
+			set .Ocupado , 0 ;
+			bg_destroy $@team_A;
+			bg_destroy $@team_B;
+			disablenpc "PortalA";
+			disablenpc "PortalB";
+			set $BarrAuxNorte,0;
+			set $BarriAuxSur,0;
+			QuitBarAux();
+			DesWarps();
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 673,1,$@membersB[.@i];
+			}
+			deletearray $@membersA;
+			deletearray $@membersB;
+			sleep2 5000;
+			mapannounce "guild_vs4","En 5 segundos los participanes seran llevados a prontera.",0,0xB40404;
+			sleep2 5000;
+			mapwarp "guild_vs4","prontera",206,173;
+		}
+			
+	}
+	
+	if(@teamPVP==2)
+	{
+		for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+		{
+				if($@membersB[.@i] == getcharid(3))
+					deletearray $@membersB[.@i],1;
+		}
+		
+		if(bg_get_data($@team_B,0)<1)
+		{
+			mapannounce "guild_vs4","El equipo B se retiro del campo. la batalla llega a su fin",0,0xB40404;
+			killmonsterall "guild_vs4";
+			set .Ocupado , 0 ;
+			bg_destroy $@team_A;
+			bg_destroy $@team_B;
+			disablenpc "PortalA";
+			disablenpc "PortalB";
+			set $BarrAuxNorte,0;
+			set $BarriAuxSur,0;
+			QuitBarAux();
+			DesWarps();
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 673,1,$@membersA[.@i];
+			}
+			deletearray $@membersA;
+			deletearray $@membersB;
+			sleep2 5000;
+			mapannounce "guild_vs4","En 5 segundos los participanes seran llevados a prontera.",0,0xB40404;
+			sleep2 5000;
+			mapwarp "guild_vs4","prontera",205,170;
+			areaannounce "prontera",187,190,229,152,"La sala de Batalla PVP esta desocupada....",0,0xB40404;
+		}
+			
+	}
+end;
+
+//Definimos el equipo B
+RegisterB:
+donpcevent "PVP::OnRegister";
+end;
+
+OnRegister:
+	set $@stateA,getwaitingroomstate(0,"Team_A");
+	set $@stateB,getwaitingroomstate(0,"Team_B");
+	if($@stateA >=$maxPVP &&  $@stateB >=$maxPVP)
+	{
+		donpcevent "Team_A::OnEnter";
+		donpcevent "Team_B::OnEnter";
+		bg_warp $@team_A,"quiz_02",236,345;
+		bg_warp $@team_B,"quiz_02",263,345;
+		set .Ocupado , 1 ;
+		//set $BarrAuxNorte,0;
+		//set $BarriAuxSur,0;
+		//QuitBarAux();
+		//DesWarps();
+		areaannounce "prontera",187,190,229,152,"Dos grupos acaban de registrarse en el Campo de batalla de la feria.",0,0xB40404;
+
+		sleep2 2000;
+		//areaannounce "prontera",187,190,229,152,"Teletransportando al lugar del encuentro!",0,0xB40404;
+		//warpparty "guild_vs4",7,49,.Partys[1];//WARP GRUPO 1
+		//warpparty "guild_vs4",91,49,.Partys[2];//WARP GRUPO 1
+		set .BarUno,0;
+		set .BarDos,0;
+		Armar1();//ARMA BARRICADAS GRUPO 1
+		Armar2();//AMRA BARRICADAS GRUPO 2
+		ActWarps();//ACTIVA WARPS EN EL MAPA
+		set $@scoreA,2;
+		set $@scoreB,2;
+		bg_updatescore "guild_vs4",$@scoreA,$@scoreB;
+		//pvpon "guild_vs4";//ACTIVA PVP
+		monster "guild_vs4",50,49,getmonsterinfo(1907,0),1907,1,"PVP::OnEmpeBreak";//EMPERIUM
+		areamonster "guild_vs4",44,55,55,44,"Guardian",1286,4;//GUARDIANES
+		areaannounce "quiz_02",224,357,275,334,"Los warps al campo de batalla se activaran en 5 segundos, solo podran entrar aquellos con Siver Coins.",0,0xB40404;
+		sleep2 5000;
+		enablenpc "PortalA";
+		enablenpc "PortalB";
+		areaannounce "quiz_02",224,357,275,334,"Los warps fueron Activados .La batalla comienza!!!",0,0xB40404;
+	}
+end;
+
+function Armar1{
+	if(.BarUno <=0 )
+	{
+		setwall "guild_vs4",25,48,10,0,0,"Barricadas1";
+		set .BarUno, 4;
+		monster "guild_vs4",24,51,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA1
+		monster "guild_vs4",24,50,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA2
+		monster "guild_vs4",24,49,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA3
+		monster "guild_vs4",24,48,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricUno";//BARRICADA4
+	}
+}//ENDFUNCTION
+
+function Armar2{
+	if(.BarDos <=0 )
+	{
+		setwall "guild_vs4",74,48,10,0,0,"Barricadas2";
+		set .BarDos, 4;
+		monster "guild_vs4",75,51,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+		monster "guild_vs4",75,50,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+		monster "guild_vs4",75,49,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+		monster "guild_vs4",75,48,getmonsterinfo(1905,0),1905,1,"PVP::OnBarricDos";//BARRICADA1
+	}
+}//ENDFUNCTION
+
+function ActWarps{
+	enablenpc "WarpPVP";
+	enablenpc "WarpPVP01";
+	enablenpc "WarpPVP02";
+	enablenpc "WarpPVP03";
+}//ENDFUNCTION
+
+function DesWarps{
+	disablenpc "WarpPVP";
+	disablenpc "WarpPVP01";
+	disablenpc "WarpPVP02";
+	disablenpc "WarpPVP03";
+}//ENDFUNCTION
+
+
+//retira las barreras invisibles
+function QuitBarAux{
+	delwall "BarricadasAuxNorte";
+	delwall "BarricadasAuxSur";
+}//ENDFUNCTION
+
+//Se ejecuta al destruiruna barricada  del grupo 1
+OnBarricUno:
+	set .BarUno , .BarUno - 1 ; //BarUno es el total de barricadas, cada vez que una se destruye llega se resta -1
+	if ( .BarUno == 0 ) { // si no ahi barricadas entonces se borran las tiles que no se ven
+		delwall "Barricadas1";
+		mapannounce "guild_vs4","El grupo A destruyo todas las barricadas!.",0,0xB40404;
+	}//ENDIF
+	end;
+
+OnBarricDos:
+	set .BarDos , .BarDos - 1 ;
+	if ( .BarDos == 0 ) {
+		delwall "Barricadas2";
+		mapannounce "guild_vs4","El grupo B destruyo todas las barricadas!.",0,0xB40404;
+	}//ENDIF
+	end;
+
+OnEmpeBreak:
+	//pvpoff "guild_vs4";
+	//set $BarrAuxEqui , 0 ;
+	if(@teamPVP == 1)
+	{
+		mapannounce "guild_vs4",strcharinfo(0)+" del Equipo A Rompio el emperium",0,0xB40404;
+		sleep2 2000;
+		set $@scoreA,$@scoreA-1;
+		bg_updatescore "guild_vs4",$@scoreA,$@scoreB;
+		donpcevent "PVP::OnRespawn";
+	}
+	
+	if(@teamPVP == 2)
+	{
+		mapannounce "guild_vs4",strcharinfo(0)+" del Equipo B Rompio el emperium",0,0xB40404;
+		sleep2 2000;
+		set $@scoreB,$@scoreB-1;
+		bg_updatescore "guild_vs4",$@scoreA,$@scoreB;
+		donpcevent "PVP::OnRespawn";
+	}
+	
+	if(!($@scoreB) || !($@scoreA) )
+	{
+		killmonsterall "guild_vs4";
+		set .Ocupado , 0 ;
+		bg_destroy $@team_A;
+		bg_destroy $@team_B;
+		disablenpc "PortalA";
+		disablenpc "PortalB";
+		set $BarrAuxNorte,0;
+		set $BarriAuxSur,0;
+		QuitBarAux();
+		DesWarps();
+		if($@scoreA == 0)
+		{
+			set $@winer$,"Grupo A";
+			for( set .@i,0; .@i <= getarraysize($@membersA); set .@i,.@i +1 )
+			{
+				getitem 7929,2,$@membersA[.@i];
+			}
+			
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 7929,1,$@membersB[.@i];
+			}
+		}
+			
+		if($@scoreB == 0)
+		{
+			set $@winer$,"Grupo B";
+			for( set .@i,0; .@i <= getarraysize($@membersB); set .@i,.@i +1 )
+			{
+				getitem 7929,2,$@membersB[.@i];
+			}
+			
+			for( set .@i,0; .@i <= getarraysize($@membersA); set .@i,.@i +1 )
+			{
+				getitem 7929,1,$@membersA[.@i];
+			}
+		}
+		deletearray $@membersA;
+		deletearray $@membersB;
+		mapannounce "guild_vs4","Ha ganado el [ " + $@winer$ + " ]. Felicidades!",0,0xB40404;
+		sleep2 5000;
+		mapannounce "guild_vs4","Los ganadores reciven 2 Golds coins  y los perdedores 1 ",0,0xB40404;
+		sleep2 5000;
+		mapwarp "guild_vs4","prontera",205,170;
+		areaannounce "prontera",187,190,229,152,"La sala de Batalla PVP esta desocupada....",0,0xB40404;
+	}
+	end;
+
+OnRespawn:
+	bg_warp $@team_A,"guild_vs4",7,49;
+	bg_warp $@team_B,"guild_vs4",91,49;
+	Armar1();
+	Armar2();
+	monster "guild_vs4",50,49,getmonsterinfo(1907,0),1907,1,"PVP::OnEmpeBreak";//EMPERIUM 1288
+	areamonster "guild_vs4",44,55,55,44,"Guardian",1286,4;//GUARDIANES
+	end;
+
+OnInit:
+	set $BarrAuxNorte,0;
+	set $BarriAuxSur,0;
+	QuitBarAux();
+	DesWarps();
+	disablenpc "PortalA";
+	disablenpc "PortalB";
+	set $maxPVP,1; // el numero de jugadores para entrar a BG
+	end;
+
+OnPCDieEvent:
+getmapxy(@map$,@mapx,@mapy,0);
+if(@map$=="guild_vs4")
+{
+	if(@teamPVP==1)
+		Armar1();
+	
+	if(@teamPVP==2)
+		Armar2();
+}
+percentheal 100,100;
+	end;
+
+}//ENDSCRIPT
+
+//Warpers para la entrada oficial
+quiz_02,236,355,0	script	::PortalA	45,2,2,{
+	OnTouch:
+		set @teamPVP,1;
+		set $@membersA[getarraysize($@membersA)],getcharid(3); //Guarndamos el id de las personas q entran de este ekipo
+		warp "guild_vs4",7,49;
+	end;
+}
+
+quiz_02,263,355,0	script	::PortalB	45,2,2,{
+	OnTouch:
+		set @teamPVP,2;
+		set $@membersB[getarraysize($@membersB)],getcharid(3); //Guarndamos el id de las personas q entran de este ekipo
+		warp "guild_vs4",91,49;
+	end;
+}
+	/*   [ ================== Warp Random  ================== ]   */
+
+guild_vs4,65,50,0	script	::WarpPVP	45,2,2,{
+end;
+function ArmarAuxiliarNor;
+function ArmarAuxiliarSur;
+OnTouch:
+	set .WarpsPVP,rand(0,7);
+	if ( .WarpsPVP  == 1 ) {
+		mapannounce "guild_vs4",strcharinfo(0) + " logr� pasar y va por el Emperium!",0;
+		warp "guild_vs4",49,58;
+	} else {
+		set .NorSur,rand(1,2);
+		if ( .NorSur == 1 ) {
+			if ( $BarrAuxNorte == 0 ) {
+				set $BarrAuxNorte,1;
+				areamonster "guild_vs4",48,87,51,77,"Guardian Montado",1893,2;//GUARDIANES
+				ArmarAuxiliarNor();
+			}
+			warp "guild_vs4",49,91;
+		} else {
+			if ( $BarriAuxSur == 0 ) {
+				set $BarriAuxSur,1;
+				areamonster "guild_vs4",51,12,48,22,"Guardian Montado",1893,2;//GUARDIANES
+				ArmarAuxiliarSur();
+			}//ENDIF
+			warp "guild_vs4",49,8;
+		}//ENDELSE
+		
+	}//ENDELSE
+	end;
+
+function ArmarAuxiliarNor{
+	setwall "guild_vs4",51,74,10,2,0,"BarricadasAuxNorte";
+	set $BarAuxNor, 4;
+	monster "guild_vs4",48,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA1
+	monster "guild_vs4",49,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA2
+	monster "guild_vs4",50,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA3
+	monster "guild_vs4",51,75,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricNorte";//BARRICADA4
+}//ENDFUNCTION
+
+function ArmarAuxiliarSur{
+	setwall "guild_vs4",51,25,10,2,0,"BarricadasAuxSur";
+	set $BarAuxSur, 4;
+	monster "guild_vs4",51,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA1
+	monster "guild_vs4",50,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA2
+	monster "guild_vs4",49,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA3
+	monster "guild_vs4",48,24,getmonsterinfo(1905,0),1905,1,"VerBarricAux::OnBarricSur";//BARRICADA4
+}
+
+
+}//ENDWARP
+
+guild_vs4,49,65,0	duplicate(WarpPVP)	::WarpPVP01	45,2,2
+guild_vs4,34,50,0	duplicate(WarpPVP)	::WarpPVP02	45,2,2
+guild_vs4,49,34,0	duplicate(WarpPVP)	::WarpPVP03	45,2,2
+
+-	script	VerBarricAux	-1,{
+OnBarricNorte:
+	set $BarAuxNor , $BarAuxNor - 1 ;
+	if ( $BarAuxNor == 0 ) {
+		delwall "BarricadasAuxNorte";
+		set $BarrAuxNorte,0;
+	}//ENDIF
+	end;
+
+OnBarricSur:
+	set $BarAuxSur ,$BarAuxSur - 1 ;
+	if ( $BarAuxSur == 0 ) {
+		delwall "BarricadasAuxSur";
+		set $BarriAuxSur,0;
+	}//ENDIF
+	end;
+
+}//ENDSCRIPT
+
+quiz_01,228,375,4	script	[Muerto]	849,{
+mes "�Quieres salir de la zona de reclutamiento de batallas?";
+if ( select("No:Si") == 1 ) {
+	mes " ";
+	mes "�Deberias participar en el evento, no crees?";
+	close2;
+} else {
+	mes " ";
+	mes "...";
+	close2;
+	warp "prontera",205,171;
+	getitem 675,1;
+}//ENDELSE
+end;
+}//ENSCRIPT

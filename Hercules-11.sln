@@ -16,6 +16,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "auraset", "auraset\auraset.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titans", "titans\titans.vcxproj", "{408DF6BF-CC0B-4A4A-9BF4-3A0E932FAB06}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "getmemberaid", "getmemberaid\getmemberaid.vcxproj", "{6DAE32EC-312C-4A81-B990-392DC3419DA8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "addrid", "addrid\addrid.vcxproj", "{3AA74E70-40F6-4536-AA07-AEF2D60AC721}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -54,6 +58,14 @@ Global
 		{408DF6BF-CC0B-4A4A-9BF4-3A0E932FAB06}.Debug|Win32.Build.0 = Debug|Win32
 		{408DF6BF-CC0B-4A4A-9BF4-3A0E932FAB06}.Release|Win32.ActiveCfg = Release|Win32
 		{408DF6BF-CC0B-4A4A-9BF4-3A0E932FAB06}.Release|Win32.Build.0 = Release|Win32
+		{6DAE32EC-312C-4A81-B990-392DC3419DA8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6DAE32EC-312C-4A81-B990-392DC3419DA8}.Debug|Win32.Build.0 = Debug|Win32
+		{6DAE32EC-312C-4A81-B990-392DC3419DA8}.Release|Win32.ActiveCfg = Release|Win32
+		{6DAE32EC-312C-4A81-B990-392DC3419DA8}.Release|Win32.Build.0 = Release|Win32
+		{3AA74E70-40F6-4536-AA07-AEF2D60AC721}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3AA74E70-40F6-4536-AA07-AEF2D60AC721}.Debug|Win32.Build.0 = Debug|Win32
+		{3AA74E70-40F6-4536-AA07-AEF2D60AC721}.Release|Win32.ActiveCfg = Release|Win32
+		{3AA74E70-40F6-4536-AA07-AEF2D60AC721}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

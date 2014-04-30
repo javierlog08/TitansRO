@@ -1,0 +1,132 @@
+-	script	Torneo Rey del PVP::pvp_king	-1,{
+	
+	OnInit:
+		setarray .NO_INVITE_MAPS$[0],"hunt","que_avan01","arena","pvp_castle","sec_pri";
+		set .GUEST_MAP$,"pvp_castle";
+		set .x,174;
+		set .y,31;
+		setmapflag "arena",mf_pvp;
+		setmapflag "arena",mf_nomemo;
+		setmapflag "arena",mf_nosave;
+		setmapflag "arena",mf_nowarp;
+		setmapflag "arena",mf_nowarpto;
+		setmapflag "arena",mf_novending;
+		setmapflag "arena",mf_notrade;
+		setmapflag "arena",mf_noteleport;
+		setmapflag "arena",mf_zone,"PvP"; //restricted items
+		setmapflag "arena",mf_zone,"Jail"; //restricted items
+
+		setmapflag "que_avan01",mf_nomemo;
+		setmapflag "que_avan01",mf_nosave;
+		setmapflag "que_avan01",mf_nowarp;
+		setmapflag "que_avan01",mf_nowarpto;
+		//setmapflag "que_avan01",mf_nogo;
+		setmapflag "que_avan01",mf_novending;
+		setmapflag "que_avan01",mf_notrade;
+		setmapflag "que_avan01",mf_noteleport;
+		setmapflag "que_avan01",mf_zone,"Jail"; //restricted items teleport
+
+		
+	end;
+
+	OnOrganize:
+		sleep2 100;
+		callfunc("inviteToPVP");
+		set getvariableofnpc(.TORNEO,"pvp_king_officer"),1; // Inicio la organizacion de un torneo
+		doevent "pvp_king_register::OnSetup";
+		warp  .GUEST_MAP$,.x,.y;
+		sleep2 1000;
+		announce "El Player [ "+strcharinfo(0)+" ] acaba de convocar un Torneo Para elegir un Rey del PVP. Los interesados pueden inscribirse a partir de ahora.",bc_all;
+	end;
+	
+	
+	OnGuest: //Este label sera llamado por la funcion inviteToPVP
+		sleep2 100;
+		set .@no_invite,0;
+		for(@i=0;@i<getarraysize(.NO_INVITE_MAPS$);++@i)
+			if(strcharinfo(3)==.NO_INVITE_MAPS$[@i])
+				set .@no_invite,1;
+
+		if(#PVP_INVITATIONS>0 || .@no_invite) // no le manda nada a las personas que no quieren invitacion o estan en mapas prohibidos para invitar
+			end;
+
+		next2;
+		mes "^00994c[ INVITACION ]^000000";
+		cutin "prt_soldier",2;
+		mes "Hola "+strcharinfo(0);
+		mes "Has sido invitado a al ";
+		mes "^0000ff"+strnpcinfo(0)+"^000000";
+		mes "^ff0000Deseas participar?^000000";
+		if(select("Si:No")==1) {
+			if(callfunc("F_DobleACC")){
+				next2;
+				mes "^ff0000 Tienes cuentas dobles.";
+				mes "~ ~ ~";
+				mes "Las cuentas dobles no estan permitidas dentro del PVP";
+				mes "~ ~ ~";
+				mes "Debes cerrarlas para entrar al PVP.";
+				close2;
+				cutin "",255;
+				end;
+			}
+
+			if(getvariableofnpc(.TORNEO,"pvp_king_officer")>=2){
+				next2;
+				mes "^00994c[ INVITACION ]^000000";
+				mes "^ff0000Has tomado mucho tiempo en contestar.";
+				mes "El torneo ya inicio.^000000";
+				close2;
+				cutin "",255;
+				end;
+			}
+			warp  .GUEST_MAP$,.x,.y;
+		} else {
+			next2;
+			cutin "prt_soldier",2;
+			mes "^00994c[ INVITACION ]^000000";
+			mes "Entiendo, Justo ahora estas ocupado.";
+			mes "Para desactivar invitaciones usa ^0000ff@inviteoff^000000";
+			mes "Para reactivarlas usa ^0000ff@inviteon^000000";
+			close2;
+			cutin "",255;
+		}
+	end;
+	
+	
+}
+
+
+-	script	" "::arena_wall	-1,{
+	end;
+}
+
+pvp_castle,173,37,5	script	Ayuda::pvp_info_king	973,{
+	if(select("Info:Salir")==1){
+		mes "^336600[ Info ]^000000";
+		mes " ";
+		mes "Debes registrarte con el Registrador del torneo a la derecha.";
+		next;
+		mes "^336600[ Info ]^000000";
+		mes " ";
+		mes "Existe determinada cantidad de tiempo en que se te permitira registrarte.";
+		next;
+		mes "^336600[ Info ]^000000";
+		mes " ";
+		mes "Cuando el relog dentro de la sala llegue a 0, las inscripciones habran terminado.";
+		next;
+		mes "^336600[Info]^000000";
+		mes " ";
+		mes "Luego de eso seras llevado a una sala especial, donde no podras salir, almenos que deslogues.";
+		next;
+		mes "^336600[ Info ]^000000";
+		mes " ";
+		mes "Asi que trata de llevar todo lo que necesites, antes de ser llevado a esa sala.";
+		next;
+		mes "^336600[ Info ]^000000";
+		mes " ";
+		mes "Si deslogueas dentro de la sala, seras descalificado del torneo y llevado a prision 1 dia.";
+		close;
+	} else {
+		warp "pvp_castle",106,110;
+	}
+}

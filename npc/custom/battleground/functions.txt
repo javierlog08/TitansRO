@@ -1,0 +1,110 @@
+function	script	inviteToPVP	{
+	set $@invitator$,strcharinfo(0);
+	setarray $@name$[0],"";
+	setarray $@id[0],0;
+	set $@nb,0;
+	if(getargcount() == 0) {
+		set $@nb, query_sql("SELECT account_id, name FROM `char` WHERE online=1", $@id, $@name$);
+	} else if(getargcount()>=1) {
+		set $@nb,0;
+		set @usersize,getarg(1);
+		for(@i=0;@i<@usersize;++@i){
+			if(isloggedin(getcharid(3,getelementofarray(getarg(0), @i)))) {
+				set $@name$[$@nb],getelementofarray(getarg(0), @i);
+				set $@id[$@nb],getcharid(3,getelementofarray(getarg(0), @i));
+				set $@nb,$@nb+1;
+			}
+		}
+	}
+	set $@LAST_RID,getcharid(3);
+	detachrid;
+	for($@i=0; $@i < $@nb; ++$@i) {
+		if($@name$[$@i]!=$@invitator$ && isloggedin($@id[$@i])) { // NI al invitador NI a personas q no esten onlin
+			if(!checkmes($@id[$@i])) { //No le manda el mensaje a personas que estan en dialogo,
+				attachrid $@id[$@i];
+				addtimer 1,strnpcinfo(3)+"::OnGuest"; //El npc que llama el script tiene al evento OnGuest
+				detachrid;
+			}
+		}
+	}
+	attachrid $@LAST_RID; //Para que sigua el flujo normal el script despues de usar esta funcion
+	return;
+}
+
+function	script	F_DobleACC	{
+	/*set @ip$,getcharip();
+	set @nb, query_sql("select c.online from `char` c join login lo on c.account_id=lo.account_id where lo.last_ip='"+@ip$+"' and c.online=1",@online);
+	if(@nb > 1)
+		return 1;
+	*/
+	return 0;
+}
+
+function	script	F_ValidateBG	{
+	set .@WEIGHT_ERROR,1;
+	set .@JOB_ERROR,2;
+	set .@TIME_LIMIT_ERROR,3;
+	set .@ONUSE_ERROR,4;
+	set .@TEAMIN_ERROR,5;
+	set .@ACCEPT,6;
+
+	if (checkweight(1201,1) == 0) {
+		return .@WEIGHT_ERROR;
+	}
+
+	if ((Class == Job_Novice) || (BaseClass == Job_SuperNovice)) {
+		return .@JOB_ERROR;
+	}
+
+	if (BaseLevel < 80) {
+		return .@JOB_ERROR;
+	}
+
+	set .@chk_urtime,checkquest(getarg(2),PLAYTIME); //ARgumento es el ID de kla Quest
+	if ((.@chk_urtime == 0)|| (.@chk_urtime == 1)) {
+		return .@TIME_LIMIT_ERROR;
+	} else {
+		if (.@chk_urtime == 2)
+			erasequest 2070;
+		set .@mapcount2,getmapusers(getarg(3)); // Argumento es el mapa del BG en juego
+		if (.@mapcount2 > 0) {
+			return .@ONUSE_ERROR;
+		} else {
+			if (getarg(0) > 0 && getarg(1) > 0) {  //argument es la variable del BG que se este trtando de utilizar por ejemplo $@FlaviusBG1,$@FlaviusBG2 
+				return .@TEAMIN_ERROR;
+			} else {
+				return .@ACCEPT;
+			}
+		}
+	}
+
+	return 0;
+} 
+
+function	script	F_MessageBG	{
+	switch(getarg(0)) {
+			case 1:
+				doevent "bg_messages::OnWeight";
+			break;
+
+			case 2:
+				doevent "bg_messages::OnJob";
+			break;
+
+			case 3:
+				doevent "bg_messages::OnAgain";
+			break;
+
+			case 4:
+				doevent "bg_messages::OnUse";
+			break;
+
+			case 5:
+				doevent "bg_messages::OnIntro";
+			break;
+
+			case 6:
+				doevent "bg_messages::OnAccept";
+			break;
+		}
+}

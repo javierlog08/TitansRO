@@ -1,0 +1,107 @@
+-	script	hunt_pvp	-1,{
+
+	OnInit:
+		setmapflag "hunt", mf_novending;
+		setmapflag "hunt", mf_nosave;
+		setmapflag "hunt", mf_nowarp;
+		setmapflag "hunt", mf_nowarpto;
+		setmapflag "hunt", mf_nomemo;
+		setmapflag "hunt", mf_pvp;
+		setmapflag "hunt", mf_noteleport;
+		setmapflag "hunt",mf_zone,"Jail"; //no warp no nada
+		setcell "hunt",104,26,110,44,cell_basilica,1; //area no atacable del mapa
+		setwall "hunt",112,46,10,2,0,"HuntWall"; //pared que evita el paso desde la entrada del pvp
+	end;
+
+}
+
+
+hunt,79,137,4	script	Info::danger_monster_z	2_BOARD1,{
+	mes "                        ^ff0000[ Peligro ] ^000000";
+	mes "     ";
+	mes "Zona infectada de monstruos de arena.";
+	mes "Por su bien no pase";
+	close;
+}
+
+hunt,83,119,4	script	danger_monster_summoner	139,10,10,{
+	if(.SANDMONSTER)
+		end;
+
+	announce "Oh No !!. [ "+ strcharinfo(0)+" ] Libero a los monstruos de la trampa de arena",bc_map,0xff3333;
+	areamonster "this", 67, 110, 91, 122, "Arena Monster", 3151, 5,strnpcinfo(3)+"::OnSandMob";
+	set .SANDMONSTER,1;
+	end;
+
+	OnSandMob:
+		sleep2 100;
+		if(mobcount("hunt", strnpcinfo(3)+"::OnSandMob") <= 3 && mobcount("hunt", strnpcinfo(3)+"::OnSandMob") < 5)
+			areamonster "this", 67, 110, 91, 122, "Arena Monster", 3151, 2,strnpcinfo(3)+"::OnSandMob";
+	end;
+}
+
+hunt,110,133,4	script	Info::hunt_info_exit	2_BOARD1,{
+	mes "                           ^164145[ Info ] ^000000";
+	mes "     ";
+	mes "La salida del PVP esta en el centro de este mapa.";
+	mes "^0000ffSigue este camino para llegar a la salida.^000000";
+	close;
+}
+
+hunt,107,82,1	script	Salida::hunt_exit	487,{
+	mes "-----------------------------";
+	mes "Deseas salir?";
+	mes "-----------------------------";
+
+	if(select("Si:No")==1){
+		
+		if(getvariableofnpc(.BADLUCKYBRIAN$,"hunt_summoner")==strcharinfo(0)) {
+			announce "El player [ "+strcharinfo(0)+" ] gano "+getvariableofnpc(.Reward,"hunt_summoner")+" Hunt Points al lograr escapar del modo BAD LUCKY BRIAN.",bc_all,0xff9933;
+			set getvariableofnpc(.BADLUCKYBRIAN$,"hunt_summoner"),"";
+			set #HUNTPOINTS,#HUNTPOINTS+.Reward;
+			set getvariableofnpc(.HUNT_ON,"hunt_summoner"),0;
+			doevent "hunt_summoner::OnResetState";
+			addtimer 5000,strnpcinfo(3)+"::OnBryanSacapeMessage";
+		}
+		warp "pvp_castle",100,110;
+		end;
+	}
+	next2;
+	
+	mes "-------------------------";
+	mes "VALE DIVIERTE !!";
+	mes "-------------------------";
+	close2;
+	end;
+
+	OnBryanSacapeMessage:
+		sleep2 100;
+		announce "El PVP el modo de cazeria estara disponible para otra invocación en 2 minutos",bc_all,0xffff33;
+	end;
+}
+
+hunt,108,45,4	script	effect_chain	139,5,5,{
+	doevent "effect_wall::OnChain";
+	doevent "effect_wall2::OnChain";
+	end;
+}
+
+hunt,106,45,4	script	effect_wall	139,{
+	end;
+
+	OnChain:
+		sleep2 100;
+		specialeffect 711;
+	end;
+}
+
+hunt,109,45,4	script	effect_wall2	139,,{
+	end;
+
+	OnChain:
+		sleep2 100;
+		specialeffect 711;
+	end;
+}
+
+hunt	mapflag	loadevent

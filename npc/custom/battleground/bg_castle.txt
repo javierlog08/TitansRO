@@ -1,0 +1,24 @@
+-	script	map_features	-1,{
+OnPCLoadMapEvent:
+		sleep2 1;
+		if(strcharinfo(3)=="pvp_castle") {
+			if(callfunc("F_DobleACC")) {
+				mes "^ff0000 Tienes cuentas dobles en el server.";
+				mes "~ ~ ~";
+				mes "No estan permitidas.";
+				mes "~ ~ ~";
+				mes "Debes cerrarlas para entrar al PVP.";
+				close2;
+				cutin "",255;
+				atcommand "@go 0";
+				end;
+			}
+			
+			set #PVP_INVITATIONS,0; //Dentro del castillo  las invitaciones son habilitadas nuevamente
+		}
+	end;
+}
+pvp_castle	mapflag	loadevent
+pvp_castle,99,69,0	warp	pvpcastexit	2,2,titans,140,206
+titans,140,209,0	warp	pvpcastenter	1,1,pvp_castle,99,72
+
