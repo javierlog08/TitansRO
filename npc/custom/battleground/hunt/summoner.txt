@@ -92,6 +92,7 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 	
 	OnActivate:
 		sleep2 100;
+		enablenpc "hunt_exit";
 		if(.HUNT_ON) {
 			next2;
 			mes "^00CCCC[ Organizador de Cazeria ]^000000";
@@ -152,6 +153,7 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 			announce "Para su desgracia el Player que mate a [ "+strcharinfo(0)+" ]. Le quitara los puntos y se declarara ganador.",bc_all,0x00cccc;
 			end;
 		}
+		disablenpc "hunt_exit"; //De esta manera esperamos a que el mismo sistema los saque del mapa
 		set .HUNT_ON,0;
 		announce "El player [ "+strcharinfo(0)+" ] gano "+.Reward+" Hunt Points al lograr cazar al Monstruo en el PVP de Cazeria.",bc_all,0xff9933;
 		doevent strnpcinfo(3)+"::OnEndEvent";
@@ -178,7 +180,7 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 
 	OnEndEvent:
 		sleep2 100;
-		set #HUNTPOINTS,#HUNTPOINTS+.Reward;
+		set #PVPPOINTS,#PVPPOINTS+.Reward;
 		sleep2 10000;
 		doevent strnpcinfo(3)+"::OnResetState";
 		sleep2 5000;
@@ -235,7 +237,7 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 		if (strcharinfo(3) == "hunt" && rid2name(killedrid) == .BADLUCKYBRIAN$) {
 			set .HUNT_ON,0; //terminamos 
 			announce "El player [ "+strcharinfo(0)+" ] mato a [ "+rid2name(killedrid)+" ] y le quito la recompenza de "+.Reward+" Hunt Points.",bc_all,0xff9933;
-			set #HUNTPOINTS,#HUNTPOINTS+.Reward;
+			set #PVPPOINTS,#PVPPOINTS+.Reward;
 			doevent strnpcinfo(3)+"::OnResetState";
 			sleep2 5000;
 			announce "El PVP el modo de cazeria estara disponible para otra invocación en 2 minutos",bc_all,0xffff33;
@@ -258,7 +260,7 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 	end;
 
 	OnInit:
-		set .STACK,3; //Numero de usuarios en el mapa de hunt, requeridos para la activacion del juego
+		set .STACK,1; //Numero de usuarios en el mapa de hunt, requeridos para la activacion del juego
 		set .PRICE,1000000;
 		set .HUNT_ON,0;
 		set .HUNT_MOB_GID,0;

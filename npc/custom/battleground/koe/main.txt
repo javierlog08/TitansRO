@@ -17,8 +17,9 @@
 -	script	KoE	-1,{
 OnInit:
 	disablenpc "The King#KoE";
-	disablenpc "Exit#KoE";
+	disablenpc "KoE Manager#KoE";
 	bindatcmd "koe", strnpcinfo(0)+"::OnCommand", 99,100;
+	set .Reward,10; //Pts Recompenza
 	end;
 OnCommand:
 	if ( compare( .@atcmd_parameters$, "on" ) ) goto L_Start;
@@ -30,13 +31,13 @@ OnCommand:
 	end;
 
 OnStart:
-	goto L_Start;
 	addtimer getvariableofnpc(.time,"pvp_koe_officer"),strnpcinfo(3)+"::OnStop";
+	goto L_Start;
 end;
 
 OnStop:
-	goto L_End;
 	addtimer 100,"pvp_koe_officer::OnDelay";
+	goto L_End;
 end;
 
 //OnClock2000: // everyday 8pm starts
@@ -46,7 +47,7 @@ L_Start:
 	announce "El PVP King Of Emperium ha sido activado !", bc_all;
 	.start = 1;
 	enablenpc "The King#KoE";
-	disablenpc "Exit#KoE";
+	disablenpc "KoE Manager#KoE";
 	$koegid = 0;
 	donpcevent "::OnRevKoE";
 	maprespawnguildid "guild_vs1", $koegid, 7;
@@ -57,10 +58,10 @@ L_End:
 	gvgoff "guild_vs1";
 	announce "El PVP King Of Emperium se ha desactivado!", bc_all;
 	.start = 0;
-	enablenpc "Exit#KoE";
+	enablenpc "KoE Manager#KoE";
 	disablenpc "The King#KoE";
 	killmonsterall "guild_vs1";
-//	maprespawnguildid "guild_vs1", $koegid, 6; // uncomment this line to kick non-owner off the map when event ends
+	maprespawnguildid "guild_vs1", $koegid, 6; // uncomment this line to kick non-owner off the map when event ends
 	end;
 OnEmpDead:
 	$koegid = getcharid(2);
@@ -92,13 +93,17 @@ prontera,155,191,4	script	The King#KoE	58,{
 }
 
 // KoE Exit
-guild_vs1,49,56,5	script	Exit#KoE	51,{
-	mes "[Salida]";
-	mes "Nos Vemos.";
-	close2;
-	warp "pvp_castle",113,110;
-	if ( getcharid(2) == $koegid )
-		getitem 501, 1; // configure prize here
+guild_vs1,49,49,5	script	KoE Manager#KoE	811,{
+	if ( getcharid(2) == $koegid ){ 
+		mes "^990099[KoE Manager]^000000";
+		mes "Enohrabuena !";
+		mes "Tu Guild ha demostrado ser la mejor.";
+		mes "Recibe de parte de el torneo KoE ";
+		mes "^808080~ "+getvariableofnpc(.Reward,"KoE")+" puntos de PVP^000000 ~";
+		close2;
+		set #PVPPOINTS,#PVPPOINTS+getvariableofnpc(.Reward,"KoE");
+		warp "pvp_castle",113,110;
+	}
 	end;
 }
 
@@ -117,6 +122,13 @@ OnRevKoE:
 guild_vs1,61,49,6	duplicate(koe_flag)	King of Emperium Hill#2	722
 guild_vs1,38,49,2	duplicate(koe_flag)	King of Emperium Hill#3	722
 guild_vs1,49,61,0	duplicate(koe_flag)	King of Emperium Hill#4	722
+//Duplicados para castillo titans ro
+pvp_castle,90,79,5	duplicate(koe_flag)	King of Emperium Hill#5	722
+pvp_castle,90,87,5	duplicate(koe_flag)	King of Emperium Hill#6	722
+pvp_castle,90,95,5	duplicate(koe_flag)	King of Emperium Hill#7	722
+pvp_castle,109,79,3	duplicate(koe_flag)	King of Emperium Hill#8	722
+pvp_castle,109,87,3	duplicate(koe_flag)	King of Emperium Hill#9	722
+pvp_castle,109,95,3	duplicate(koe_flag)	King of Emperium Hill#10	722
 
 guild_vs1	mapflag	nobranch
 guild_vs1	mapflag	nomemo

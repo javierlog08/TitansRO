@@ -58,7 +58,7 @@ hunt,107,82,1	script	Salida::hunt_exit	487,{
 		if(getvariableofnpc(.BADLUCKYBRIAN$,"hunt_summoner")==strcharinfo(0)) {
 			announce "El player [ "+strcharinfo(0)+" ] gano "+getvariableofnpc(.Reward,"hunt_summoner")+" Hunt Points al lograr escapar del modo BAD LUCKY BRIAN.",bc_all,0xff9933;
 			set getvariableofnpc(.BADLUCKYBRIAN$,"hunt_summoner"),"";
-			set #HUNTPOINTS,#HUNTPOINTS+.Reward;
+			set #PVPPOINTS,#PVPPOINTS+.Reward;
 			set getvariableofnpc(.HUNT_ON,"hunt_summoner"),0;
 			doevent "hunt_summoner::OnResetState";
 			addtimer 5000,strnpcinfo(3)+"::OnBryanSacapeMessage";

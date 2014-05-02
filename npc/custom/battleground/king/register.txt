@@ -201,7 +201,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 		set .user2$,"";
 		set .static_time,60000; // tiempo de registro statico
 		set .time,.static_time; //Tiempo de registro dynamico
-		set .STACK,2; //numero de jugadores para que exista un torneo
+		set .STACK,8; //numero de jugadores para que exista un torneo
 		set .JAILTIME,2; //en Horas
 		set .JAIL_ON,0; //0 No activo envio a prision || 1 Envio a prision activo
 		set .MATCH,0; //Si es 1 entonces acaba de iniciar la organizacion de un match...si es 2 entonces ya acabo la cuenta regresiva del match y estan batallando

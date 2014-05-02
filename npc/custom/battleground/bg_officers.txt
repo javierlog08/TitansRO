@@ -146,7 +146,7 @@ pvp_castle,100,114,4	script	PVP HUNT::pvp_hunt_officer	105,{
 		mes "Hola, este es el PVP Modo Cazeria.";
 		mes "Que deseas?";
 		
-		switch(select("Info:Entrar al PVP:Ver ^0000ffHunt Points^000000")) {
+		switch(select("Info:Entrar al PVP")) {
 			case 1:
 				next2;
 				cutin "prt_soldier",2;
@@ -159,9 +159,9 @@ pvp_castle,100,114,4	script	PVP HUNT::pvp_hunt_officer	105,{
 				next;
 				cutin "prt_soldier",2;
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
-				mes "El player que caze al ^FF0000 MVP ^000000 ganara ^0000ffHunt Points^000000.";
+				mes "El player que caze al ^FF0000 MVP ^000000 ganara ^0000ffPuntos de PVP^000000.";
 				mes "^808080~ ~^000000";
-				mes "Los  ^0000ffHunt Points^000000 pueden ser usados para adquirir ^0000ffMedallas de BG^000000 con el ^0000ff PVP Points Trader^000000 del castillo";
+				mes "Los  ^0000ffPuntos de PVP^000000 pueden ser usados para adquirir armas con el ^0000ff PVP Points Trader^000000 del castillo";
 				next;
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
 				mes "Para activar el modo cazeria en este PVP necesitas cierto numero de usuarios en el mapa";
@@ -170,13 +170,13 @@ pvp_castle,100,114,4	script	PVP HUNT::pvp_hunt_officer	105,{
 				mes "Luego de ser activado todo usuario que lo desee puede entrar a particiar.";
 				next;
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
-				mes "Dentro del juego tambien existe un modo llamado ^ff0000BAD LUCKY BRIAN^000000 en el cual el usuario que logre cazar al MVP tiene una posibilidad del 50% de no recibir los ^0000ffHunt Points^000000.";
+				mes "Dentro del juego tambien existe un modo llamado ^ff0000BAD LUCKY BRIAN^000000 en el cual el usuario que logre cazar al MVP tiene una posibilidad del 50% de no recibir los ^0000ffPuntos de PVP^000000.";
 				next;
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
 				mes "En lugar de eso aparecera un letrero de ^FF0000 MVP ^000000 en su cabeza. Entonces el usuario debera correr al centro del mapa, para hablar con el NPC de Salida";
 				next;
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
-				mes "Si logra llegar al centro sin ser asesinado, entonces ganara los ^0000ffHunt Points^000000 prometidos. Si no el usuario que lo mate se los llevará";
+				mes "Si logra llegar al centro sin ser asesinado, entonces ganara los ^0000ffPuntos de PVP^000000 prometidos. Si no el usuario que lo mate se los llevará";
 				next;
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
 				mes "^ff0000Nota:^000000";
@@ -204,18 +204,18 @@ pvp_castle,100,114,4	script	PVP HUNT::pvp_hunt_officer	105,{
 				}
 			end;
 
-			case 3:
+			/*case 3:
 				next2;
 				
 				mes "^00CCCC[ Organizador de Cazeria ]^000000";
 				mes "- - - - - - - - - - - - - - - -";
 				mes "Tienes un total de:";
-				mes "^808080~ "+#HUNTPOINTS+" Hunt Points ^000000";
+				mes "^808080~ "+#PVPPOINTS+" Hunt Points ^000000";
 				mes "- - - - - - - - - - - - - - - -";
 				close2;
 				cutin "",255;
 				end;
-			end;
+			end;*/
 		}
 	end;
 
@@ -452,7 +452,8 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 	cutin "prt_soldier",2;
 	mes "^00CCCC[ Organizador KoE]^000000";
 	if(.DELAY) {
-		mes "Antes de activar nuevamente una KoE es necesario esperar ^ff0000"+.DELAY_CLOCK$+"^000000 minuto(s)";
+		mes "Antes de activar nuevamente una ^0000ffKoE^000000 necesitas esperar";
+		mes "^ff0000"+.DELAY_CLOCK$+"^000000 minuto(s)";
 		close2;
 		cutin "",255;
 		end;
@@ -465,12 +466,14 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 		mes "La KoE se activara ^ff0000"+(.time/60000)+" minuto(s)^000000. Despues de eso toda guild dentro del PVP tiene que pelear por conservar el emperium dentro de la sala.";
 		next;
 		mes "^00CCCC[ Organizador KoE]^000000";
-		mes "La guild que conserve el control de la sala al final del tiempo gana el evento.";
+		mes "La guild que conserve el control de la sala al final del tiempo";
+		mes "gana ^ff0000"+getvariableofnpc(.Reward,"KoE")+" Puntos de PVP^000000.";
 		mes " ";
 		mes "^0000ff Deseas activar la KoE?^000000";
 		if(select("No:Si")==2) {
 			doevent "KoE::OnStart";
 			atcommand "@refresh ";
+			//goto OnWarp;
 			end;
 		} else {
 			next2;
@@ -492,12 +495,7 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
     mes "Hola.";
     mes "Te gustaria particiar en el torneo ^FF0000King of Emperium Hill^000000?";
 	if ( select ( "Si", "No" ) == 1 ){ 
-		 switch( rand(1,4) ){
-			case 1:	warp "guild_vs1", 50, 88; end;
-			case 2:	warp "guild_vs1", 88, 50; end;
-			case 3:	warp "guild_vs1", 50, 11; end;
-			case 4:	warp "guild_vs1", 11, 50; end;
-		}
+		 goto OnWarp;
 	}
    
 
@@ -505,22 +503,36 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 	cutin "",255;
 	end;
 
+	OnWarp:
+		sleep2 1;
+		switch( rand(1,4) ){
+			case 1:	warp "guild_vs1", 50, 88; end;
+			case 2:	warp "guild_vs1", 88, 50; end;
+			case 3:	warp "guild_vs1", 50, 11; end;
+			case 4:	warp "guild_vs1", 11, 50; end;
+		}
+	end;
+
 	OnInit:
-		set .time,120000;
-		set .DELAY_CONF,300000;
+		set .time,150000;
+		set .DELAY_CONF,900000;
 		set .DELAY,0;
 		delwaitingroom;
 		waitingroom "PVP KoE",0;
+		.ss = 59;
+		.mm = (.DELAY_CONF / 60000)-1;
+		.DELAY_CLOCK$ = "";
 	end;
 
 	OnDelay:
 		sleep2 1;
-		set .DELAY,.DELAY_CONF;
+		set .DELAY,(.DELAY_CONF-65000);
 		while(1){
 			sleep2 1000;
 			.DELAY = .DELAY-1000;
 			if(.DELAY <=0) {
-				.mm = (.DELAY / 60000)-1; 
+				.mm = (.DELAY_CONF / 60000)-1;
+				set .DELAY,0;
 				break;
 				end;
 			}
@@ -530,19 +542,20 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 
 	function setDelayClock	{
 		.ss = .ss-1;
+
 		if(.ss<=0) {
 			.mm = .mm-1;
 			.ss = 59;
 		}
-		if(.mm <= 0) {;
-			.mm = 59;
-		}
+
 		.@ss$ = (.ss<10)?("0"+.ss):.ss;
 		.@mm$ = (.mm<10)?("0"+.mm):.mm;
 		.@mm$ = (.DELAY <= 60000)?"00":.@mm$; //Si solo queda un minuto....
 		.DELAY_CLOCK$ = .@mm$+":"+.@ss$;
 	}
 }
+
+//pvp_castle,121,114,4	duplicate(Loki)	PVP Free For All	105
 
 -	script	bg_messages	-1,{
 

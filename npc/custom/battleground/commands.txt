@@ -29,8 +29,8 @@
 				if(!(countitem(5666)>=1)) {
 					getitem 5666,1;
 					equip 5666;
-					atcommand "@aura 822";
 				}
+				atcommand "@aura 822";
 				set .DELAY,0; // delay de un minuto
 				initnpctimer;
 				doevent strnpcinfo(3)+"::OnPVPKingDelay";

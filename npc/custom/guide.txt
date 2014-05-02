@@ -19,7 +19,8 @@ OnPCLoadMapEvent:
 	
 	OnCommand:
 		sleep2 1;
-		unittalk getcharid(3),"Activar Modo Guia !";
+		//unittalk getcharid(3),"Activar Modo Guia !";
+		message strcharinfo(0),"Activar Modo Guia !";
 		specialeffect2 521;
 		specialeffect2 879;
 		if(!#GUIDE_SOUND)
@@ -28,6 +29,7 @@ OnPCLoadMapEvent:
 	end;
 
 	OnGuide:
+
 		sleep2 1;
 		if(strcharinfo(3)=="sec_pri"){ //Si estas en prision, no puedes hablar con la guia
 			mes "                        ^ff0000[ Info ] ^000000";

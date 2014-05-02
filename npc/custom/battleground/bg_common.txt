@@ -170,264 +170,71 @@ bat_room,160,159,3	script	General Guillaume	4_M_KY_KIYOM,{
 	end;
 }
 
-// Flags
-//============================================================
-//bat_room,140,160,3	script	Guillaume Base#roomflag1	1_FLAG_LION,{ end; }
-//bat_room,167,160,3	script	Guillaume Base#roomflag2	1_FLAG_LION,{ end; }
-//bat_room,140,139,3	script	Croix Base#roomflag1	1_FLAG_EAGLE,{ end; }
-//bat_room,167,139,3	script	Croix Base#roomflag2	1_FLAG_EAGLE,{ end; }
-
-// BattleGround Warper
-//============================================================
-bat_room,148,150,5	script	Teleporter#Battlefield	4_F_TELEPORTER,{
-	mes "[Teleporter]";
-	mes "Do you wish to leave the battlefield? Use my services to return to town.";
-	next;
-	switch(select("Leave:Don't Leave")) {
-	case 1:
-		mes "[Teleporter]";
-		switch(bat_return) {
-		default:
-		case 1:
-			setarray .@mapname$[0],"Prontera.","prontera";
-			setarray .@xy[0],116,72;
-			break;
-		case 2:
-			setarray .@mapname$[0],"Morroc","moc_ruins";
-			setarray .@xy[0],152,48;
-			break;
-		case 3:
-			setarray .@mapname$[0],"Al De Baran.","aldebaran";
-			setarray .@xy[0],168,112;
-			break;
-		case 4:
-			setarray .@mapname$[0],"Geffen.","geffen";
-			setarray .@xy[0],120,39;
-			break;
-		case 5:
-			setarray .@mapname$[0],"Payon.","payon";
-			setarray .@xy[0],161,58;
-			break;
-		case 6:
-			setarray .@mapname$[0],"Lighthalzen.","lighthalzen";
-			setarray .@xy[0],159,93;
-			break;
-		case 7:
-			setarray .@mapname$[0],"Rachel.","rachel";
-			setarray .@xy[0],115,124;
-			break;
-		}
-		mes "You will be sent back to "+.@mapname$[0]+".";
-		close2;
-		warp .@mapname$[1],.@xy[0],.@xy[1];
-		break;
-	case 2:
-		mes "[Teleporter]";
-		mes "I'll be here whenever you're in need of my services.";
-		close;
-	}
-	end;
-}
-
--	script	Maroll Battle Recruiter::BatRecruit	4_F_JOB_KNIGHT,{
-	mes "[Maroll Battle Recruiter]";
-	mes "Good day, adventurer.";
-	mes "I'm a knight from a far country called Maroll Kingdom.";
-	next;
-	mes "[Maroll Battle Recruiter]";
-	mes "The two princes of the kingdom are now battling for the throne of Maroll, and are in need of experienced soldiers like you.";
-	mes "How would you like to lend your power to one of the princes in the Maroll Kingdom?";
-	next;
-	switch(select("Join:Don't Join")) {
-	case 1:
-		mes "[Maroll Battle Recruiter]";
-		mes "May the war god bless you.";
-		close2;
-		getmapxy(.@mapname$,.@x,.@y,1);
-		if (.@mapname$ == "prontera")
-			set bat_return,1;
-		else if (.@mapname$ == "moc_ruins")
-			set bat_return,2;
-		else if (.@mapname$ == "aldebaran")
-			set bat_return,3;
-		else if (.@mapname$ == "geffen")
-			set bat_return,4;
-		else if (.@mapname$ == "payon")
-			set bat_return,5;
-		else if (.@mapname$ == "lighthalzen")
-			set bat_return,6;
-		else if (.@mapname$ == "rachel")
-			set bat_return,7;
-		else
-			set bat_return,1;
-		warp "bat_room",154,150;
-		break;
-	case 2:
-		mes "[Maroll Battle Recruiter]";
-		mes "I'll always be stationed here for more soldiers. Feel free to come back whenever you're interested.";
-		close;
-	}
-	end;
-}
-
-prontera,123,83,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit1	4_F_JOB_KNIGHT
-moc_ruins,75,162,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit2	4_F_JOB_KNIGHT
-aldebaran,146,109,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit3	4_F_JOB_KNIGHT
-geffen,109,66,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit4	4_F_JOB_KNIGHT
-payon,189,105,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit5	4_F_JOB_KNIGHT
-lighthalzen,153,86,5	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit6	4_F_JOB_KNIGHT
-rachel,149,138,3	duplicate(BatRecruit)	Maroll Battle Recruiter::BatRecruit7	4_F_JOB_KNIGHT
-
-// Additional warps
-// Empty
-bat_room,57,81,0	warp	bat1	1,1,bat_room,154,149
-bat_room,57,90,0	warp	bat2	1,1,bat_room,154,149
-// Empty
-bat_room,85,81,0	warp	bat5	1,1,bat_room,154,149
-bat_room,85,90,0	warp	bat6	1,1,bat_room,154,149
-// Free BG
-bat_room,113,81,0	warp	bat9	1,1,bat_room,154,149
-bat_room,113,90,0	warp	bat10	1,1,bat_room,154,149
-// Free BG
-bat_room,141,81,0	warp	bat13	1,1,bat_room,154,149
-bat_room,141,90,0	warp	bat14	1,1,bat_room,154,149
-// Free BG
-bat_room,169,81,0	warp	bat17	1,1,bat_room,154,149
-bat_room,169,90,0	warp	bat18	1,1,bat_room,154,149
-// Free BG
-bat_room,197,81,0	warp	bat21	1,1,bat_room,154,149
-bat_room,197,90,0	warp	bat22	1,1,bat_room,154,149
-// Free BG
-bat_room,225,81,0	warp	bat25	1,1,bat_room,154,149
-bat_room,225,90,0	warp	bat26	1,1,bat_room,154,149
-// Empty
-bat_room,253,81,0	warp	bat29	1,1,bat_room,154,149
-bat_room,253,90,0	warp	bat30	1,1,bat_room,154,149
-// Empty
-bat_room,253,220,0	warp	bat31	1,1,bat_room,154,149
-bat_room,253,211,0	warp	bat32	1,1,bat_room,154,149
-
-// Kafra
-//============================================================
-bat_room,148,147,4	script	Kafra Staff::kaf_bat	4_F_KAFRA9,{
-	cutin "kafra_09",2;
-	callfunc "F_Kafra",0,2,1,150,0;
-}
 
 // Repairman
 //============================================================
-bat_room,138,144,4	script	Repairman#bg	4_M_04,{
+pvp_castle,80,97,5	script	Repairman#bg	4_M_04,{
 	callfunc "repairmain","Repairman";
 	end;
 }
 
-// GM Management NPC
-//============================================================
-bat_room,1,151,3	script	Switch#batgnd	4_DOG01,{
-	set .@i, callfunc("F_GM_NPC",1854,0);
-	if (.@i == -1) {
-		mes "The command has been cancelled.";
-		close;
-	} else if (.@i == 0) {
-		end;
-	} else {
-		mes "May I help you?";
-		next;
-		switch(select("Close Battlefield:Open Battlefield:Reset a01:Reset b01:Reset a02:Reset b02")) {
-		case 1:
-			disablenpc "Tierra Gorge Officer#01a";
-			disablenpc "Tierra Gorge Officer#02a";
-			disablenpc "Tierra Gorge Officer#01b";
-			disablenpc "Tierra Gorge Officer#02b";
-			disablenpc "Flavius Officer#01a";
-			disablenpc "Flavius Officer#01b";
-			disablenpc "Flavius Officer#02a";
-			disablenpc "Flavius Officer#02b";
-			break;
-		case 2:
-			enablenpc "Tierra Gorge Officer#01a";
-			enablenpc "Tierra Gorge Officer#02a";
-			enablenpc "Tierra Gorge Officer#01b";
-			enablenpc "Tierra Gorge Officer#02b";
-			enablenpc "Flavius Officer#01a";
-			enablenpc "Flavius Officer#01b";
-			enablenpc "Flavius Officer#02a";
-			enablenpc "Flavius Officer#02b";
-			break;
-		case 3:
-			donpcevent "start#bat_a01::OnEnable";
-			break;
-		case 4:
-			donpcevent "start#bat_b01::OnEnable";
-			break;
-		case 5:
-			donpcevent "start#bat_a02::OnEnable";
-			break;
-		case 6:
-			donpcevent "start#bat_b02::OnEnable";
-			break;
-		}
-		mes "Complete";
-		close;
-	}
-}
 
 // Badges Exchange
 //============================================================
-bat_room,160,150,3	script	Erundek	4_M_MANAGER,{
+pvp_castle,85,92,5	script	Erundek	4_M_MANAGER,{
 	if (checkweight(1201,1) == 0) {
-		mes "- Wait a minute !! -";
-		mes "- Currently you're carrying -";
-		mes "- too many items with you. -";
-		mes "- Please try again -";
-		mes "- after you loose some weight. -";
+		mes "- Espera un minuto !! -";
+		mes "- Ahora mismo estas cargando -";
+		mes "- Demasiados items. -";
+		mes "- Por favor intentalo de nuevo -";
+		mes "- Despues de perder algo de peso. -";
 		close;
 	}
 	mes "[Erundek]";
-	mes "Do you have the battlefield badges?";
-	mes "I can exchange Bravery Badges and Valor Badges for reward items.";
+	mes "Posees medallas del campo de batalla?";
+	mes "Yo puedo cambiarte Bravery Badges y Valor Badges por items de recompensa.";
 	next;
 	switch(select("Exchange Badges:Check the Catalog")) {
 	case 1:
 		mes "[Erundek]";
-		mes "Which type of items would you like to exchange?";
-		mes "To check more information about the reward items, please use our ^3131FFCatalog^000000.";
+		mes "Que tipo de items deseas cambiar?";
+		mes "Para checear mas informacion de nuestros items de recompensa, porfavor vea nuestro ^3131FFCatalogo^000000.";
 		next;
 		switch(select("Weapon:Armor:Accessory:Consumable")) {
 		case 1:
 			mes "[Erundek]";
-			mes "You chose ^3131FFWeapon^000000.";
-			mes "The following weapons are available for exchange with the battlefield badges.";
-			mes "Please note that items for ^3131FFBravery Badges are indicated as (BB)^000000, and ^3131FFValor Badges as (VB)^000000.";
+			mes "Has escojido ^3131FFArma^000000.";
+			mes "Las sigientes armas estan disponibles para cambiarse por medallas del campo de batalla.";
+			mes "Porfavor note que los items ^3131FFBravery Badges estan indicados como (BB)^000000, y ^3131FFValor Badges como (VB)^000000.";
 			next;
 			switch(select("Dagger/OneSword/TwoSword/TwoSpear:Staff/Mace/TwoAxe/Shuriken:Bow/Katar/Music/Whip:Book/Knuckle:Revolver/Rifle/Gatling/Shotgun/Launcher")) {
 			case 1:
 				mes "[Erundek]";
-				mes "The following items are available in the ^3131FFDagger, One-Handed Sword, Two-Handed Sword, and Two-Handed Spear^000000 category.";
+				mes "Los sigientes items estan disponibles en ^3131FFDagger, One-Handed Sword, Two-Handed Sword, y Two-Handed Spear^000000 categoria.";
 				next;
 				setarray .@Weapons[0],13036,7828,13037,7829,13411,7828,13410,7829,1183,7828,1184,7829,1425,7828,1482,7829;
 				break;
 			case 2:
 				mes "[Erundek]";
-				mes "The following items are available in the ^3131FFStaff / Mace / Two-Handed Axe / Huuma Shuriken^000000 category.";
+				mes "Los sigientes items estan disponibles en ^3131FFStaff / Mace / Two-Handed Axe / Huuma Shuriken^000000 categoria.";
 				next;
 				setarray .@Weapons[0],1632,7828,1633,7829,1634,7828,1635,7829,1543,7828,1542,7829,1380,7828,1379,7829,13305,7828,13306,7829;
 				break;
 			case 3:
 				mes "[Erundek]";
-				mes "The following weapons are available in the ^3131FFBow / Katar / Musical Instrument / Whip^000000 category.";
+				mes "Los sigientes items estan disponibles en ^3131FFBow / Katar / Musical Instrument / Whip^000000 categoria.";
 				next;
 				setarray .@Weapons[0],1739,7828,1738,7829,1279,7828,1280,7829,1924,7828,1923,7829,1978,7828,1977,7829;
 				break;
 			case 4:
 				mes "[Erundek]";
-				mes "The following weapons are available in the ^3131FFBook / Knuckle^000000 category.";
+				mes "Los sigientes items estan disponibles en ^3131FFBook / Knuckle^000000 categoria.";
 				next;
 				setarray .@Weapons[0],1574,7828,1575,7829,1824,7828,1823,7829;
 				break;
 			case 5:
 				mes "[Erundek]";
-				mes "The following weapons are available in the ^3131FFRevolver / Rifle / Gatling Gun / Shotgun / Grenade Launcher^000000 category.";
+				mes "Los sigientes items estan disponibles en ^3131FFRevolver / Rifle / Gatling Gun / Shotgun / Grenade Launcher^000000 categoria.";
 				next;
 				setarray .@Weapons[0],13108,7828,13171,7829,13172,7828,13173,7829,13174,7829;
 				break;
@@ -438,29 +245,29 @@ bat_room,160,150,3	script	Erundek	4_M_MANAGER,{
 			set .@i, (select(.@menu$)-1)*2;
 			set .@type$, ((.@Weapons[.@i+1]==7828)?"(BB)":"(VB)");
 			mes "[Erundek]";
-			mes "You chose ^3131FF"+getitemname(.@Weapons[.@i])+.@type$+"^000000.";
-			mes "You can exchange for this item with ^FF0000100 "+getitemname(.@Weapons[.@i+1])+"^000000.";
-			mes "Would you like to exchange?";
+			mes "Has Escojido ^3131FF"+getitemname(.@Weapons[.@i])+.@type$+"^000000.";
+			mes "Tu puedes cambiar este item con ^FF0000100 "+getitemname(.@Weapons[.@i+1])+"^000000.";
+			mes "Te gustaria cambiarlo?";
 			next;
 			switch(select("Do not exchange:Exchange")) {
 			case 1:
 				break;
 			case 2:
 				mes "[Erundek]";
-				mes "Would you like to spend ^FF0000100 "+getitemname(.@Weapons[.@i+1])+"^000000 and receive a ^3131FF"+getitemname(.@Weapons[.@i])+.@type$+"^000000?";
+				mes "Te gustaria gastar ^FF0000100 "+getitemname(.@Weapons[.@i+1])+"^000000 and receive a ^3131FF"+getitemname(.@Weapons[.@i])+.@type$+"^000000?";
 				next;
 				mes "[Erundek]";
-				mes "Remember, Battleground Reward Items are ^FF0000Character Bound^000000. Are you sure you want this item?";
+				mes "Recuerda, Los premios de recompensa del campo de batalla son ^FF0000Unicas por Personaje^000000. Are you sure you want this item?";
 				next;
-				switch(select("Yes:No")) {
+				switch(select("Si:No")) {
 				case 1:
 					mes "[Erundek]";
 					if (countitem(.@Weapons[.@i+1]) >= 100) {
-						mes "Thank you for exchanging.";
+						mes "Gracias por Cambiar.";
 						delitem .@Weapons[.@i+1],100;
 						getitem .@Weapons[.@i],1;
 					}
-					else mes "I'm sorry, but you don't have enough badges to exchange.";
+					else mes "Lo siento, pero no tienes suficientes medallas.";
 					close;
 				case 2:
 					break;
@@ -468,12 +275,12 @@ bat_room,160,150,3	script	Erundek	4_M_MANAGER,{
 				break;
 			}
 			mes "[Erundek]";
-			mes "Do you need more time to check the items?";
+			mes "Necesitas mas tiempo para chequear los items?";
 			close;
 		case 2:
 			mes "[Erundek]";
-			mes "You chose ^3131FFArmor^000000.";
-			mes "The following armors are available for exchange with the battlefield badges.";
+			mes "Has escojido ^3131FFArmor^000000.";
+			mes "Las sigientes armaduras estan disponibles para cambiar por medallas del campo de batalla.";
 			next;
 			switch(select("Garments / Shoes:Armor")) {
 			case 1:
@@ -486,16 +293,16 @@ bat_room,160,150,3	script	Erundek	4_M_MANAGER,{
 			break;
 		case 3:
 			mes "[Erundek]";
-			mes "You chose ^3131FFAccessory^000000.";
-			mes "You can exchange the Medal of Honors with your Badges according to the job classes, as follows:";
+			mes "Has escojido ^3131FFAccessory^000000.";
+			mes "Tu puedes cambiar tus medallas de honor por medallas dependiendo de tu clase de trabajo, como la sigiente:";
 			next;
 			setarray .@items[0],2733,500,2720,500,2721,500,2722,500,2723,500,2724,500,2725,500;
 			set .@menu1$,"Gunslinger:Swordman/Taekwon Master:Thief:Acolyte:Magician:Archer:Merchant";
 			break;
 		case 4:
 			mes "[Erundek]";
-			mes "You chose ^3131FFConsumable^000000.";
-			mes "The following consumable items are available for exchange with the battlefield badges:";
+			mes "Has escojido ^3131FFConsumable^000000.";
+			mes "Los sigientes items consumibles estan disponibles para cambio por medallas de campo de batalla:";
 			next;
 			setarray .@items[0],12269,10,12270,10,12271,5,12272,10,12273,10;
 			break;
@@ -503,7 +310,7 @@ bat_room,160,150,3	script	Erundek	4_M_MANAGER,{
 		break;
 	case 2:
 		mes "[Erundek]";
-		mes "We have many items, so please take a look and purchase deliberately.";
+		mes "Nosotros tenemos muchos items, asi que heche un vistazo y compre deliberadamente.";
 		close2;
 		readbook 11010,1;
 		end;
@@ -516,47 +323,155 @@ bat_room,160,150,3	script	Erundek	4_M_MANAGER,{
 	mes "[Erundek]";
 	mes "You chose ^3131FF"+getitemname(.@items[.@i])+"^000000.";
 	switch(.@items[.@i]) {
-		case 2720: mes "This item is for Swordman and Taekwon Master Class only."; break;
-		case 2721: mes "This item is for Thief Class only."; break;
-		case 2722: mes "This item is for Acolyte Class only."; break;
-		case 2723: mes "This item is for Magician Class only."; break;
-		case 2724: mes "This item is for Archer Class only."; break;
-		case 2725: mes "This item is for Merchant Class only."; break;
-		case 2733: mes "This item is for Gunslinger only."; break;
+		case 2720: mes "Este item es solamente para Swordman y Taekwon Master Class solamente."; break;
+		case 2721: mes "Este item es solamente para Thief Class solamente."; break;
+		case 2722: mes "Este item es solamente para Acolyte Class solamente."; break;
+		case 2723: mes "Este item es solamente para Magician Class solamente."; break;
+		case 2724: mes "Este item es solamente para Archer Class solamente."; break;
+		case 2725: mes "Este item es solamente para Merchant Class solamente."; break;
+		case 2733: mes "Este item es solamente para Gunslinger solamente."; break;
 		default: break;
 	}
-	mes "You can exchange for this item with ^FF0000"+.@items[.@i+1]+" "+getitemname(7828)+" or "+.@items[.@i+1]+" "+getitemname(7829)+"^000000.";
-	mes "Would you like to exchange?";
+	mes "Tu puedes cambiar este item por ^FF0000"+.@items[.@i+1]+" "+getitemname(7828)+" O "+.@items[.@i+1]+" "+getitemname(7829)+"^000000.";
+	mes "Te gustaria cambiarlo?";
 	next;
-	switch(select("Do not exchange:Exchange")) {
+	switch(select("No Cambiar:Cambiar")) {
 	case 1:
 		mes "[Erundek]";
-		mes "Do you need more time to check the items?";
+		mes "Necesitas mas tiempo para chequear los items?";
 		break;
 	case 2:
 		mes "[Erundek]";
-		mes "Which Badge do you want to exchange?";
-		mes "You need ^3131FF"+.@items[.@i+1]+" Badges^000000 to exchange.";
+		mes "Que medalla deseas cambiar?";
+		mes "Necesitas ^3131FF"+.@items[.@i+1]+" Medallas^000000 para cambiar.";
 		next;
 		if (.@item[0] < 12269 || .@item[0] > 12273 ) {
 			mes "[Erundek]";
-			mes "Remember, Battleground Reward Items are ^FF0000Character Bound^000000. Are you sure you want this item?";
+			mes "Recuerda, Las recompensas del campo de batalla son ^FF0000Unicas por Personaje^000000. Estas seguro que quieres este item?";
 			next;
 		}
 		set .@j, select("Bravery Badge:Valor Badge:Cancel");
 		mes "[Erundek]";
 		if (.@j == 3) {
-			mes "You cancelled the exchange.";
+			mes "Has cancelado el cambio.";
 			break;
 		}
 		set .@cost, ((.@j==1)?7828:7829);
 		if (countitem(.@cost) >= .@items[.@i+1]) {
-			mes "Thank you for exchanging.";
+			mes "Gracias por cambiar.";
 			delitem .@cost, .@items[.@i+1];
 			getitem .@items[.@i],1;
 		}
-		else mes "You do not have enough "+getitemname(.@cost)+"s.";
+		else mes "No tienes suficiente "+getitemname(.@cost)+"s.";
 		break;
 	}
+	close;
+}
+
+// PVP Point Trader
+pvp_castle,111,101,4	script	PVP Point Trader::pvp_point_trader	470,{
+	function trade;
+
+	mes "^006633[ PVP Point Trader ]^000000";
+	if (checkweight(1201,1) == 0) {
+		mes "- Espera un minuto !";
+		mes "- Actualmente estas llevando  -";
+		mes "- demaciados items contigo. -";
+		mes "- Por favor intenta de nuevo -";
+		mes "- despues de perder algo de peso.";
+		close;
+	}
+	mes "Yo tradeo armas por puntos que has ganado en los modos de ^0000ffPVP Hunt^000000 y ^0000ffPVP KoE^000000 en esta sala.";
+	mes " ";
+	if(#PVPPOINTS < .PRICE) {
+		mes "Pero no tradeo ningun arma por menos de ^ff0000"+.PRICE+" Puntos de PVP^000000";
+		close;
+		end;
+	}
+
+	mes "Que deseas tradear de mi lista?";
+	setarray .@m$, "Dagger","One Handed Sword","Two Handed Sword","Axe","Mace","Bow","Staff","Book","Spear","Katar","Knuckle","Whip","Musical Instrument";
+		set .@m, select (implode(.@m$,":")) - 1;
+		switch (.@m) {
+			case 0:
+				setarray .@mw$, "Ginnungagap:Grimtooth:Dragon Killer:Mail Breaker:Bazerald:Sword Breaker:Ice Pick:Sucsamad:Kitchen Knife:Azoth:Exorciser:Assassin Dagger:Moonlight Dagger:Weeder Knife:Cursed Dagger:Dagger of Counter:Combat Knife:Fortune Sword";
+				setarray .@mw, 13002,1237,13001,1225,1231,1224,1230,1236,1229,1235,1233,1232,1234,1227,1241,1242,1228,1223;
+				break;
+			case 1:
+				setarray .@mw$, "Nagan:Immaterial Sword:Mysteltainn:Byeollungum:Star Dust Blade:Caesar's Sword:Ice Falchion:Excalibur:Edge:Cutlus:Solar Sword:Tirfing:Fireblend";
+				setarray .@mw, 1130,1141,1138,1140,1148,1134,1131,1137,1132,1135,1136,1139,1133;
+				break;
+			case 2:	
+				setarray .@mw$, "Dragon Slayer:Masamune:Muramasa:Schweizersabel:Executioner:Zweihander:Katzbalger";
+				setarray .@mw, 1166,1165,1164,1167,1169,1168,1170;
+				break;
+			case 3:
+				setarray .@mw$, "Great Axe:Guillotine:Light Epsilon:Bloody Axe:Sabbath:Slaughter:Cleaver:Tomahawk";
+				setarray .@mw, 1364,1369,1366,1363,1365,1367,1305,1368;
+				break;
+			case 4:
+				setarray .@mw$, "Golden Mace:Grand Cross:Long Mace:Spike:Slash:Quadrille";
+				setarray .@mw, 1524,1528,1525,1523,1526,1527;
+				break;
+			case 5:
+				setarray .@mw$, "Roguemaster's Bow:Dragon Wing:Rudra's Bow:Ballista";
+				setarray .@mw, 1719,1724,1720,1722;
+				break;
+			case 6:
+				setarray .@mw$, "Wing Staff:Wizardry Staff";
+				setarray .@mw, 1616,1473;
+			case 7:
+				setarray .@mw$, "Legacy of Dragon:Book of the Apocalypse:Girl's Diary:Hardcover Book";
+				setarray .@mw, 1559,1557,1558,1561;
+				break;
+			case 8:
+				setarray .@mw$, "Gae Bolg:Gelerdria:Gungnir:Skewer:Longinus's Spear:Brionac:Bill Guisarme:Zephyrus:Crescent Scythe:Tjungkuletti:Hellfire";
+				setarray .@mw, 1474,1414,1413,1415,1469,1470,1467,1468,1466,1416,1471;
+				break;
+			case 9:
+				setarray .@mw$, "Infiltrator:Bloody Roar:Unholy Touch";
+				setarray .@mw, 1261,1265,1263;
+				break;
+			case 10:
+				setarray .@mw$, "Hatii Claw:Berserk:Kaiser Knuckle";
+				setarray .@mw, 1815,1814,1813;
+				break;
+			case 11:
+				setarray .@mw$, "Lariat:Rapture Rose:Blade Whip:Chemeti:Queen's Whip";
+				setarray .@mw, 1962,1963,1969,1964,1970;
+				break;
+			case 12:
+				setarray .@mw$, "Oriental Lute:Electric Guitar";
+				setarray .@mw, 1918,1913;
+				break;		
+		}
+		set .@j, select (.@mw$+":Cancelar") - 1;
+		explode(.@mw$,.@mw$,":");
+		if (.@j == getarraysize(.@mw$)) close;
+		trade(.@mw[.@j]);
+		//callsub S_BonusReward,1500,.@mw[.@j];
+		end;
+
+	function trade {
+		set #PVPPOINTS,#PVPPOINTS-.PRICE;
+		getitem getarg(0),1;
+		next2;
+		mes "^006633[ PVP Point Trader ]^000000";
+		mes "Exelente negocio !";
+		mes "Regresa siempre que quieras";
+		close;
+	}
+
+	OnInit:
+		set .PRICE,10000; //Cantidad de Puntos Necesarios para cambiar items
+	end;
+}
+
+pvp_castle,114,97,4	script	PVP Points Checker::pvp_points_check	654,{
+	mes "^cc66cc[ PVP Point Checker ]^000000";
+	mes "Jugando ^0000ffPVP Hunt^000000 O ^0000ffPVP KoE^000000 obtienes un puntaje especial llamado";
+	mes "^ff0000Puntos de PVP^000000";
+	mes "Actualmente tienes un total de: ";
+	mes "^808080"+#PVPPOINTS+" Puntos de PVP^000000";
 	close;
 }

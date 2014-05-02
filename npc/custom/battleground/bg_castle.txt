@@ -17,8 +17,15 @@ OnPCLoadMapEvent:
 			set #PVP_INVITATIONS,0; //Dentro del castillo  las invitaciones son habilitadas nuevamente
 		}
 	end;
+
+OnInit:
+	setmapflag "pvp_castle", mf_novending;
+	setmapflag "pvp_castle", mf_nosave;
+	setmapflag "pvp_castle", mf_nomemo;
+	setmapflag "pvp_castle", mf_noteleport;
+	setmapflag "pvp_castle", mf_loadevent;
+end;
 }
-pvp_castle	mapflag	loadevent
 pvp_castle,99,69,0	warp	pvpcastexit	2,2,titans,140,206
 titans,140,209,0	warp	pvpcastenter	1,1,pvp_castle,99,72
 
