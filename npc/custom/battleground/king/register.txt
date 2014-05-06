@@ -150,7 +150,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 
 	StartTournament:
 		delwaitingroom;
-		
+		disablenpc "pvp_king_reward"; //Si el premiador quedo dentro de la sala de espera activado
 		//Borramos el item del usuario anterior. que era el rey actual del torneo y borramos al rey del torneo actual
 		set .OldKing$,$pvpking$[0]; // Gudarmaos primero una referencia del antiguo rey
 		if($pvpking$[0]!="" && isloggedin(getcharid(3,$pvpking$[0]))) {
@@ -167,7 +167,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 		sleep2 10000;
 		announce "Los participantes estan siendo llevados a la sala de organización. Buena Suerte a todos",bc_all;
 		for(.@i=0;.@i<.Size;++.@i)
-			unitwarp getcharid(3,.queue$[.@i]),"que_avan01",25,26;
+			warpchar "que_avan01",25,26,getcharid(0,.queue$[.@i]);
 
 		areawarp "pvp_castle",159,11,188,38,"pvp_castle",106,110;
 		initnpctimer;
@@ -199,9 +199,10 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 		set .Size,0;
 		set .user1$,"";
 		set .user2$,"";
+		set .TEND,0; //Finalizo el torneo?  usado para evitar error de mensajes si un usuario abondona despues de ser declarado ganador, asi no continua valiadno match infinitamente
 		set .static_time,60000; // tiempo de registro statico
 		set .time,.static_time; //Tiempo de registro dynamico
-		set .STACK,8; //numero de jugadores para que exista un torneo
+		set .STACK,3; //numero de jugadores para que exista un torneo
 		set .JAILTIME,2; //en Horas
 		set .JAIL_ON,0; //0 No activo envio a prision || 1 Envio a prision activo
 		set .MATCH,0; //Si es 1 entonces acaba de iniciar la organizacion de un match...si es 2 entonces ya acabo la cuenta regresiva del match y estan batallando
@@ -218,9 +219,10 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 			setWinner(strcharinfo(0));
 			warpchar "pvp_castle",106,110,getcharid(0,rid2name(killedrid));
 			sleep2 2000;
-			if(.ON_FINAL) // Si estamos en la final
+			if(.ON_FINAL){ // Si estamos en la final
 				announce "[ "+strcharinfo(0)+" ] Derroto a [ "+rid2name(killedrid)+" ] Y logra con esto ganar la Final del Torneo PVP.",bc_all;
-			else
+				set .TEND,1; //Si esta fue la kill que gano la final, este flag nos ayudara a decir que el torneo ya finalizo
+			}else
 				announce "[ "+strcharinfo(0)+" ] Derroto a [ "+rid2name(killedrid)+" ] Y logra con esto pasar a la siguiente ronda del Torneo PVP.",bc_all;
 			
 			sleep2 7000;
@@ -245,7 +247,8 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 		}
 
 		if(getState()==2){ // El torneo inicio
-			playerLeave(strcharinfo(0));
+			if(!.TEND)
+				playerLeave(strcharinfo(0));
 		}
 	end;
 
@@ -328,9 +331,12 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 			mapannounce "que_avan01","Los participantes de la batalla No. "+.announce_count+" de la RONDA ("+.round+") estan siendo llevados a la arena en 5 segundos.",bc_blue;
 
 		sleep2 8000;
-			
-		warpchar "arena",29,48,getcharid(0,.user1$);
-		warpchar "arena",70,48,getcharid(0,.user2$);
+		
+		if(strcharinfo2(3,.user1$)=="que_avan01")
+			warpchar "arena",29,48,getcharid(0,.user1$);
+
+		if(strcharinfo2(3,.user2$)=="que_avan01")
+			warpchar "arena",70,48,getcharid(0,.user2$);
 
 		sleep2 5000;
 		if(.ON_FINAL)
@@ -364,11 +370,12 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 			sleep2 8000;
 			setMatch();
 		} else { //Se acabaron los encuentros de la primera ronda
-			if(.ON_FINAL)
+			if(.ON_FINAL) {
 				mapannounce "que_avan01","Ha Terminado la Final",bc_blue;
-			else
+			}else{
 				mapannounce "que_avan01","Han Terminado los encuentros de la RONDA ("+.round+").",bc_blue;
-			sleep2 5000;
+				sleep2 5000;
+			}
 
 			if(getarraysize(.winners$) == 2) { //Final
 				announce "Llego la Ultima Pelea del Torneo. El jugador que Gane esta pelea sera proclamado como REY DEL PVP.",bc_all;
@@ -406,7 +413,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 
 	function setState {
 		set getvariableofnpc(.TORNEO,"pvp_king_officer"),getarg(0);
-		return;
+		//return;
 	}
 
 	function getState {
@@ -423,31 +430,27 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 		//setState(0);
 		set .time,.static_time; 
 		set .MATCH,0;
+		set .TEND,0; //Flag para señalar si el torneo finalizo, 1 finalizo , 0 no finalizado
 		set .user1$,"";
 		set .user2$,"";
 		set .OldKing$,""; // Viejo rey del pvp
 		set .FLAG_IGNORE_DRAW,0; //Este es un flag que evitara mensaje de empate si ahi forfy antes
 	}
 
+
 	function setKing {
-		set .@winner,getcharid(3,getarg(0));
-		attachrid .@winner;
 		if(.OldKing$!="" && isloggedin(getcharid(3,.OldKing$))) {
 			attachrid getcharid(3,.OldKing$);
-			if(countitem(5666)>=1 && .OldKing$!=strcharinfo(0)) //Si el campeon volvio a ganar, no borramos la corona
+			if(countitem(5666)>=1 && .OldKing$!=getarg(0)) //Si el campeon volvio a ganar, no borramos la corona
 				delitem 5666,1,getcharid(3,.OldKing$);
 		
-			detachrid;
-			attachrid .@winner;
+			detachrid;;
 		}
 		deletearray $pvpking$,getarraysize($pvpking$);
 		setarray $pvpking$[0],getarg(0); //nuevo rey
 		setRanking(getarg(0)); //Reordenamos el ranking
 		reset(); 
-		
-		if(isloggedin(.@winner))
-			doevent "pvp_king_reward::OnKing";
-
+		enablenpc "pvp_king_reward";
 		setDelay();//Delay para el proximo rey del pvp
 	}
 
@@ -476,9 +479,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 	*/
 	function setDelay {
 		setState(3);
-		addrid 0;
-		addtimer 1000,"pvp_king_officer::OnDelayTime"; 
-		return;
+		donpcevent "pvp_king_officer::OnDelayTime"; 
 	}
 
 	function checkUser {
@@ -566,7 +567,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 				warpchar "titans",147,168,getcharid(0,getarg(0)); //Es necesario que cambiemos el mapa de la persona para q o falle validateMatch
 			}
 			
-			if((getarg(0)==.user1$ || getarg(0)==.user2$) && .MATCH==2){ //el user esta involucrado en el match actual y el match ya comenzo
+			if((getarg(0)==.user1$ || getarg(0)==.user2$) && .MATCH==2){ //el user esta involucrado en el match actual y el match ya comenzo, o si el torneo ya finalizo (el ultimo kil para coronar al rey)
 				validateMatch(.user1$,.user2$); //si un usuario se fue, declarara ganador al otro y pasara a la siguiente ronda
 			}
 		}
@@ -580,9 +581,8 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 arena	mapflag	loadevent
 que_avan01	mapflag	loadevent
 
--	script	pvp_king_reward	-1,{
+que_avan01,29,27,2	script	Organizador::pvp_king_reward	105,{
 	OnKing:
-		sleep2 10;
 		cutin "prt_soldier",2;
 		mes "^00CCCC[ Organizador Rey del PVP ]^000000";
 		mes "Felicidades, eres el Campeón.";
@@ -591,6 +591,10 @@ que_avan01	mapflag	loadevent
 		close2;
 		warp "titans",146,164;
 		cutin "",255;
+	end;
+
+	OnInit:
+		disablenpc strnpcinfo(3);
 	end;
 }
 

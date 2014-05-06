@@ -1,5 +1,4 @@
 titans,143,163,4	script	titans_guide	-1,{
-	function checkMapFlags;
 
 OnInit:
 	bindatcmd "guide",strnpcinfo(3)+"::OnCommand";
@@ -39,14 +38,17 @@ OnPCLoadMapEvent:
 			close2;
 			end;
 		}
-
-		if(checkMapFlags()){ //Si estas en prision, no puedes hablar con la guia
-			mes "                        ^ff0000[ Info ] ^000000";
-			mes "     ";
-			mes "Imposible contactar con la Guia en este mapa.";
-			close2;
-			end;
+		
+		if(strnpcinfo(3)!="pvp_castle") { //Dentro del castillo no validamos la guia
+			if(callfunc("checkMapFlags")){ //Si estas en prision, no puedes hablar con la guia
+				mes "                        ^ff0000[ Info ] ^000000";
+				mes "     ";
+				mes "Imposible contactar con la Guia en este mapa.";
+				close2;
+				end;
+			}
 		}
+		
 
 		cutin "jpn_anni01",2;
 		mes "^336600[Guia de Titans RO]^000000";
@@ -69,72 +71,14 @@ OnPCLoadMapEvent:
 	end;
 
 	OnMenu:
-		switch(select("Server Info:NPCs:Configuracion:Salir")) {
+		switch(select("NPC's del server:Server Info:Configuracion:Salir")) {
 			case 1:
 				next2;
 				cutin "jpn_anni03",2;
 				mes "^336600[Guia de Titans RO]^000000";
-				mes "Que nivel de jugador tienes?";
-				if(select("Usuario Experto:Principiante")==1) {
-					next2;
-					cutin "jpn_anni02",2;
-					mes "^9933ff[Rates]^000000";
-					mes "^A0A0A0~Usa el comando @rates^000000";
-					mes "^9933ff[Cartas MVPs]^000000";
-					mes "^A0A0A0~No funcionan en BG / WOE / PVP^000000";
-					mes "^9933ff[Instant Cast]^000000";
-					mes "^A0A0A0~Solo se alcanza con 170 de DEX^000000";
-					mes "^9933ff[Horarios WOE]^000000";
-					mes "^A0A0A0~4 Dias a la semana^000000";
-					mes "^9933ff[Comandos Customs]^000000";
-					mes "^A0A0A0~@OnGuide; @kpoints^000000";
-					mes "^9933ff[Freebies]^000000";
-					mes "^A0A0A0~Son regalos que recibes^000000";
-					mes "^A0A0A0~al integrarte a nuestro server^000000";
-					mes "^A0A0A0~Justo Ahora estan en tu invetario^000000";
-				} else {
-					next2;
-					cutin "jpn_anni02",2;
-					mes "^336600[Guia de Titans RO]^000000";
-					mes "Titans RO es un servidor de Ragnarok";
-					mes "Ragnarok es un juego Multi-jugador";
-					mes "tiene su propia historia; como otros RPG";
-					mes "puedes aprender a jugar preguntando a los usuarios";
-					mes "o buscando mas informacion en sitios como ";
-					mes "^0080ffwww.iro.wiki.com^000000";
-					mes "^0080ffwww.ratemyserver.net^000000";
-					mes "^0080ffwww.rune-nifelheim.com^000000";
-					next;
-					mes "Adicional te doy algunos TIPS";
-					mes "^A0A0A0~Ver Zeny / Dinero presiona ALT+V^000000";
-					mes "^A0A0A0~Ver tus STATUS ALT+Q^000000";
-					mes "^A0A0A0~Ver tu inventario ALT+E^000000";
-				}
-				close2;
-				goto OnGuide; 
-			break;
-			
-			case 2:
-				next2;
-				cutin "jpn_anni03",2;
-				mes "^336600[Guia de Titans RO]^000000";
 				mes "Que NPC deseas ver?";
-				switch(select("^3399FFEntrenamiento^000000:^4C9900Mercado^000000:^FF3333Battlegrounds - PVP^000000:^ff8000Central del Server^000000")) {
+				switch(select("^4C9900Mercado^000000:^FF3333Battlegrounds - PVP^000000:^3399FFRefinadores^000000:^ff8000Central del Server^000000:^808080~Volver a Menu~^000000")) {
 					case 1:
-						set ACTIVE_GUIDE,1;
-						getmapxy(@map$,@x,@y,0);
-						if(@map$ == "titans" && @x == 150 && @y == 263) {
-							atcommand "@refresh ";
-							doevent "token_training::OnNpcTalk";
-						} else {
-							if(MY_TRAINER > 0) //Si ya conoce al trainer, warp directo a el
-								warp "iz_ac01_d",100,34;
-							else
-								warp "titans",150,263;
-						}
-					break;
-
-					case 2:
 						set ACTIVE_GUIDE,1;
 						getmapxy(@map$,@x,@y,0);
 						if(@map$ == "titans" && @x == 110 && @y == 209) {
@@ -146,7 +90,7 @@ OnPCLoadMapEvent:
 						
 					break;
 
-					case 3:
+					case 2:
 						set ACTIVE_GUIDE,1;
 						getmapxy(@map$,@x,@y,0);
 						if(@map$ == "titans" && @x == 140 && @y == 203) {
@@ -161,19 +105,101 @@ OnPCLoadMapEvent:
 						
 					end;
 
-					case 4:
-						warp "titans",146,168;
+					case 3:
+						next2;
+						mes "^336600[Guia de Titans RO]^000000";
+						mes "A cual refinador deseas ir?";
+						mes "^ff8000Prontera:^000000 Refinan con HD y reparan armas";
+						mes "^4c9900Payon:^000000 Puedes encontrar al npc Suhnbi que refina con Enriched Metals";
+						switch(select("Prontera:Payon")){
+							case 1: warp "prt_in",58,63;break;
+							case 2: warp "payon",146,167;break;
+						}
 					end;
 
+					/*case 4:
+						set ACTIVE_GUIDE,1;
+						getmapxy(@map$,@x,@y,0);
+						if(@map$ == "titans" && @x == 150 && @y == 263) {
+							atcommand "@refresh ";
+							doevent "token_training::OnNpcTalk";
+						} else {
+							if(MY_TRAINER > 0) //Si ya conoce al trainer, warp directo a el
+								warp "iz_ac01_d",100,34;
+							else
+								warp "titans",150,263;
+						}
+					break;*/
+					case 4:
+						warp "titans",147,168;
+					end;
+
+					case 5:
+						goto OnMenu;
+					end;
+
+					
+
+				}
+			break;
+
+			case 2:
+				next2;
+				cutin "jpn_anni03",2;
+				mes "^336600[Guia de Titans RO]^000000";
+				mes "Que nivel de jugador tienes?";
+				switch(select("Usuario Experto:Principiante:^808080~Volver a Menu~^000000")) {
+					case 1:
+						next2;
+						cutin "jpn_anni02",2;
+						mes "^9933ff[Rates]^000000";
+						mes "^A0A0A0~Usa el comando @rates^000000";
+						mes "^9933ff[Cartas MVPs]^000000";
+						mes "^A0A0A0~No funcionan en BG / WOE / PVP^000000";
+						mes "^9933ff[Instant Cast]^000000";
+						mes "^A0A0A0~No existe en renewall.^000000";
+						mes "^9933ff[Horarios WOE]^000000";
+						mes "^A0A0A0~4 Dias a la semana^000000";
+						mes "^9933ff[Comandos Customs]^000000";
+						mes "^A0A0A0~@guide,@jobmaster @kpoints, @pvpking^000000";
+						close2;
+						goto OnGuide; 
+					break;
+
+					case 2:
+						next2;
+						cutin "jpn_anni02",2;
+						mes "^336600[Guia de Titans RO]^000000";
+						mes "Titans RO es un servidor de Ragnarok";
+						mes "Ragnarok es un juego Multi-jugador";
+						mes "tiene su propia historia; como otros RPG";
+						mes "puedes aprender a jugar preguntando a los usuarios";
+						mes "o buscando mas informacion en sitios como ";
+						mes "^0080ffwww.iro.wiki.com^000000";
+						mes "^0080ffwww.ratemyserver.net^000000";
+						mes "^0080ffwww.rune-nifelheim.com^000000";
+						next;
+						mes "Adicional te doy algunos TIPS";
+						mes "^A0A0A0~Ver Zeny / Dinero presiona ALT+V^000000";
+						mes "^A0A0A0~Ver tus STATUS ALT+Q^000000";
+						mes "^A0A0A0~Ver tu inventario ALT+E^000000";
+						close2;
+						goto OnGuide; 
+					break;
+
+					case 3:
+						goto OnMenu;
+					end;
+					
 				}
 			break;
 
 			case 3:
 				while(1) {
-					//.@_aura = getd("aura_"#AURA);
 					.@g_sound$ = (!#GUIDE_SOUND)?"Sonido de Guia ^0000ff[ ON ]^000000":"Sonido de Guia ^ff0000[ OFF ]^000000";
 					.@g_pvp$ = (!#PVP_INVITATIONS)?"Invitaciones PVP ^0000ff[ ON ]^000000":"Invitaciones PVP ^ff0000[ OFF ]^000000";
-					.@config$ = "Cambiar Aura:Guardar Punto:"+.@g_sound$+":"+.@g_pvp$;
+					.@g_tra$ = (!#MY_TRAINER)?"Anuncios Job Master^0000ff[ ON ]^000000":"Anuncios Job Master ^ff0000[ OFF ]^000000";
+					.@config$ = "Cambiar Aura:"+.@g_sound$+":"+.@g_pvp$+":"+.@g_tra$+":^808080~Volver a Menu~^000000";
 					switch(select(.@config$)) {
 						case 1:
 							next2;
@@ -194,12 +220,17 @@ OnPCLoadMapEvent:
 							end;
 						break;
 						case 2:
-						case 3:
 							set #GUIDE_SOUND,(!#GUIDE_SOUND);
 						break;
-						case 4:
+						case 3:
 							set #PVP_INVITATIONS,(!#PVP_INVITATIONS);
 						break;
+						case 4:
+							set #MY_TRAINER,(!#MY_TRAINER);
+						break;
+						case 5:
+							goto OnMenu;
+						end;
 					}
 				}
 				
@@ -211,19 +242,6 @@ OnPCLoadMapEvent:
 			break;
 		}
 	end;
-
-	function checkMapFlags {
-		if(getmapflag( strcharinfo(3),mf_nowarp) ||
-			getmapflag( strcharinfo(3),mf_warpto) ||
-			getmapflag( strcharinfo(3),mf_noteleport) ||
-			getmapflag( strcharinfo(3),mf_nomemo) || 
-			getmapflag( strcharinfo(3),mf_pvp) ||
-			getmapflag( strcharinfo(3),mf_nosave)) {
-			return 1;
-		}
-			
-		return 0;
-	}
 }
 
 titans,150,263,4	script	token_training	139,3,3,{

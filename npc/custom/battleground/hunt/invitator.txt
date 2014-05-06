@@ -39,17 +39,22 @@
 		cutin "prt_soldier",2;
 		mes "Las invitaciones fueron enviadas.";
 		mes "Si algun amigo no recibe la invitacion es por que estaba hablando con otro npc , escribistes mal su nombre o esta dentro del area de PVP.";
+		set .OnDelay,1;
+		addtimer .DELAY,strnpcinfo(3)+"::OnDelayStop";
 		close2;
 		cutin "",255;
 		//warp  .GUEST_MAP$,.x,.y;
 	end;
 
+	OnDelayStop:
+		set .OnDelay,0;
+	end;
+
 	OnGuest:
 		sleep2 100;
 		set .@no_invite,0;
-		for(@i=0;@i<getarraysize(.NO_INVITE_MAPS$);++@i)
-			if(strcharinfo(3)==.NO_INVITE_MAPS$[@i])
-				set .@no_invite,1;
+		if(callfunc("checkMapFlags"))
+			set .@no_invite,1;
 
 		if(#PVP_INVITATIONS>0 || .@no_invite) // no le manda nada a las personas que no quieren invitacion o estan en mapas prohibidos para invitar
 			end;
@@ -101,6 +106,7 @@
 		set .GUEST_MAP$,"hunt";
 		set .x,107;
 		set .y,28;
-		setarray .NO_INVITE_MAPS$[0],"hunt","que_avan01","arena","pvp_castle","sec_pri";
+		set .OnDelay,0;// Estamos en delay ahora mismo?
+		set .DELAY,180000; //3 minutos tiempo de delay por invitacion
 	end;
 }

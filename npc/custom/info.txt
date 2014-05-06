@@ -1,0 +1,77 @@
+//===== eAthena Script =======================================
+//= Test walking NPC
+//===== By: ==================================================
+//= MI53RE
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rathena 15542 (+?)
+//===== Description: =========================================
+//= a walking npc
+//===== Additional Comments: =================================
+//= 1.O First Release
+//= 1.1 Moving and talking in animated sprite
+//= 1.2 Random walk, two npc active
+//============================================================
+titans,148,163,3	script	GM Info	2492,{
+stopnpctimer;
+goto OnInfo;
+end;
+
+OnInit:
+startnpctimer;
+npcspeed 200;
+end;
+
+OnInfo:
+	mes "^660066[GM Informativo]^000000";
+	mes "Hola ^0000ff"+strcharinfo(0)+" ^000000!";
+	mes "Te recomiendo utilizar el comando ^ff0000@guide^000000 para activar al npc guia del server.";
+	mes "Entre las funciones de la Guia estan:";
+	mes "^808080~ Warp a NPC's importantes";
+	mes "~ Informacion del Server";
+	mes "~ Configuraciones adicionales^000000";
+	close2;
+	goto OnInit;
+end;
+
+OnTimer2000:
+set .@random, rand(3);
+if (.@random == 0) { npcwalkto 145,161;
+/*npctalk "1a";*/ }
+if (.@random == 1) { npcwalkto 149,159;
+/*npctalk "1b";*/ }
+if (.@random == 2) { npcwalkto 155,160;
+/*npctalk "1c";*/ }
+end;
+
+OnTimer6000:
+set .@random, rand(3);
+if (.@random == 0) { npcwalkto 142,162;
+ }
+if (.@random == 1) { npcwalkto 145,166;
+ }
+if (.@random == 2) { npcwalkto 139,163;
+}
+end;
+
+OnTimer13000:
+set .@random, rand(3);
+if (.@random == 0) { npcwalkto 145,161;
+}
+if (.@random == 1) { npcwalkto 149,159;
+}
+if (.@random == 2) { npcwalkto 155,160;
+}
+end;
+
+OnTimer18000:
+npcwalkto 158,165;
+end;
+
+OnTimer21000:
+stopnpctimer;
+initnpctimer;
+end;
+
+}

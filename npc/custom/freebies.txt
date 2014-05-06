@@ -1,0 +1,28 @@
+titans,136,161,5	script	Freebies	567,{
+        set .npcname$,"                     ^990000[ Presta-Items ]^000000";
+       
+        mes .npcname$;
+		mes " ";
+        mes "Hola ^0000ff"+strcharinfo(0)+"^000000 Bienvenido al Server. ";
+		mes "En este servidor puedo rentarte items por determinada cantidad de tiempo.";
+        next;
+       
+        if(#freebiez == 1)
+        {
+                mes .npcname$;
+                mes "you've already claim your Freebies.";
+                close;
+        }
+       
+         for ( set .@x,0; .@x < getarraysize(.@freebie_item); set .@x,.@x + 1 )
+    {
+        getitem .@freebie_item[.@x], .@quantity[.@x];
+    }
+        set #freebiez,1;
+        mes .npcname$;
+        mes "You already got the DeceiveRO's freebies good luck on your new character ";
+        close;
+OnInit:
+waitingroom "Freebies Aqui !",0;
+end;
+}

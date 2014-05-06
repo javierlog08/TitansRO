@@ -1,0 +1,1621 @@
+//========================================================================================
+//Title: Ghost's PvP System (Multi-announcer + Ladder)
+//Version: 1.4
+//Author: Ghost
+//Created: 12/27/2011
+//Released: 01/31/
+//Compatibility: rAthena | eAthena
+//Support: TXT & SQL
+//rAthena Topic: http://rathena.org/board/topic/58222-ghosts-scripts/
+//Required File:
+//      SQL Table: http://pastebin.com/dEqrkczy
+//      Wav Files: http://www.mediafire.com/?i3uutvdp00jw4r8
+//References:
+//      http://www.wowwiki.com/Defense_of_the_Ancients:_Allstars
+//      http://honwiki.net/wiki/Kill_Streak
+//      http://honwiki.net/wiki/Multi_Kill
+//      http://honwiki.net/wiki/Patch_2.0.0#Nemesis_and_Payback
+//      http://igamepros.com/viewtopic.php?f=62&t=4342
+//Additional Note:
+//      Multiple kill timer is set to Heroes of Newerth's 18 seconds.
+//      KDR Algorithm is originally written by me, Ghost.
+//      If you like this PvP System, say thanks at my rAthena topic.
+//Glossary:
+//      KDR: Kill Death Ratio
+//      SK: Streak Kill
+//      MK: Multi Kill
+//Credits:
+//      Thank you to the Athena community.
+//Changelog:
+//      v1.4 = Modified by [Icabit]
+//           = Added Gm Menu 80% done [Icabit]
+//           = Added pimp and seductive pack [Icabit]
+//      v1.3 = Fixed $icaPvPMap$[0] settings [Ghost]
+//           = Added $icaGMLevel at configuration [Ghost]
+//           = Change SK Hex Color to ^00FF00 for visibility [Ghost]
+//           = Fixed Streak Kill ended broadcast [Ghost]
+//           = Typographical error (Ms. Pudding to Flamboyant) on Announcer Setting corrected [Ghost]
+//           = Changed Top 10 Players ranking from KDR to Kills [Ghost]
+//      v1.2 = Fixed obfuscation at PvP Statistics [Ghost]
+//      v1.1 = KDR Algorithm update for undefined calculation check [Lighta]
+//           = Fixed obfuscation at Nemesis Kill [Lighta]
+//      v1.0 = Initial release
+//©2011-2012 Ghost
+//========================================================================================
+-	script	Versus	-1,{
+OnInit:
+//Broadcast Color | See HexTable: http://johncfish.com/bggallery/otherchart/hextable.gif
+set .KColor$, "0xFFFF00"; //Kill Broadcast Color | e.g. Jguy pwned Mercurial
+set .KSColor$, "0xFFFF00"; //Killing Streak Broadcast Color | e.g. jTynne is on a Killing Spree
+set .MKColor$, "0x33FF00"; //Multiple Kill Broadcast Color | e.g. Mercurial just got a Double Kill
+set .ESColor$, "0xFF0000"; //End Streak Broadcast Color | e.g. BrianL just ended Jguy's Killing Spree
+set .NMColor$, "0x0099FF"; //Nemesis Broadcast Color | e.g. Xazax is owning Cookies
+set .PBColor$, "0xFF0000"; //Payback Broadcast Color | e.g. Makizushi just have a payback againts lilcooldude69
+set .FDColor$, "0xFF00CC"; //Feeder Broadcast Color | e.g. Cookies is feeding Z3R0
+ 
+//--Warning: Critical Setting | Killing Streaks and Multiple Kills Announcer
+setarray .KSDotA$[0], "First Blood","none","is on a Killing Spree", "is Dominating", "has a Mega-Kill", "is Unstoppable", "is Wicked Sick", "has a M-m-m-m....Monster Kill", "is Godlike", "is Beyond Godlike";
+setarray .KSHoN$[0], "Blood Lust","none","is a Serial Killer", "is an Ultimate Warrior", "is Legendary", "is on an Onslaught!", "is Savage Sick", "is Dominating", "has a Bloodbath", "is Immortal"; //Took out #9. Champion of Newearth
+setarray .MKDotA$[0], "just got a Double Kill", "just got a Triple Kill", "just got an Ultra Kill", "is on a Rampage", "is Owning his enemies", "is a Killing Machine!";
+setarray .MKHoN$[0], "just got a Double Tap", "just got a Hat Trick", "just got an Quad Kill", "annihilated his enemies", "just got a Genocide", "is a Murderer";
+setarray .ESDotA$[0], "Killing Spree", "Dominating", "Mega-Kill", "Unstoppable", "Wicked Sick", "Monster Kill", "Godlike", "Beyond Godlike";
+setarray .ESHoN$[0], "Serial Killer", "Ultimate Warrior", "Legendary", "Onslaught", "Savage Sick", "Dominating", "Bloodbath", "Immortal"; //Took out #9. Champion of Newearth
+setarray .EMDotA$[0], "Double Kill", "Triple Kill", "Ultra Kill", "Rampage", "Ownage";
+setarray .EMHoN$[0], "Double Tap", "Hat Trick", "Quad Kill", "Annihilation", "Genocide";
+if ($icaSave==1){end;}
+//--Configuration
+set $icaSystem, 1; //Toggle PvP System (0:Disable|1:Enable)
+set $icaServerType, 1; //Are you using TXT or SQL? (0:TXT|1:SQL)
+set $icaGMLevel, 90; //GM levels above or equal this level will be ignored by the system
+setarray $icaPvPMap$[0], "All"; //List all pvp maps here (Index 0:"All" to enable all maps)
+ 
+//PvP Ladder
+set $icaTop, 10; //What is the length of the list?
+set $icaReset, 2; //Allow players to reset their PvP statistics? (0:Disable|1:Zeny|2:Cashpoint|3:Skull|4:Item)
+set $icaZenyFee, 1000; //How much zeny you want to charge to reset their pvp stat?
+set $icaCashFee, 1000; //How much cashpoint you want to charge to reset their pvp stat?
+set $icaSkullFee, 1000; //How much skull you want to charge to reset their pvp stat?
+set $icaResetItemFee, 7227; //What item you want to charge to reset their pvp stat? (7227=TCG change this to the one you want)
+set $icaResetItemAmountFee, 1000; //What item you want to charge to reset their pvp stat?
+set $icaAnnouncerFeeOption, 0; //Option for payment? (0:Zeny|2:Cashpoint|3:Items)
+set $icaAnnouncerZenyFee, 1000; //How much zeny you want to charge to buy an announcer?
+set $icaAnnouncerCashFee, 1000; //How much cashpoint you want to charge to buy an announcer?
+set $icaAnnouncerSkullFee, 1000; //How much skull you want to charge to buy an announcer?
+set $icaAnnouncerItemFee, 7227; //What item you want to charge to buy an announcer? (7227=TCG change this to the one you want)
+set $icaAnnouncerItemAmountFee, 1000; //What item you want to charge to buy an announcer?
+ 
+//Reward Setting (Every Kill)
+set $icaMaxZeny, 1000000000; //What is the max zeny of the server?
+set $icaZeny, 0; //Earn zeny each kill? (0:Disable)
+set $icaCash, 0; //How much #CASHPOINT every kill? (0:Disable)
+set $icaSkull, 0; //Collect player's skull each kill? (0:Disable|1:Enable)
+setarray $icaItemID[0], 0; //Get items each kill? (0:Disable)
+setarray $icaAmount[0], 0; //How many items per kill?
+ 
+//Penalty Setting
+set $icaFeed, 10; //How many kills before feeding is called? (10:Recommended)
+set $icaPenalty, 0; //What is the penalty for the feedee? (0:Disable|1:Kill Rollback|2:Server Kick|3:Server Block)
+set $icaKick, 1; //Who to kick? (0:Feedee|1:Feeder|2:Both)
+set $icaRollback, 10; //How many times should the kill count rollback when feeding is called? (10:Recommended)
+ 
+//Announcer Setting
+set $icaBroadcast, 0; //Where do you want to broadcast? (0:bc_map|1:bc_all)
+set $icaStreak, 1; //Show number of killing streak in broadcast? e.g. Ghost is Beyond Godlike(8)
+set $icaMultiple, 1; //Show number of multiple kill in broadcast? e.g. Makizushi just got an Ownage(5)
+set $icaNemesis, 1; //Show number of nemesis in broadcast? e.g. Epoque is owning Jguy(9)
+set $icapaybackperiod, 5; //limit of nemesis before you can have you revenge e.g after keikun owned you 5 times or more you can have now your revenge
+set $icaFeeder, 1; //Show number of feed in broadcast? e.g. Cookies is feeding `KeiKun(10)
+set $icaRandomKillWord, 1; //Randomize the kill words? e.g. Arcenciel "Kill Word" jTynne (0:Disable|Default:"pwned")
+setarray $icaKillWord$[0], "pwned", "killed", "disintegrated", "neutralized"; //Enable above setting for this to work
+ 
+
+
+//--Warning: Fail Safe | Do Not Touch
+if($icaSystem > 1){ set $icaSystem, 1; }
+if($icaSystem < 0){ set $icaSystem, 0; }
+if($icaServerType > 1){ set $icaServerType, 1; }
+if($icaServerType < 0){ set $icaServerType, 0; }
+if($icaGMLevel > 99){ set $icaGMLevel, 99; }
+if($icaGMLevel < 0){ set $icaGMLevel, 0; }
+if(($icaPvPMap$[0] == "ALL")||($icaPvPMap$[0] == "ALl")||($icaPvPMap$[0] == "AlL")||($icaPvPMap$[0] == "aLL")||($icaPvPMap$[0] == "aLl") || ($icaPvPMap$[0] == "alL")){ setarray $icaPvPMap$[0], "All"; }
+if(.Ladder > 1){ set .Ladder, 1; }
+if(.Ladder < 0){ set .Ladder, 0; }
+if($icaTop < 0){ set $icaTop, 0; }
+if($icaReset > 3){ set $icaReset, 0; }
+if($icaReset < 0){ set $icaReset, 0; }
+if(($icaReset == 1)&&($icaZenyFee <= 0)){ set $icaReset, 0; }
+if(($icaReset == 1)&&($icaZenyFee >= $icaMaxZeny)){ set $icaReset, 0; }
+if(($icaReset == 2)&&($icaCashFee <= 0)){ set $icaReset, 0; }
+if(($icaReset == 3)&&($icaSkullFee <= 0)){ set $icaReset, 0; }
+if($icaZeny > $icaMaxZeny){ set $icaZeny, 0; }
+if($icaZeny < 0){ set $icaZeny, 0; }
+if($icaCash < 0){ set $icaCash, 0; }
+if($icaBroadcast > 1){ set $icaBroadcast, 1; }
+if($icaBroadcast < 0){ set $icaBroadcast, 0; }
+if($icaFeed < 1){ set $icaFeed, 0; }
+if($icaPenalty > 3){ set $icaPenalty, 3; }
+if($icaPenalty < 1){ set $icaPenalty, 0; }
+if($icaRollback < 1){ set $icaRollback, 0; }
+if($icaStreak > 1){ set $icaStreak, 1; }
+if($icaStreak < 1){ set $icaStreak, 0; }
+if($icaMultiple > 1){ set $icaMultiple, 1; }
+if($icaMultiple < 1){ set $icaMultiple, 0; }
+if($icaNemesis > 1){ set $icaNemesis, 1; }
+if($icaNemesis < 0){ set $icaNemesis, 0; }
+if($icaFeeder > 1){ set $icaFeeder, 1; }
+if($icaFeeder < 1){ set $icaFeeder, 0; }
+if($icaRandomKillWord > 1){ set $icaRandomKillWord, 1; }
+if($icaRandomKillWord < 0){ set $icaRandomKillWord, 0; }
+end;
+
+OnPCKillEvent:
+if($icaSystem)
+{
+	freeloop(1);
+if(getgmlevel() >= $icaGMLevel){ end; }
+if($icaPvPMap$[0] != "All"){
+	for(set .@i, 0; .@i < (getarraysize($icaPvPMap$) - 1); set .@i, .@i + 1){
+		if(strcharinfo(3) != $icaPvPMap$[.@i]){ end; }
+	}
+}
+		set #killed$,rid2name(killedrid);
+		for(set .@i, 0; .@i <= 127; set .@i, .@i + 1)
+		{
+			if (@killed$[.@i]=="none")
+			{
+				set @killed$[.@i],#killed$;
+				set @mcountss[.@i],1;
+				dispbottom "You have killed: "+@killed$[.@i]+" for "+@mcountss[.@i]+" time/times already";
+				break;
+			}
+			else if (@killed$[.@i]==#killed$)
+			{
+				set @mcountss[.@i],@mcountss[.@i]+1;
+				dispbottom "You have killed: "+@killers$[.@i]+" for "+@mcountss[.@i]+" time/times already";
+				if (@mcountss[.@i]>=$icapaybackperiod) {dispbottom "Give that BITCH! some more!";}
+				break;
+			}
+			else if (.@i== 127){break;}	
+		}
+	for(set .@i, 0; .@i <= 127; set .@i, .@i + 1)	
+	{
+	if ((rid2name(killedrid)==@killed$[.@i])&&(@mcountss[.@i]>=$icaFeed) && ($icaPenalty))
+	{
+	switch($icaPenalty)
+		{
+			case 0: break;
+			case 1: callsub OnRollback; break;
+			case 2: callsub OnRollback;
+				if($icaKick == 0){ atcommand "@kick "+strcharinfo(0); }
+				if($icaKick == 1){ atcommand "@kick "+rid2name(killedrid); }
+				if($icaKick == 2){ atcommand "@kick "+strcharinfo(0); atcommand "@kick "+rid2name(killedrid); }
+				break;
+			case 3: callsub OnRollback;
+				if($icaKick == 0){ atcommand "@block "+strcharinfo(0); }
+				if($icaKick == 1){ atcommand "@block "+rid2name(killedrid); }
+				if($icaKick == 2){ atcommand "@block "+strcharinfo(0);	atcommand "@block "+rid2name(killedrid); }
+				break;
+			default: break;
+		}
+	}
+	else if (.@i== 127){break;}
+	}
+	
+
+	for(set .@i, 0; .@i <= 127; set .@i, .@i + 1)	
+	{
+		if ((rid2name(killedrid)==@killed$[.@i])&&(@mcountss[.@i]<=$icaFeed))
+		{
+			if($icaZeny && ((Zeny + $icaZeny) < $icaMaxZeny)){ set Zeny, Zeny + $icaZeny; }
+			if($icaCash){ dispbottom "[Point System] +1 Kill Point"; set #CASHPOINT, #CASHPOINT + $icaCash; }
+			if($icaSkull){ getnameditem 7420, rid2name(killedrid); }
+			for(set .@i, 0; .@i < getarraysize($icaItemID); set .@i, .@i + 1){ if($icaItemID){ getitem $icaItemID[.@i], $icaAmount[.@i]; }else{break;}}
+			break;
+		}
+		else if (.@i== 127){break;}
+	}
+		if (@killers$[0]=="none"){
+		}
+		else
+		{
+		for(set .@i, 0; .@i <= 127; set .@i, .@i + 1){
+			
+			if ((rid2name(killedrid)==@killers$[.@i])&&(@mcounts[.@i]>=$icapaybackperiod))
+			{
+			announce strcharinfo(0)+" just have a payback againts "+@killers$[.@i]+" ",bc_blue|bc_all;
+			set @mcounts[.@i],1;
+			set @killers$[.@i],"none";
+			soundeffect ""+#Announcer+"_Payback.wav",0;
+			sleep2 500;
+			break;
+			}
+			else if ((rid2name(killedrid)==@killers$[.@i])&&(@mcounts[.@i]<=$icapaybackperiod)){
+				break;
+			}
+			else if (.@i== 127){break;}
+		}
+		}
+		
+
+		if(getcharid(0)!=killedrid)
+		{
+			set @contains,0;
+			for(set @x,0; @x<getarraysize(@killedID); set @x,@x+1)
+			{
+				if(getcharid(0)==@killedID[@x])
+				{
+					set @contains,1;
+					break;
+				}
+			}
+			
+			if(!@contains)
+			{	getmapxy .map$,.@x,.@y,0;
+				set @pvppoint,rand(1,3);
+				set Kill,Kill+1;
+				set @killedID[killCTR],killedrid;
+				set killCTR,killCTR+1;
+				if(killCTR>=$pvpMaxKillCache) set killCTR,0;
+				callsub OnRecordStreak;
+				set #multikillCTR,#multikillCTR+1;
+				if(!#multikill)
+				{
+					deltimer "Versus::OnPvPMultiKillTrigger";
+					addtimer 30000,"Versus::OnMultiKillTrigger";
+					set #multikill,1;
+				}
+				else
+				{
+					switch(#multikillCTR)
+					{
+						case 1:
+							break;
+						case 2:
+							soundeffectall ""+#Announcer+"_MK2.wav",0;
+							if(#Announcer == 0){ announce strcharinfo(0)+" "+.MKDotA$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							if(#Announcer > 1){ announce strcharinfo(0)+" "+.MKHoN$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							break;
+						case 3:
+							soundeffectall ""+#Announcer+"_MK3.wav",0;
+							if(#Announcer == 0){ announce strcharinfo(0)+" "+.MKDotA$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							if(#Announcer > 1){ announce strcharinfo(0)+" "+.MKHoN$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							break;
+						case 4:
+							soundeffectall ""+#Announcer+"_MK4.wav",0;
+							if(#Announcer == 0){ announce strcharinfo(0)+" "+.MKDotA$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							if(#Announcer > 1){ announce strcharinfo(0)+" "+.MKHoN$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							break;
+						case 5:
+							soundeffectall ""+#Announcer+"_MK5.wav",0;
+							if(#Announcer == 0){ announce strcharinfo(0)+" "+.MKDotA$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							if(#Announcer > 1){ announce strcharinfo(0)+" "+.MKHoN$[#multikillCTR - 2]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							break;
+						default:
+							soundeffectall ""+#Announcer+"_MK6.wav",0;
+							if(#Announcer == 0){ announce strcharinfo(0)+" "+.MKDotA$[5]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							if(#Announcer > 1){ announce strcharinfo(0)+" "+.MKHoN$[5]+" "+(($icaMultiple)?"("+#multikillCTR+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .MKColor$; }
+							break;
+					}
+
+				}
+						sleep2 500;
+				switch(#streak)
+				{
+				
+					case 1:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS1.wav",0;
+						set #streak$,"First Blood";
+						break;
+					case 2:
+						break;
+					case 3:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS3.wav",0;
+						set #streak$,"Serial Killer";
+						break;
+					case 4:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS4.wav",0;
+						set #streak$,"Ultimate Warrior";
+						break;
+					case 5:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS5.wav",0;
+						set #streak$,"Legendary";
+						break;
+					case 6:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS6.wav",0;
+						set #streak$,"Onslaught";
+						break;
+					case 7:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS7.wav",0;
+						set #streak$,"Savage Sick";
+						break;
+					case 8:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS8.wav",0;
+						set #streak$,"Domination";
+						break;
+					case 9:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[#streak - 1]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS9.wav",0;
+						set #streak$,"Champion";
+						break;
+					default:
+						if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[9]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[9]+" "+(($icaStreak)?"("+(#streak)+")":"")+" in "+strcharinfo(3)+" after killing "+rid2name(killedrid), (($icaBroadcast)?bc_all:bc_map), .KSColor$; }
+						soundeffect ""+#Announcer+"_KS10.wav",0;
+						set #streak$,"Immortal";
+						break;
+				}
+								set #streak,#streak+1;
+								dispbottom "Your Current Streak: "+#streak$+"("+(#streak-1)+")";
+								for(set .@i, 0; .@i <= 127; set .@i, .@i + 1)	
+								{
+								if((@mcountss[.@i] > 3) && (@mcountss[.@i] < $icaFeed))
+								{	
+								sleep2 500;
+								announce strcharinfo(0)+" is owning "+@killed$[.@i]+" "+(($icaNemesis)?"("+@mcountss[.@i]+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .NMColor$;
+								if(#Announcer > 0){ soundeffect #Announcer+"_Nemesis.wav",0; } else { soundeffect "1_Nemesis.wav", 0;}
+								}
+								if(@mcountss[.@i] >= $icaFeed)
+								{
+									sleep2 500;
+									announce @killed$[.@i]+" is feeding "+strcharinfo(0)+" "+(($icaFeeder)?"("+@mcountss[.@i]+")":"")+"", (($icaBroadcast)?bc_all:bc_map), .FDColor$;
+									soundeffect "Feeder.wav",0;
+								}
+								else if (.@i==127) { break;}
+								}
+			}
+		}
+}
+end;
+
+OnPCDieEvent:
+if(getgmlevel() >= $icaGMLevel){ end; }
+	if( killerrid > 3000000) { dispbottom "You have been killed by "+rid2name(killerrid); end;}
+		if (#streak > 2)
+			{
+			announce  rid2name(killerrid)+" has ended "+ strcharinfo(0) +"'s "+ #streak$ +"! streak at "+ .map$,0;
+			soundeffect ""+#Announcer+"_smackdown.wav",0;
+			}
+		set Death,Death+1;
+		set #streak$,"None";
+		set #multikill,0;
+		set #multikillCTR,0;
+		set NemesisKilled, 0;
+		set #nm, 0;
+		set #streak,1;
+		set #killer$,rid2name(killerrid);
+		for(set .@i, 0; .@i <= 127; set .@i, .@i + 1){
+			if (@killers$[.@i]=="none")
+			{
+				set @killers$[.@i],#killer$;
+				set @mcounts[.@i],1;
+				dispbottom "you have been killed by: "+@killers$[.@i]+" for "+@mcounts[.@i]+" time/times already";
+				break;
+			}
+			else if (@killers$[.@i]==#killer$)
+			{
+				set @mcounts[.@i],@mcounts[.@i]+1;
+				dispbottom "you have been killed by: "+@killers$[.@i]+" for "+@mcounts[.@i]+" time/times already";
+				if (@mcounts[.@i]>=$icapaybackperiod) {dispbottom "Come ON! give him a payback!";}
+				break;
+			}
+			else if (.@i==127){break;}
+
+		}
+		for(set .@i, 0; .@i <= 127; set .@i, .@i + 1){
+			if (@killed$[.@i]==#killer$)
+			{
+				set @mcountss[.@i],1;
+				dispbottom " Your nemesis count against him is now back to "+@mcountss[.@i]+"";
+				set @killed$[.@i],"none";
+				break;
+			}
+			else if (.@i==127){break;}
+
+		}
+		
+		//Show the list of killers and their streak against you
+		//for(set .@i, 0; .@i <= 127; set .@i, .@i + 1){
+		//	
+		//if (@killers$[.@i]=="none"){
+		//	break;
+		//}
+		//	dispbottom "you have been killed by: "+@killers$[.@i]+" for "+@mcounts[.@i]+" time/times already";
+		//	if (@mcounts[.@i]>=$icapaybackperiod) {dispbottom "Come ON! give him a payback!";}
+		//}
+	end;
+	
+OnPCLoginEvent:		
+if(getgmlevel() >= $icaGMLevel){ end; }
+		setarray @killers$[0],"none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none";
+		setarray @mcounts[0],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1;
+		setarray @killed$[0],"none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none";
+		setarray @mcountss[0],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1;
+		set #streak,1;
+		set #streak$,"None";
+		set #multikill,0;
+		set #multikillCTR,0;
+		set NemesisKilled,0;
+		set #nm,0;
+		set #mcount,0;
+		set #killer$,"NONE";
+		set #killed$,"NONE";
+	end;
+OnPCLogoutEvent:
+		if($icaSystem){
+if(getgmlevel() >= $icaGMLevel){ end; }
+	for(set .@i, 0; .@i <= 127; set .@i, .@i + 1)	
+	{
+	if((@mcountss[.@i] > 3) && (@mcountss[.@i] < $icaFeed)){ set NemesisKill, NemesisKill + 1; }
+	if(@mcountss[.@i] >= $icaFeed){set FeedCount, FeedCount + 1;}
+	if (.@i==127) {break;}
+	}
+	if($icaServerType){ query_sql("REPLACE INTO `pvp_rank` (`char_id`, `account_id`, `char`, `kill`, `death`, `kdr`, `killingstreak`, `multikill`,  `nemesiskill`, `feedcount`,`killingspree`, `dominating`, `megakill`, `unstoppable`, `wickedsick`, `monsterkill`, `godlike`, `beyondgodlike`, `doublekill`, `triplekill`, `ultrakill`, `rampage`, `ownage`) VALUES ("+getcharid(0)+","+getcharid(3)+", '"+rid2name(getcharid(3))+"', "+Kill+", "+Death+", '"+callfunc("KDR_Calculator", Kill, Death)+"', "+KillingStreak+", "+MultiKill+",  "+NemesisKill+", "+FeedCount+", "+KillingSpree+", "+Dominating+", "+MegaKill+", "+Unstoppable+", "+WickedSick+", "+MonsterKill+", "+Godlike+", "+BeyondGodlike+", "+DoubleKill+", "+TripleKill+", "+UltraKill+", "+Rampage+", "+Ownage+")"); }
+	if($icaPvPMap$[0] != "All"){
+		for(set .@i, 0; .@i < (getarraysize($icaPvPMap$) - 1); set .@i, .@i + 1){
+			if(strcharinfo(3) != $icaPvPMap$[.@i]){ end; }
+	}
+	}
+
+	}
+		set #streak,1;
+		set #streak$,"None";
+		set #multikill,0;
+		set #multikillCTR,0;
+		set NemesisKilled,0;
+		set #nm,0;
+		set #mcount,0;
+		set #killer$,"NONE";
+		set #killed$,"NONE";
+		setarray @killers$[0],"none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none";
+		setarray @mcounts[0],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1;
+		setarray @killed$[0],"none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none","none";
+		setarray @mcountss[0],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1;
+end;
+OnMultiKillTrigger:
+	set #multikill,0;
+	set #multikillCTR,0;
+end;
+
+
+OnRecordStreak:
+if(#streak > 2){
+	set KillingStreak, KillingStreak + 1;
+	switch(#streak-1){
+	case 0:	case 1:	case 2: break; 
+	case 3: set KillingSpree, KillingSpree + 1; break; 
+	case 4: set Dominating, Dominating + 1; break;
+	case 5: set MegaKill, MegaKill + 1; break; 
+	case 6: set Unstoppable, Unstoppable + 1; break; 
+	case 7: set WickedSick, WickedSick + 1; break;
+	case 8: set MonsterKill, MonsterKill + 1; break; 
+	case 9: set Godlike, Godlike + 1; break; 
+	case 10: set BeyondGodlike, BeyondGodlike + 1; break;
+	default: break;
+	}
+}
+if(#multikillCTR > 1){
+	set MultiKill, MultiKill + 1;
+	switch(#multikillCTR)
+	{
+	case 0:	case 1: break; 
+	case 2: set DoubleKill, DoubleKill + 1; break; 
+	case 3: set TripleKill, TripleKill + 1; break;
+	case 4: set UltraKill, UltraKill + 1; break;
+	case 5: set Rampage, Rampage + 1; break; 
+	case 6: set Ownage, Ownage + 1; break;
+	default: break;
+	}
+}
+
+return;
+OnRollback:
+if($icaZeny){ set Zeny, Zeny - ($icaZeny * $icaRollback); }
+if($icaCash){ dispbottom "[Point System] -"+($icaCash * $icaRollback)+" Kill Point"; set #CASHPOINT, #CASHPOINT - ($icaCash * $icaRollback); }
+if($icaSkull){ delitem 7420, $icaRollback; }
+for(set .@i, 0; .@i < getarraysize($icaItemID); set .@i, .@i + 1){ if($icaItemID){ delitem $icaItemID[.@i], $icaAmount[.@i] * $icaRollback; }}
+if((Kill - $icaRollback) > 0){ set Kill, Kill - $icaRollback; } else { set Kill, 0; }
+if((KillingSpree - 1) > 0){ set KillingSpree, KillingSpree - 1; } else { set KillingSpree, 0; }
+if((Dominating - 1) > 0){ set Dominating, Dominating - 1; } else { set Dominating, 0; }
+if((MegaKill - 1) > 0){ set MegaKill, MegaKill - 1; } else { set MegaKill, 0; }
+if((Unstoppable - 1) > 0){ set Unstoppable, Unstoppable - 1; } else { set Unstoppable, 0; }
+if((WickedSick - 1) > 0){ set WickedSick, WickedSick - 1; } else { set WickedSick, 0; }
+if((MonsterKill - 1) > 0){ set MonsterKill, MonsterKill - 1; } else { set MonsterKill, 0; }
+if((Godlike - 1) > 0){ set Godlike, Godlike - 1; } else { set Godlike, 0; }
+if((BeyondGodlike - 1) > 0){ set BeyondGodlike, BeyondGodlike - 1; } else { set BeyondGodlike, 0; }
+if((DoubleKill - 1) > 0){ set DoubleKill, DoubleKill - 1; } else { set DoubleKill, 0; }
+if((TripleKill - 1) > 0){ set TripleKill, TripleKill - 1; } else { set TripleKill, 0; }
+if((UltraKill - 1) > 0){ set UltraKill, UltraKill - 1; } else { set UltraKill, 0; }
+if((Rampage - 1) > 0){ set Rampage, Rampage - 1; } else { set Rampage, 0; }
+if((Ownage - 1) > 0){ set Ownage, Ownage - 1; } else { set Ownage, 0; }
+if((NemesisKill - ($icaRollback - 3)) > 0){ set NemesisKill, NemesisKill - ($icaRollback - 3); } else { set NemesisKill, 0; }
+announce "[Anti-Feed] Your kill count has been rollbacked "+$icaRollback+" times.",bc_self,0xFF0000;
+return;
+freeloop(0);
+}
+
+prontera,158,192,3	script	PvP Ladder[Loki]	467,{
+if(getgmlevel() >= $icaGMLevel)
+{
+	mes "[Loki]"; mes "Here are The Current Settings of your PvP System";
+	mes "System Settings";
+	mes $icaSystem+" =Toggle PvP System (0:Disable|1:Enable)";
+	mes $icaServerType+" =Are you using TXT or SQL? (0:TXT|1:SQL)";
+	mes $icaGMLevel+" =GM levels above or equal this level will be ignored by the system";
+	next;
+	mes "PvP Ladder";
+	mes $icaTop+" =What is the length of the list?";
+	mes $icaReset+" =Allow players to remes their PvP statistics? (0:Disable|1:Zeny|2:Cashpoint|3:Skull)";
+	mes $icaZenyFee+" =How much zeny you want to charge to remes their pvp stat?";
+	mes $icaCashFee+" =How much cashpoint you want to charge to remes their pvp stat?";
+	mes $icaSkullFee+" =How much skull you want to charge to remes their pvp stat?";
+	mes $icaAnnouncerFee+" =How much cashpoint per announcer? (DotA announcer is mes as default)";
+	next;
+	mes "Reward Setting (Every Kill)";
+	mes $icaMaxZeny+" =What is the max zeny of the server?";
+	mes $icaZeny+" =Earn zeny each kill? (0:Disable)";
+	mes $icaCash+" =How much #CASHPOINT every kill? (0:Disable)";
+	mes $icaSkull+" =Collect player's skull each kill? (0:Disable|1:Enable)";
+	next;
+	mes "Penalty Setting";
+	mes $icaFeed+" =How many kills before feeding is called? (10:Recommended)";
+	mes $icaPenalty+" =What is the penalty for the feedee? (0:Disable|1:Kill Rollback|2:Server Kick|3:Server Block)";
+	mes $icaKick+" =Who to kick? (0:Feedee|1:Feeder|2:Both)";
+	mes $icaRollback+" =How many times should the kill count rollback when feeding is called? (10:Recommended)";
+	next; 
+	mes "Announcer Setting";
+	mes $icaBroadcast+" =Where do you want to broadcast? (0:bc_map|1:bc_all)";
+	mes $icaStreak+" =Show number of killing streak in broadcast? e.g. Ghost is Beyond Godlike(8)";
+	mes $icaMultiple+" =Show number of multiple kill in broadcast? e.g. Makizushi just got an Ownage(5)";
+	mes $icaNemesis+" =Show number of nemesis in broadcast? e.g. Epoque is owning Jguy(9)";
+	mes $icapaybackperiod+" =limit of nemesis before you can have you revenge e.g after keikun owned you 5 times or more you can have now your revenge";
+	mes $icaFeeder+" =Show number of feed in broadcast? e.g. Cookies is feeding `KeiKun(10)";
+	mes $icaRandomKillWord+" =Randomize the kill words? e.g. Arcenciel Kill Word jTynne (0:Disable|Default:pwned)";
+	next;
+	mes "[Loki]"; mes "What can I do for you today?";
+L_mainmenu:
+switch(select("System Settings:PvP Ladder Settings:Reward Settings (Every Kill):Penalty Settings:Announcer Settings:Player Menu:Reset All Settings:Save Current Settings:Reset Ladder:Nothing")){
+	case 1:
+	L_option1:
+	switch(select("Toggle PvP System:TXT or SQL:Min Gm lvl Involved:Back")){
+	case 1: 
+		L_again:
+		mes "Toggle PvP System (0:Disable|1:Enable)";
+		set @option,0;
+		input @option;
+		if ((@option<0)||(@option>1)){ mes "invalid input or out of range"; goto L_again;}
+		set $icaSystem, @option; //Toggle PvP System (0:Disable|1:Enable)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaSystem;
+		next;
+		goto L_option1;
+		end;
+		break;
+	case 2: 
+		L_again1:
+		mes "Are you using TXT or SQL? (0:TXT|1:SQL)";
+		set @option,0;
+		input @option;
+		if ((@option<0)||(@option>1)){ mes "invalid input or out of range"; goto L_again1;}
+		set $icaServerType, @option; //Are you using TXT or SQL? (0:TXT|1:SQL)
+		mes "is now set to: "+$icaServerType;
+		mes "Successfully changed Settings";
+		next;
+		goto L_option1;
+		end;
+		break;
+	case 3: 
+		L_again2:
+		mes "GM levels above or equal this level will be ignored by the system input from 0 to 99 only";
+		set @option,0;
+		input @option;
+		if ((@option > 99)||(@option < 0)){ mes "invalid input or out of range"; goto L_again2;}
+		set $icaGMLevel, @option; //GM levels above or equal this level will be ignored by the system
+		mes "is now set to: "+$icaGMLevel;
+		mes "Successfully changed Settings";
+		next;
+		goto L_option1;
+		end;
+		break;
+	case 4: 
+		goto L_mainmenu; 
+		end; 
+		break;
+	} // end of System Settings
+	
+	case 2:
+	L_option2:
+	switch(select("Max List:Stat Reset Option:Stat Reset Zeny Fee:Stat Reset Cash Fee:Stat Reset Skull Fee:Stat Reset  Item Fee:Stat Reset Item Fee Amount:Announcer Fee Option:Announcer Zeny Fee:Announcer Cash Fee:Announcer Skull Fee:Announcer Item Fee:Announcer Item Fee Amount:Back")){
+	//PvP Ladder
+	case 1: 
+		L_2again:
+		mes "What is the length of the list (minimum of 10)";
+		set @option,0;
+		input @option;
+		if (@option < 9){ mes "invalid input or out of range"; goto L_2again;}
+		set $icaTop, @option; //What is the length of the list?
+		mes "is now set to: "+$icaTop;
+		mes "Successfully changed Settings";
+		next;
+		goto L_option2;
+		end;
+		break;
+	
+	case 2: 
+		L_2again1:
+		mes "Allow players to reset their PvP statistics? (0:Disable|1:Zeny|2:Cashpoint|3:Skull|4:Item)";
+		set @option,0;
+		input @option;
+		if ((@option < 0)||(@option > 4)){ mes "invalid input or out of range"; goto L_2again1;}
+		set $icaReset, @option; //Allow players to reset their PvP statistics? (0:Disable|1:Zeny|2:Cashpoint|3:Skull|4:Item)
+		mes "is now set to: "+$icaReset;
+		mes "Successfully changed Settings";
+		next;
+		goto L_option2;
+		end;
+		break;
+
+	case 3:
+		L_2again2:
+		mes "How much zeny you want to charge to reset their pvp stat? (minimum of 1000)";
+		set @option,0;
+		input @option;
+		if (@option < 999){ mes "invalid input or out of range"; goto L_2again2;}
+		set $icaZenyFee, @option; //how much zeny you want to charge to reset their pvp stat?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaZenyFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+	
+	case 4:
+		L_2again3:
+		mes "How much cash you want to charge to reset their pvp stat? (minimum of 1000)";
+		set @option,0;
+		input @option;
+		if (@option < 999){ mes "invalid input or out of range"; goto L_2again3;}
+		set $icaCashFee, @option; //how much zeny you want to charge to reset their pvp stat?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaCashFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+	
+	case 5:
+		L_2again4:
+		mes "How much skull you want to charge to reset their pvp stat? (minimum of 1000)";
+		set @option,0;
+		input @option;
+		if (@option < 999){ mes "invalid input or out of range"; goto L_2again5;}
+		set $icaSkullFee, @option; //how much skull you want to charge to reset their pvp stat?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaSkullFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+		
+	case 6:
+		L_2again5:
+		mes "What item you want to charge to reset their pvp stat? (7227 is the default=TCG change this to the one you want)";
+		set @option,0;
+		input @option;
+		if (@option < 500){ mes "invalid input or out of range"; goto L_2again5;}
+		set $icaResetItemFee, @option; //What item you want to charge to reset their pvp stat? (7227 is the default=TCG change this to the one you want)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+getitemname($icaResetItemFee);
+		next;
+		goto L_option2;
+		end;
+		break;
+		
+	case 7:
+		L_2again6:
+		mes "how much "+getitemname($icaResetItemFee)+" to charge to reset their pvp stat?";
+		set @option,0;
+		input @option;
+		if (@option < 0){ mes "invalid input or out of range"; goto L_2again6;}
+		set $icaResetItemAmountFee, @option; //how much "+getitemname($icaResetItemFee)+" to charge to reset their pvp stat?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaResetItemAmountFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+	
+	case 8:
+
+		L_2again7:
+		mes "Allow players to Buy Announcers? (0:Disable|1:Zeny|2:Cashpoint|3:Skull|4:Item)";
+		set @option,0;
+		input @option;
+		if ((@option < 0)||(@option > 4)){ mes "invalid input or out of range"; goto L_2again7;}
+		set $icaAnnouncerFeeOption, @option; //How much cashpoint per announcer? (DotA announcer is set as default)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaAnnouncerFeeOption;
+		next;
+		goto L_option2;
+		end;
+		break;
+	
+	case 9:
+		L_2again8:
+		mes "How much zeny you want to charge to buy an announcer? (minimum of 1000)";
+		set @option,0;
+		input @option;
+		if (@option < 999){ mes "invalid input or out of range"; goto L_2again8;}
+		set $icaAnnouncerZenyFee, @option; //how much zeny you want to charge to buy an announcer
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaAnnouncerZenyFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+		
+	case 10:
+		L_2again9:
+		mes "How much cash you want to charge to buy an announcer? (minimum of 1000)";
+		set @option,0;
+		input @option;
+		if (@option < 999){ mes "invalid input or out of range"; goto L_2again9;}
+		set $icaAnnouncerCashFee, @option; //how much zeny you want to charge to buy an announcer?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaAnnouncerCashFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+	case 11:
+		L_2again10:
+		mes "How much skull you want to charge to buy an announcer? (minimum of 1000)";
+		set @option,0;
+		input @option;
+		if (@option < 999){ mes "invalid input or out of range"; goto L_2again10;}
+		set $icaAnnouncerSkullFee, @option; //how much skull you want to charge to reset their pvp stat?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaAnnouncerSkullFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+	case 12:
+	L_2again11:
+		mes "What item you want to charge to buy an announcer? (7227 is the default=TCG change this to the one you want)";
+		set @option,0;
+		input @option;
+		if (@option < 500){ mes "invalid input or out of range"; goto L_2again11;}
+		set $icaAnnouncerItemFee, @option; //What item you want to charge to buy an announcer? (7227 is the default=TCG change this to the one you want)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+getitemname($icaAnnouncerItemFee);
+		next;
+		goto L_option2;
+		end;
+		break;
+	case 13:
+	L_2again12:
+		mes "how much "+getitemname($icaAnnouncerItemFee)+" to charge to but an announcer?";
+		set @option,0;
+		input @option;
+		if (@option < 0){ mes "invalid input or out of range"; goto L_2again12;}
+		set $icaAnnouncerItemAmountFee, @option; //how much "+getitemname($icaResetItemFee)+" to charge to reset their pvp stat?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaAnnouncerItemAmountFee;
+		next;
+		goto L_option2;
+		end;
+		break;
+	case 14: 
+		goto L_mainmenu; 
+		end; 
+		break;
+	} // end of PvP Ladder Settings
+	case 3:
+	L_option3:
+	switch(select("What is the max zeny of the server?:Earn zeny each kill?:How much #CASHPOINT every kill?:Collect player's skull each kill?:Back")){
+	//Reward Setting (Every Kill)
+	case 1: 
+		L_3again:
+		mes "What is the max zeny of the server? (minimum of 1000000000, nax of 2000000000)";
+		set @option,0;
+		input @option;
+		if ((@option < 999999999)||(@option > 2000000000)){ mes "invalid input or out of range"; goto L_3again;}
+		set $icaMaxZeny, @option; //What is the max zeny of the server?
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaMaxZeny;
+		next;
+		goto L_option3;
+		end;
+		break;
+	
+	case 2: 
+		L_3again1:
+		mes "Earn zeny each kill? (0:Disable)";
+		set @option,0;
+		input @option;
+		if (@option < 0){ mes "invalid input or out of range"; goto L_3again1;}
+		set $icaZeny, @option; //Earn zeny each kill? (0:Disable)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaZeny;
+		next;
+		goto L_option3;
+		end;
+		break;
+	
+	case 3: 
+		L_3again2:
+		mes "Earn zeny each kill? (0:Disable)";
+		set @option,0;
+		input @option;
+		if (@option < 0){ mes "invalid input or out of range"; goto L_3again2;}
+		set $icaCash, @option; //How much #CASHPOINT every kill? (0:Disable)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaCash;
+		next;
+		goto L_option3;
+		end;
+		break;
+	
+	case 4: 
+		L_3again3:
+		mes "Collect player's skull each kill? (0:Disable|1:Enable)";
+		set @option,0;
+		input @option;
+		if (@option < 0){ mes "invalid input or out of range"; goto L_3again3;}
+		set $icaSkull, @option; //Collect player's skull each kill? (0:Disable|1:Enable)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaSkull;
+		next;
+		goto L_option3;
+		end;
+		break;
+	
+	case 5: 
+		goto L_mainmenu; 
+		end; 
+		break;
+
+	} // end of reward settings
+	
+	
+	case 4:
+	L_option4:
+	switch(select("How many kills before feeding is called? (10 is Recommended):What is the penalty for the feedee?:Who to kick?:How many times should the kill count rollback when feeding is called?:Back")){
+	//penalty settings
+	case 1: 
+		L_4again:
+		mes "How many kills before feeding is called? (10:Recommended and minimum is 5)";
+		set @option,0;
+		input @option;
+		if (@option < 4){ mes "invalid input or out of range"; goto L_4again;}
+		set $icaFeed, @option; //How many kills before feeding is called? (10:Recommended)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaFeed;
+		next;
+		goto L_option4;
+		end;
+		break;
+
+	case 2: 
+		L_4again1:
+		mes "What is the penalty for the feedee? (0:Disable|1:Kill Rollback|2:Server Kick|3:Server Block)";
+		set @option,0;
+		input @option;
+		if ((@option < 0)||(@option > 3)){ mes "invalid input or out of range"; goto L_4again1;}
+		set $icaPenalty, @option; //What is the penalty for the feedee? (0:Disable|1:Kill Rollback|2:Server Kick|3:Server Block)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaPenalty;
+		next;
+		goto L_option4;
+		end;
+		break;
+	
+	case 3: 
+		L_4again2:
+		mes "Who to kick? (0:Feedee|1:Feeder|2:Both)";
+		set @option,0;
+		input @option;
+		if ((@option < 0)||(@option > 2)){ mes "invalid input or out of range"; goto L_4again2;}
+		set $icaKick, @option; //Who to kick? (0:Feedee|1:Feeder|2:Both)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaKick;
+		next;
+		goto L_option4;
+		end;
+		break;
+	
+	case 4: 
+		L_4again3:
+		mes "How many times should the kill count rollback when feeding is called? recommended("+$icaFeed+") same as the feed limit";
+		set @option,0;
+		input @option;
+		if (@option < 4){ mes "invalid input or out of range"; goto L_4again3;}
+		set $icaRollback, @option; //How many times should the kill count rollback when feeding is called? (10:Recommended)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaRollback;
+		next;
+		goto L_option4;
+		end;
+		break;
+	
+	case 5: 
+		goto L_mainmenu; 
+		end; 
+		break;
+	}
+ 	case 5:
+	L_option5:
+	switch(select("Where do you want to broadcast?:Show number of killing streak in broadcast?:Show number of multiple kill in broadcast?:Show number of nemesis in broadcast?:Show number of feed in broadcast?:Randomize the kill words?:Payback Period limit?:Back")){
+	//Announcer Setting
+	case 1: 
+		L_5again:
+		mes "Where do you want to broadcast? (0:bc_map|1:bc_all)";
+		set @option,0;
+		input @option;
+		if ((@option > 1)||(@option < 0)){ mes "invalid input or out of range"; goto L_5again;}
+		set $icaBroadcast, @option; //Where do you want to broadcast? (0:bc_all|1:bc_map)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaBroadcast;
+		next;
+		goto L_option5;
+		end;
+		break;
+		
+	case 2: 
+		L_5again1:
+		mes "Show number of killing streak in broadcast?(0:Disable|1:Enable) e.g. Ghost is Beyond Godlike(8)";
+		set @option,0;
+		input @option;
+		if ((@option > 1)||(@option < 0)){ mes "invalid input or out of range"; goto L_5again1;}
+		set $icaStreak, @option; //Show number of killing streak in broadcast? e.g. Ghost is Beyond Godlike(8)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaStreak;
+		next;
+		goto L_option5;
+		end;
+		break;
+		
+	case 3: 
+		L_5again2:
+		mes "Show number of multiple kill in broadcast?(0:Disable|1:Enable) e.g. Makizushi just got an Ownage(5)";
+		set @option,0;
+		input @option;
+		if ((@option > 1)||(@option < 0)){ mes "invalid input or out of range"; goto L_5again2;}
+		set $icaMultiple, @option; //Show number of multiple kill in broadcast?(0:Disable|1:Enable) e.g. Makizushi just got an Ownage(5)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaMultiple;
+		next;
+		goto L_option5;
+		end;
+		break;
+		
+	
+	case 4: 
+		L_5again3:
+		mes "Show number of nemesis in broadcast?(0:Disable|1:Enable) e.g. Epoque is owning Jguy(9)";
+		set @option,0;
+		input @option;
+		if ((@option > 1)||(@option < 0)){ mes "invalid input or out of range"; goto L_5again3;}
+		set $icaNemesis, @option; //Show number of nemesis in broadcast?(0:Disable|1:Enable) e.g. Epoque is owning Jguy(9)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaNemesis;
+		next;
+		goto L_option5;
+		end;
+		break;
+		
+	case 5: 
+		L_5again4:
+		mes "Show number of feed in broadcast?(0:Disable|1:Enable) e.g. Cookies is feeding `KeiKun(10)";
+		set @option,0;
+		input @option;
+		if ((@option > 1)||(@option < 0)){ mes "invalid input or out of range"; goto L_5again5;}
+		set $icaFeeder, @option; //Show number of feed in broadcast?(0:Disable|1:Enable) e.g. Cookies is feeding `KeiKun(10)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaFeeder;
+		next;
+		goto L_option5;
+		end;
+		break;
+	
+	case 6: 
+		L_5again5:
+		mes "Randomize the kill words?(0:Disable|1:Enable) e.g. Arcenciel Kill Word jTynne (0:Disable|Default:pwned)";
+		set @option,0;
+		input @option;
+		if ((@option > 1)||(@option < 0)){ mes "invalid input or out of range"; goto L_5again5;}
+		set $icaRandomKillWord, @option; //Randomize the kill words?(0:Disable|1:Enable) e.g. Arcenciel "Kill Word" jTynne (0:Disable|Default:"pwned")
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaRandomKillWord;
+		next;
+		goto L_option5;
+		end;
+		break;
+		
+	case 7: 
+		L_5again6:
+		mes "Pay Back Period after some owns you (minimum of 5)? e.g. Player a killed you 5 times then you gave him a payback";
+		set @option,0;
+		input @option;
+		if (@option < 4){ mes "invalid input or out of range"; goto L_5again6;}
+		set $icapaybackperiod, @option; //Pay Back Period after some owns you (minimum of 5)? e.g. Player a killed you 5 times then you gave him a payback
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icapaybackperiod;
+		next;
+		goto L_option5;
+		end;
+		break;
+		
+	case 8: 
+		goto L_mainmenu; 
+		end; 
+		break;
+	}
+	case 6:
+	goto L_player;
+	next;
+	break;
+	case 7:
+		//set to default settings
+		set $icaSystem, 1; //Toggle PvP System (0:Disable|1:Enable)
+		set $icaServerType, 1; //Are you using TXT or SQL? (0:TXT|1:SQL)
+		set $icaGMLevel, 90; //GM levels above or equal this level will be ignored by the system
+		setarray $icaPvPMap$[0], "All"; //List all pvp maps here (Index 0:"All" to enable all maps)
+		 
+		//PvP Ladder
+		set $icaTop, 10; //What is the length of the list?
+		set $icaReset, 2; //Allow players to reset their PvP statistics? (0:Disable|1:Zeny|2:Cashpoint|3:Skull|4:Item)
+		set $icaZenyFee, 1000; //How much zeny you want to charge to reset their pvp stat?
+		set $icaCashFee, 1000; //How much cashpoint you want to charge to reset their pvp stat?
+		set $icaSkullFee, 1000; //How much skull you want to charge to reset their pvp stat?
+		set $icaResetItemFee, 7227; //What item you want to charge to reset their pvp stat? (7227=TCG change this to the one you want)
+		set $icaResetItemAmountFee, 1000; //What item you want to charge to reset their pvp stat?
+		set $icaAnnouncerFeeOption, 1000; //Option for payment? (0:Zeny|2:Cashpoint|3:Items)
+		set $icaAnnouncerZenyFee, 0; //How much zeny you want to charge to buy an announcer?
+		set $icaAnnouncerCashFee, 1000; //How much cashpoint you want to charge to buy an announcer?
+		set $icaAnnouncerSkullFee, 1000; //How much skull you want to charge to buy an announcer?
+		set $icaAnnouncerItemFee, 7227; //What item you want to charge to buy an announcer? (7227=TCG change this to the one you want)
+		set $icaAnnouncerItemAmountFee, 1000; //What item you want to charge to buy an announcer?
+		 
+		//Reward Setting (Every Kill)
+		set $icaMaxZeny, 1000000000; //What is the max zeny of the server?
+		set $icaZeny, 0; //Earn zeny each kill? (0:Disable)
+		set $icaCash, 0; //How much #CASHPOINT every kill? (0:Disable)
+		set $icaSkull, 0; //Collect player's skull each kill? (0:Disable|1:Enable)
+		setarray $icaItemID[0], 0; //Get items each kill? (0:Disable)
+		setarray $icaAmount[0], 0; //How many items per kill?
+		 
+		//Penalty Setting
+		set $icaFeed, 10; //How many kills before feeding is called? (10:Recommended)
+		set $icaPenalty, 0; //What is the penalty for the feedee? (0:Disable|1:Kill Rollback|2:Server Kick|3:Server Block)
+		set $icaKick, 0; //Who to kick? (0:Feedee|1:Feeder|2:Both)
+		set $icaRollback, 10; //How many times should the kill count rollback when feeding is called? (10:Recommended)
+		 
+		//Announcer Setting
+		set $icaBroadcast, 0; //Where do you want to broadcast? (0:bc_all|1:bc_map)
+		set $icaStreak, 1; //Show number of killing streak in broadcast? e.g. Ghost is Beyond Godlike(8)
+		set $icaMultiple, 1; //Show number of multiple kill in broadcast? e.g. Makizushi just got an Ownage(5)
+		set $icaNemesis, 1; //Show number of nemesis in broadcast? e.g. Epoque is owning Jguy(9)
+		set $icapaybackperiod, 5; //limit of nemesis before you can have you revenge e.g after keikun owned you 5 times or more you can have now your revenge
+		set $icaFeeder, 1; //Show number of feed in broadcast? e.g. Cookies is feeding `KeiKun(10)
+		set $icaRandomKillWord, 1; //Randomize the kill words? e.g. Arcenciel "Kill Word" jTynne (0:Disable|Default:"pwned")
+		setarray $icaKillWord$[0], "pwned", "killed", "disintegrated", "neutralized"; //Enable above setting for this to work
+		break;
+	case 8:
+	L_saveset:
+		mes "Save? (0:No|1:Yes)";
+		set @option,0;
+		input @option;
+		if ((@option<0)||(@option>1)){ mes "invalid input or out of range"; goto L_saveset;}
+		set $icaSave, @option; //Toggle PvP System (0:Disable|1:Enable)
+		mes "Successfully changed Settings";
+		mes "is now set to: "+$icaSave;
+		next;
+		goto L_mainmenu;
+		end;
+		break;
+		
+	case 9:
+	query_sql "TRUNCATE TABLE `pvp_rank`";
+	query_sql "UPDATE `global_reg_value` set `value`='0' WHERE `str`='Kill' OR `str`='Death' OR `str`='KillingStreak' OR `str`='MultiKill' OR `str`='NemesisKill' OR `str`='FeedCount' OR `str`='KillingSpree' OR `str`='Dominating' OR `str`='MegaKill' OR `str`='Unstoppable' OR `str`='WickedSick' OR `str`='MonsterKill' OR `str`='Godlike' OR `str`='BeyondGodlike' OR `str`='DoubleKill' OR `str`='TripleKill' OR `str`='UltraKill' OR `str`='Rampage' OR `str`='Ownage'";
+	mes "Ladder Has been Reset";
+	close;
+	break;
+	case 10:
+	next;
+	mes "Bye~~~";
+	close;
+	break;
+}
+end;
+close;
+}
+else
+{
+L_player:
+mes "[Loki]"; mes "Hi! "+ strcharinfo(0) +" What can I do for you today?";
+switch(select("Player Ranking:PvP Statistic:Announcer Setting")){
+case 1: //Player Ranking
+	next; 
+	if($icaServerType==1){
+		mes "[Top "+$icaTop+" PvP Players]";
+		mes "^0000FFKill^000000 | ^FF0000Death^000000 | ^FF22FFKDR^000000 | ^00FF00SK^000000 | ^666666MK^000000";
+		query_sql "SELECT `char`, `kill`, `death`, `kdr`, `killingstreak`, `multikill` FROM `pvp_rank` ORDER BY `pvp_rank`.`kill` DESC LIMIT "+$icaTop+"", .@char$, .@kill, .@death, .@kdr$, .@sk, .@multikillCTR;
+		for(set .@i, 0; .@i < getarraysize(.@char$); set .@i, .@i + 1){
+			mes .@i+1+". "+.@char$[.@i]+" ^0000FF"+.@kill[.@i]+"^000000 ^FF0000"+.@death[.@i]+"^000000 ^FF22FF"+.@kdr$[.@i]+"^000000 ^00FF00"+.@sk[.@i]+"^000000 ^666666"+.@multikillCTR[.@i]+"^000000 ";
+		}
+		close;
+	} else { 
+		mes "Top "+$icaTop+" ranking is not yet implemented for this server type."; 
+	}
+	break;
+case 2: //PvP Statistic
+	next;
+	mes strcharinfo(0)+"'s PvP Statistic"; mes "^666666Kill:^000000 "+Kill+" ^666666Death:^000000 "+Death+" ^666666KDR:^000000 "+callfunc("KDR_Calculator", Kill, Death)+"^000000";
+	mes "^666666Kills:^000000 "+Kill+" ^666666Deaths:^000000 "+Death+" ^666666KDR:^000000 "+callfunc("KDR_Calculator", Kill, Death)+"";
+	mes "^666666Killing Streak:^000000 "+KillingStreak+" ^666666Multi-Kills:^000000 "+MultiKill+"";
+	switch(select("Killing Streak:Multi-Kill Streak:Nemesis Streak:Reset")){
+	case 1: //Killing Streak
+		next;
+		setarray .LSDotA$[0], ""+KillingSpree+"", ""+Dominating+"", ""+MegaKill+"", ""+Unstoppable+"", ""+WickedSick+"", ""+MonsterKill+"", ""+Godlike+"", ""+BeyondGodlike+"";
+		mes "Killing Streak Stats";
+		switch(#Announcer){
+		case 0:
+			for(set .@i, 0; .@i < getarraysize(.LSDotA$); set .@i, .@i + 1){
+				mes "^666666"+getvariableofnpc(.ESDotA$[.@i], "Versus")+"^000000: "+ .LSDotA$[.@i];
+			 }
+			close;
+		default:
+			for(set .@i, 0; .@i < getarraysize(.LSDotA$); set .@i, .@i + 1){
+				mes "^666666"+getvariableofnpc(.ESHoN$[.@i], "Versus")+"^000000: "+ .LSDotA$[.@i];
+			 }
+			close;
+		}
+		close;
+		break;
+	case 2: //Multi-Kill
+		next;
+		setarray .LMDotA$[0], ""+DoubleKill+"", ""+TripleKill+"", ""+UltraKill+"", ""+Rampage+"";
+		mes "Multi-Kill Stats";
+		switch(#Announcer){
+		case 0:
+			for(set .@i, 0; .@i < getarraysize(.LMDotA$); set .@i, .@i + 1){
+				mes "^666666"+getvariableofnpc(.EMDotA$[.@i], "Versus")+"^000000: "+ .LMDotA$[.@i];
+			 }
+			close;
+		default:
+			for(set .@i, 0; .@i < getarraysize(.LMDotA$); set .@i, .@i + 1){
+				mes "^666666"+getvariableofnpc(.EMHoN$[.@i], "Versus")+"^000000: "+ .LMDotA$[.@i];
+			 }
+			close;
+		}
+		break;
+	case 3:	//Nemesis
+		next;
+		mes "Nemesis Stat";
+		mes "^666666Nemesis Kill^000000: "+NemesisKill;
+		mes "^666666Feed Count^000000: "+FeedCount;
+		close;
+		break;
+	case 4: //Reset Stat
+		next;
+		mes "[Loki]"; mes "Are you sure you want to reset your PvP Statistics?";
+		if($icaReset == 0){ mes "^FF0000Reset Option has been disabled^000000"; }
+		if($icaReset == 1){ mes "^FF0000Reset Fee:^000000 "+$icaZenyFee+" Zeny"; }
+		if($icaReset == 2){ mes "^FF0000Reset Fee:^000000 "+$icaCashFee+" Kill Point"; }
+		if($icaReset == 3){ mes "^FF0000Reset Fee:^000000 "+$icaSkullFee+" Skull"; }
+		if($icaReset == 4){ mes "^FF0000Reset Fee:^000000 "+$icaResetItemAmountFee+"pieces of "+getitemname($icaResetItemFee)+""; }
+		switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaReset){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee; break;
+				case 2:
+					if(#CASHPOINTS < $icaCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; break;
+				case 3:
+					if(countitem(7420) < $icaSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaResetItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; break;
+				default: break;
+			}
+		if($icaServerType==1){ query_sql "DELETE FROM `pvp_rank` WHERE `pvp_rank`.`char_id` = "+getcharid(0)+""; }
+		callsub OnPvPReset; announce "[Loki] Your PvP Statistic has been reset.",bc_self,0xFF0000; close;
+		}
+		close;
+	}
+	break;
+close;
+case 3: //Announcer Setting
+	next; 
+	mes "[Loki]"; mes "What kind of announcer you want to use?"+$icaAnnouncerFeeOption;
+			if($icaAnnouncerFeeOption == 0){ mes "^FF0000Buy Announcer Option has been disabled^000000"; next; close; }
+			if($icaAnnouncerFeeOption == 1){ mes "^FF0000Buy Announcer Fee:^000000 "+$icaAnnouncerZenyFee+" Zeny"; }
+			if($icaAnnouncerFeeOption == 2){ mes "^FF0000Buy Announcer Fee:^000000 "+$icaAnnouncerCashFee+" Kill Point"; }
+			if($icaAnnouncerFeeOption == 3){ mes "^FF0000Buy Announcer Fee:^000000 "+$icaAnnouncerSkullFee+" Skull"; }
+			if($icaAnnouncerFeeOption == 4){ mes "^FF0000Buy Announcer Fee:^000000 "+$icaAnnouncerItemAmountFee+" pieces of "+getitemname($icaAnnouncerItemFee)+"."; }
+	L_Announce:
+	switch(select(""+((#Announcer == 0)?"^FF0000DotA^000000":"DotA")+":"+((#Announcer == 1)?"^FF0000HoN^000000":"HoN")+":"+((#Announcer == 2)?"^FF0000Ms. Pudding^000000":"Ms. Pudding")+":"+((#Announcer == 3)?"^FF0000Flamboyant^000000":"Flamboyant")+":"+((#Announcer == 4)?"^FF0000English^000000":"English")+":"+((#Announcer == 5)?"^FF0000Balls of Steel^000000":"Balls of Steel")+":"+((#Announcer == 6)?"^FF0000BreakyCPK^000000":"BreakyCPK")+":"+((#Announcer == 7)?"^FF0000Pimp^000000":"Pimp")+":"+((#Announcer == 8)?"^FF0000Seductive^000000":"Seductive")+"")){
+		case 1: //DotA
+			if(#Announcer == 0){ goto L_Announce; }
+			soundeffect "0_Startgame.wav", 0;
+			set #Announcer, 0;
+			announce "[Loki] DotA announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+		case 2: //HoN
+			if(#Announcer == 1){ goto L_Announce; }
+			if(!#Hon){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #Hon, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #Hon, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #Hon, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #Hon, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "1_Startgame.wav", 0;
+			set #Announcer, 1;
+			announce "[Loki] HoN announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+		case 3: //Ms. Pudding
+			if(#Announcer == 2){ goto L_Announce; }
+			if(!#MsPudding){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #MsPudding, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #MsPudding, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #MsPudding, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #MsPudding, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "2_Startgame.wav", 0;
+			set #Announcer, 2;
+			announce "[Loki] Ms. Pudding announcer has been configured to your account.",bc_self,0xFF0000;
+			close;	
+			break;	
+		case 4: //Flamboyant
+			if(#Announcer == 3){ goto L_Announce; }
+			if(!#Flamboyant){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #Flamboyant, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #Flamboyant, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #Flamboyant, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #Flamboyant, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "3_Victory.wav", 0;
+			set #Announcer, 3;
+			announce "[Loki] Flamboyant announcer has been configured to your account.",bc_self,0xFF0000;
+			close;	
+			break;		
+		case 5: //English
+			if(#Announcer == 4){ goto L_Announce; }
+			if(!#English){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #English, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #English, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #English, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #English, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "4_Startgame.wav", 0;
+			set #Announcer, 4;
+			announce "[Loki] English announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+		case 6: //Balls of Steel
+			if(#Announcer == 5){ goto L_Announce; }
+			if(!#BallsofSteel){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #BallsofSteel, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #BallsofSteel, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #BallsofSteel, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #BallsofSteel, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "5_Startgame.wav", 0;
+			set #Announcer, 5;
+			announce "[Loki] Balls of Steel announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+		case 7: //BreakyCPK
+			if(#Announcer == 6){ goto L_Announce; }
+			if(!#BreakyCPK){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #BreakyCPK, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #BreakyCPK, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #BreakyCPK, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #BreakyCPK, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "6_Startgame.wav", 0;
+			set #Announcer, 6;
+			announce "[Loki] BreakyCPK announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+		case 8: //pimp
+			if(#Announcer == 7){ goto L_Announce; }
+			if(!#PIMP){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #PIMP, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #PIMP, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #PIMP, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #PIMP, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "7_Startgame.wav", 0;
+			set #Announcer, 7;
+			announce "[Loki] Pimp announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+		case 9: //seductive
+			if(#Announcer == 8){ goto L_Announce; }
+			if(!#SEDUCTIVE){
+			next;
+			mes "^FF0000Do You Want to Purchase?^000000";
+			switch(select("No:Yes")){
+			case 1: close;
+			case 2:
+			switch($icaAnnouncerFeeOption){
+				case 0: break;
+				case 1:
+					if(Zeny < $icaAnnouncerZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					set Zeny, Zeny - $icaZenyFee;
+					set #SEDUCTIVE, 1;
+					break;
+				case 2:
+					if(#CASHPOINTS < $icaAnnouncerCashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					set #CASHPOINTS, #CASHPOINTS - $icaCashFee; 
+					set #SEDUCTIVE, 1;
+					break;
+				case 3:
+					if(countitem(7420) < $icaAnnouncerSkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					delitem 7420, $icaSkullFee; 
+					set #SEDUCTIVE, 1;
+					break;
+				case 4: if(countitem($icaAnnouncerItemFee) < $icaAnnouncerItemAmountFee){ next; mes "[Loki]"; mes "You don't have enough "+getitemname($icaAnnouncerItemFee)+"."; close; }
+					delitem $icaAnnouncerItemFee, $icaAnnouncerItemAmountFee; 
+					set #SEDUCTIVE, 1;
+					break;
+				default: break;
+			}
+			}
+			}
+			soundeffect "8_Startgame.wav", 0;
+			set #Announcer, 8;
+			announce "[Loki] Seductive announcer has been configured to your account.",bc_self,0xFF0000;
+			close;
+			break;
+	default: close;break;
+	}
+end;
+ }
+close;
+ 
+OnPvPReset:
+set Kill, 0;
+set Death, 0;
+set KillingStreak, 0; 
+set MultiKill, 0;
+set KillingSpree, 0;
+set Dominating, 0;
+set MegaKill, 0;
+set Unstoppable, 0;
+set WickedSick, 0;
+set MonsterKill, 0;
+set Godlike, 0;
+set BeyondGodlike, 0;
+set DoubleKill, 0;
+set TripleKill, 0;
+set UltraKill, 0;
+set Rampage, 0;
+set Ownage, 0;
+set NemesisKill, 0;
+set FeedCount, 0;
+return;
+}
+}
+
+//Ghost's KDR Algorithm
+function	script	KDR_Calculator	{
+if(!getarg(1)) { debugmes "Error in KDR function, getarg(1) invalid value"; return 0; } // [Lighta]
+if(getarg(0) >= getarg(1)){
+	if(getarg(1)){
+		set .@i, getarg(0)/getarg(1);
+		if((getarg(0)%getarg(1)) == 0){ return .@i+".00"; }
+		set .@j, (getarg(0)%getarg(1))*100/getarg(1);
+		return .@i+"."+.@j;
+	} else {
+		return getarg(0)+".00";
+	}
+}
+if(getarg(0) < getarg(1)){
+	if(getarg(0)){ 
+		set .@i, (getarg(0)*10)/getarg(1);
+		set .@j, ((getarg(0)*10)%getarg(1))*10/getarg(1);
+	return "0."+.@i +.@j;
+	} else {
+		return "0.00";
+	}
+ }
+}

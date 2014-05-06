@@ -23,7 +23,7 @@ pvp_castle,91,30,5	script	KVM Waiting Room#a::KvM01R_Guillaume	4_M_KY_KNT,{
 	end;
 
 OnInit:
-	waitingroom "Team Guillaume",6,"KvM01_BG::OnGuillaumeJoin",1;
+	waitingroom "Team Guillaume",4,"KvM01_BG::OnGuillaumeJoin",1;
 	end;
 	
 OnEnterBG:
@@ -37,7 +37,7 @@ pvp_castle,112,30,4	script	KVM Waiting Room#b::KvM01R_Croix	4_M_CRU_KNT,{
 	end;
 
 OnInit:
-	waitingroom "Team Croix",6,"KvM01_BG::OnCroixJoin",1;
+	waitingroom "Team Croix",4,"KvM01_BG::OnCroixJoin",1;
 	end;
 
 OnEnterBG:
@@ -191,7 +191,7 @@ OnReadyCheck:
 	set .@Guillaume, getwaitingroomstate(0,"KvM01R_Guillaume");
 	set .@Croix, getwaitingroomstate(0,"KvM01R_Croix");
 
-	if( .@Guillaume < 5 || .@Croix < 5 )
+	if( .@Guillaume < 3 || .@Croix < 3 )
 		end;
 
 	set $@KvM01BG, 1; // Starting

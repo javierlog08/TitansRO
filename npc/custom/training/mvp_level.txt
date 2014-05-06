@@ -1,0 +1,38 @@
+//**********************************************************
+// Leveling Last Mode
+// 
+//	@Description--------------------------------------------
+//	This is the last part of the training there's gonna have
+//	an amount of Phreeoni to help the user level up.
+//**********************************************************
+
+//**************************
+//	Level 150-175
+//**************************
+pvp_n_2-3,99,96,4	script	Exit	459,{
+	mes "Hola~";
+	mes "Que desea volver?";
+	switch(select("Si,porfavor:Nah, Aun no soy fuerte.")) {
+		case 1:
+			warp "iz_ac01_d",100,34;
+		break;
+		case 2:
+			mes "Bien. esfuerzate !";
+			close;
+		break;
+	}
+	OnInit:
+		setmapflag "pvp_n_2-3",mf_nomemo;
+		setmapflag "pvp_n_2-3",mf_nosave;
+		setmapflag "pvp_n_2-3",mf_nowarp;
+		setmapflag "pvp_n_2-3",mf_noteleport;
+		removemapflag "pvp_n_2-3",mf_pvp;
+	end;
+}
+
+pvp_n_2-3,61,99,0,0	monster	Boss	2974,1,0,0,0
+pvp_n_2-3,100,138,0,0	monster	Boss	2974,1,0,0,0
+pvp_n_2-3,140,100,0,0	monster	Boss	2974,1,0,0,0
+pvp_n_2-3,99,62,0,0	monster	Boss	2974,1,0,0,0
+pvp_n_2-3,112,113,0,0	monster	Boss	2974,1,0,0,0
+pvp_n_2-3,114,87,0,0	monster	Boss	2974,1,0,0,0

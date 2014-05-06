@@ -65,6 +65,14 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 	end;
 	
 	Menu_Invite_Yes:
+		if(getvariableofnpc(.OnDelay,"pvp_hunt_invitator")){
+			next2;
+			mes "^00CCCC[ Organizador de Cazeria ]^000000";
+			mes "^ff0000 Al parecer ya alguien ha enviado invitaciones. Debes esperar un tiempo antes de enviar mas invitaciones para el PVP.^000000";
+			close2;
+			cutin "",255;
+			end;
+		}
 		addtimer 1,"pvp_hunt_invitator::OnOrganize";
 	end;
 
@@ -105,24 +113,29 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 		}
 		next2;
 		//addtimer 100,"pvp_hunt_invitator::OnOrganize";
-		mes "^00CCCC[ Organizador de Cazeria ]^000000";
+		/*mes "^00CCCC[ Organizador de Cazeria ]^000000";
 		mes "^ff0000 Modo de cazeria iniciado.^000000";
 		mes "~ ~";
-		mes "En algun lugar del mapa acaba de ser invocado el ^0000ffMVP^000000 de Cazeria.";
+		mes "En algun lugar del mapa acaba de ser invocado el ^0000ffMVP^000000 de Cazeria.";*/
 		set .SUMMONER$,strcharinfo(0);
 		set .HUNT_ON,1;
 		set .HUNT_MOB_GID,areamonster("this", 49, 61, 147, 51, "MVP de Cazeria", 3150, 1, strnpcinfo(3)+"::OnMobHunted");
-		doevent strnpcinfo(3)+"::OnWarpRandom";
-		close2;
-		announce "El Player [ "+strcharinfo(0)+" ] ha activado el PVP en Modo de cazeria",bc_all,0xff9933;
+		getmemberaid ALL_SAMEMAP,"hunt";
+		for ( .@i = 0; .@i < $@onlinecount; .@i++ ) {
+			attachrid $@onlineaid[.@i];
+			addtimer 1, strnpcinfo(3)+"::OnWarpRandom";
+		}
+		//close2;
+		sleep2 2000;
+		announce "El Player [ "+.SUMMONER$+" ] ha activado el PVP en Modo de cazeria",bc_all,0xff9933;
 		initnpctimer;
-		cutin "",255;
+		//cutin "",255;
 		addtimer 1,strnpcinfo(3)+"::OnEventTime"; //Activa un relog y el mensaje de que el mvp esta activo
 		addtimer 1,strnpcinfo(3)+"::OnMobTeleportSystem";
 	end;
 	
 	OnTimer8000:
-		announce "El Player en el PVP Hunt, que de caza al monstruo especial ganara "+.Reward+" Hunt Points",bc_all,0xff9933;
+		announce "El Player en el PVP Hunt, que de cazeria al monstruo especial ganara "+.Reward+" Hunt Points",bc_all,0xff9933;
 	end;
 
 	OnTimer900000:
@@ -253,14 +266,14 @@ hunt,111,32,4	script	Invocador Hunt::hunt_summoner	105,{
 		killmonster "hunt","All";
 		delwaitingroom;
 		stopnpctimer;
-		set .HUNT_PVP_DELAY,120000; //Delay de 2 Minutos
+		set .HUNT_PVP_DELAY,300000; //Delay de 5 Minutos para poder usar el pvp otra vez
 		addtimer 1,"pvp_hunt_officer::OnSetDelayMessage";
 		mapwarp "hunt","pvp_castle",100,110;
 		addtimer .HUNT_PVP_DELAY,strnpcinfo(3)+"::OnSetDelay";
 	end;
 
 	OnInit:
-		set .STACK,1; //Numero de usuarios en el mapa de hunt, requeridos para la activacion del juego
+		set .STACK,3; //Numero de usuarios en el mapa de hunt, requeridos para la activacion del juego
 		set .PRICE,1000000;
 		set .HUNT_ON,0;
 		set .HUNT_MOB_GID,0;

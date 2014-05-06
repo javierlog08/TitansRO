@@ -45,12 +45,18 @@ OnInit:
 set .System, 1; //Toggle PvP System (0:Disable|1:Enable)
 set .ServerType, 1; //Are you using TXT or SQL? (0:TXT|1:SQL)
 set .GMLevel, 90; //GM levels above or equal this level will be ignored by the system
-setarray .PvPMap$[0], "pvp_castle"; //List all pvp maps here (Index 0:"All" to enable all maps)
+setarray .PvPMap$[0], "guild_vs3"; //List all pvp maps here (Index 0:"All" to enable all maps)
+setmapflag("guild_vs3",mf_pvp);
+setmapflag("guild_vs3",mf_pvp_noguild);
+setmapflag("guild_vs3",mf_zone,"PvP");
+setmapflag "guild_vs3",mf_nowarp;
+setmapflag "guild_vs3",mf_nowarpto;
+setmapflag "guild_vs3",mf_noteleport;
 
 //PvP Ladder
 set .Top, 10; //What is the length of the list?
 set .Reset, 0; //Allow players to reset their PvP statistics? (0:Disable|1:Zeny|2:Cashpoint|3:Skull)
-set .ZenyFee, 0; //How much zeny you want to charge to reset their pvp stat?
+set .ZenyFee, 1000; //How much zeny you want to charge to reset their pvp stat?
 set .CashFee, 1000; //How much cashpoint you want to charge to reset their pvp stat?
 set .SkullFee, 1000; //How much skull you want to charge to reset their pvp stat?
 set .AnnouncerFee, 0; //How much cashpoint per announcer? (DotA announcer is set as default)
@@ -70,12 +76,12 @@ set .Kick, 0; //Who to kick? (0:Feedee|1:Feeder|2:Both)
 set .Rollback, 10; //How many times should the kill count rollback when feeding is called? (10:Recommended)
 
 //Announcer Setting
-set .Broadcast, 0; //Where do you want to broadcast? (0:bc_all|1:bc_map)
-set .Streak, 1; //Show number of killing streak in broadcast? e.g. Ghost is Beyond Godlike(8)
-set .Multiple, 1; //Show number of multiple kill in broadcast? e.g. Makizushi just got an Ownage(5)
-set .Nemesis, 1; //Show number of nemesis in broadcast? e.g. Epoque is owning Jguy(9)
-set .Feeder, 1; //Show number of feed in broadcast? e.g. Cookies is feeding `KeiKun(10)
-set .RandomKillWord, 1; //Randomize the kill words? e.g. Arcenciel "Kill Word" jTynne (0:Disable|Default:"pwned")
+set .Broadcast, 1; //Where do you want to broadcast? (0:bc_all|1:bc_map)
+set .Streak, 0; //Show number of killing streak in broadcast? e.g. Ghost is Beyond Godlike(8)
+set .Multiple, 0; //Show number of multiple kill in broadcast? e.g. Makizushi just got an Ownage(5)
+set .Nemesis, 0; //Show number of nemesis in broadcast? e.g. Epoque is owning Jguy(9)
+set .Feeder, 0; //Show number of feed in broadcast? e.g. Cookies is feeding `KeiKun(10)
+set .RandomKillWord, 0; //Randomize the kill words? e.g. Arcenciel "Kill Word" jTynne (0:Disable|Default:"pwned")
 setarray .KillWord$[0], "Owned", "killed", "disintegrated", "neutralized"; //Enable above setting for this to work
 
 //Broadcast Color | See HexTable: http://johncfish.com/bggallery/otherchart/hextable.gif
@@ -88,13 +94,14 @@ set .PBColor$, "0xFF0000"; //Payback Broadcast Color | e.g. Makizushi just have 
 set .FDColor$, "0xFF00CC"; //Feeder Broadcast Color | e.g. Cookies is feeding Z3R0
 
 //--Warning: Critical Setting | Killing Streaks and Multiple Kills Announcer
-setarray .KSDotA$[0], "is on a Killing Spree", "is Dominating", "has a Mega-Kill", "is Unstoppable", "is Wicked Sick", "has a M-m-m-m....Monster Kill", "is Godlike", "is Beyond Godlike";
+setarray .KSDotA$[0], "esta en racha de asesinatos en PVP","esta masacrando a todos en PVP", "esta destruyento todo el PVP", "es imparable en el PVP", "esta dominando todo el PVP", "es casi un Dios del PVP", "es una leyenda del PVP","es una leyenda del PVP";
+//setarray .KSDotA$[0], "is on a Killing Spree", "is Dominating", "has a Mega-Kill", "is Unstoppable", "is Wicked Sick", "has a M-m-m-m....Monster Kill", "is Godlike", "is Beyond Godlike";
 setarray .KSHoN$[0], "is a Serial Killer", "is an Ultimate Warrior", "is Legendary", "is on an Onslaught!", "is Savage Sick", "is Dominating", "has a Bloodbath", "is Immortal"; //Took out #9. Champion of Newearth
-setarray .MKDotA$[0], "just got a Double Kill", "just got a Triple Kill", "just got an Ultra Kill", "is on a Rampage", "is Owning his enemies";
+setarray .MKDotA$[0], "Asesinato Doble", "Asesinato Triple", "Asesinato Cuadruple", "PEntaaaaaaaaaaaaaakiiiil", "OH DIOS MIO 6 VECES !!";
 setarray .MKHoN$[0], "just got a Double Tap", "just got a Hat Trick", "just got an Quad Kill", "annihilated his enemies", "just got a Genocide";
 setarray .ESDotA$[0], "Killing Spree", "Dominating", "Mega-Kill", "Unstoppable", "Wicked Sick", "Monster Kill", "Godlike", "Beyond Godlike";
 setarray .ESHoN$[0], "Serial Killer", "Ultimate Warrior", "Legendary", "Onslaught", "Savage Sick", "Dominating", "Bloodbath", "Immortal"; //Took out #9. Champion of Newearth
-setarray .EMDotA$[0], "Double Kill", "Triple Kill", "Ultra Kill", "Rampage", "Ownage";
+setarray .EMDotA$[0], "Asesinato Doble", "Asesinato Triple", "Asesinato Cuadruple", "PEntaaaaaaaaaaaaaakiiiil", "OH DIOS MIO 6 VECES !!";
 setarray .EMHoN$[0], "Double Tap", "Hat Trick", "Quad Kill", "Annihilation", "Genocide";
 
 //--Warning: Fail Safe | Do Not Touch
@@ -138,12 +145,15 @@ end;
 OnPCKillEvent:
 if(.System){
 if(getgmlevel() >= .GMLevel){ end; }
+if(strcharinfo(3)==.PvPMap$[0] && !@mk && @ks<=2) //Canta kill solo en el mapa correcto y si no esta el multikill activo
+	soundeffect #Announcer+"_kill.wav",0;
+
 if(.PvPMap$[0] != "All"){
 	for(set .@i, 0; .@i < (getarraysize(.PvPMap$) - 1); set .@i, .@i + 1){
 		if(strcharinfo(3) != .PvPMap$[.@i]){ end; }
 	}
 }
-if((@nm == .Feed) && (.Penalty)){
+if((@nm == .Feed) && (.Penalty)){ //En caso de fedeers
 callsub OnClearData;
 	switch(.Penalty){
 	case 0: break;
@@ -167,15 +177,15 @@ if(@nm < .Feed){
 	if(.Skull){ getnameditem 7420, rid2name(killedrid); }
 	for(set .@i, 0; .@i < getarraysize(.ItemID); set .@i, .@i + 1){ if(.ItemID){ getitem .ItemID[.@i], .Amount[.@i]; }}
 }
-if(.RandomKillTerm){ announce strcharinfo(0)+" "+.KillWord$[rand(0, getarraysize(.KillWord$) - 1)]+" "+rid2name(killedrid)+"'s head", ((.Broadcast)?bc_all:bc_map), .KColor$; } 
-else { announce strcharinfo(0)+" pwned "+rid2name(killedrid)+"'s head", ((.Broadcast)?bc_all:bc_map), .KColor$; }
+/*if(.RandomKillWord){ announce strcharinfo(0)+" "+.KillWord$[rand(0, getarraysize(.KillWord$) - 1)]+" "+rid2name(killedrid)+"'s head", ((.Broadcast)?bc_all:bc_map), .KColor$; } 
+else { announce "[ "+strcharinfo(0)+" ] mato a  "+rid2name(killedrid)+" en PVP", ((.Broadcast)?bc_all:bc_map), .KColor$; }*/
 set Kill, Kill + 1; 
 if(@ks < 10){ set @ks, @ks + 1; }
 if(@mk < 6){ set @mk, @mk + 1; } 
 if(!NemesisKilled){ set NemesisKilled, killedrid; }
 if(NemesisKilled == killedrid){ set @nm, @nm + 1; }
 deltimer "Versus::OnMKReset"; 
-addtimer 18000, "Versus::OnMKReset"; 
+addtimer 5000,"Versus::OnMKReset"; 
 callsub OnRecordStreak; 
 callsub OnAnnounce; 
 callsub OnDeath;
@@ -185,12 +195,21 @@ end;
 OnPCDieEvent:
 if(.System){
 if(getgmlevel() >= .GMLevel){ end; }
+if(strcharinfo(3)==.PvPMap$[0] && !@mk && @ks<=2) //Canta kill solo en el mapa correcto y si no esta el multikill activo
+	soundeffect #Announcer+"_death.wav",0;
+sleep2 2000;
 if(.PvPMap$[0] != "All"){ 
-	for(set .@i, 0; .@i < (getarraysize(.PvPMap$) - 1); set .@i, .@i + 1){
+	for(set .@i, 0; .@i < getarraysize(.PvPMap$); set .@i, .@i + 1){
 		if(strcharinfo(3) != .PvPMap$[.@i]){ end; }
 		set Death, Death + 1;
 	}
 }
+/*if(strcharinfo(3)==.PvPMap$[0])
+	warp "pvp_castle",118,109;
+
+sleep2 1500;
+atcommand "@alive ";
+atcommand "@refresh ";*/
 } end;
 
 OnPCLogoutEvent:
@@ -242,44 +261,56 @@ return;
 
 OnAnnounce:
 if((@ks == 1) && (#FirstBlood == 1)){
-	if(#Announcer == 0){ announce strcharinfo(0)+" drew first blood", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
-	if(#Announcer > 1){ announce strcharinfo(0)+" got bloodlust", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
+	if(#Announcer == 0){ announce "[ "+strcharinfo(0)+" ] drew first blood", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
+	if(#Announcer > 1){ announce "[ "+strcharinfo(0)+" ] got bloodlust", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
 	set #FirstBlood, 0;
 	soundeffectall ""+#Announcer+"_KS"+1+".wav", 0, strcharinfo(3);
 }
-if(@ks > 2){
-	if(#Announcer == 0){ announce strcharinfo(0)+" "+.KSDotA$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
-	if(#Announcer > 1){ announce strcharinfo(0)+" "+.KSHoN$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
-	soundeffectall ""+#Announcer+"_KS"+@ks+".wav", 0, strcharinfo(3);
-}
 if(@mk > 1){
-	if(#Announcer == 0){ announce strcharinfo(0)+" "+.MKDotA$[@mk - 2]+" "+((.Multiple)?"("+@mk+")":"")+"", ((.Broadcast)?bc_all:bc_map), .MKColor$; }
-	if(#Announcer > 1){ announce strcharinfo(0)+" "+.MKHoN$[@mk - 2]+" "+((.Multiple)?"("+@mk+")":"")+"", ((.Broadcast)?bc_all:bc_map), .MKColor$; }
+	if(#Announcer == 0){ announce "[ "+strcharinfo(0)+" ] "+.MKDotA$[@mk - 2]+" "+((.Multiple)?"("+@mk+")":"")+"", ((.Broadcast)?bc_all:bc_map), .MKColor$; }
+	if(#Announcer > 1){ announce "[ "+strcharinfo(0)+" ] "+.MKHoN$[@mk - 2]+" "+((.Multiple)?"("+@mk+")":"")+"", ((.Broadcast)?bc_all:bc_map), .MKColor$; }
 	sleep2 1500;
 	soundeffectall ""+#Announcer+"_MK"+@mk+".wav", 0, strcharinfo(3);
 }
+
+if(@ks > 2){
+	if(@mk<=1) {
+		if(#Announcer == 0){ announce "[ "+strcharinfo(0)+" ] "+.KSDotA$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
+		if(#Announcer > 1){ announce "[ "+strcharinfo(0)+" ] "+.KSHoN$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .KSColor$; }
+		//sleep2 1500;
+		soundeffectall ""+#Announcer+"_KS"+@ks+".wav", 0, strcharinfo(3);
+	}
+}
+
 if((@nm > 3) && (@nm < .Feed)){
-	announce strcharinfo(0)+" is owning "+rid2name(NemesisKilled)+" "+((.Nemesis)?"("+@nm+")":"")+"", ((.Broadcast)?bc_all:bc_map), .NMColor$;
+	//announce "[ "+strcharinfo(0)+" ] esta abusando de  [ "+rid2name(NemesisKilled)+" ] "+((.Nemesis)?"("+@nm+")":"")+"", ((.Broadcast)?bc_all:bc_map), .NMColor$;
 	sleep2 2000;
-	if(#Announcer > 0){ soundeffectall #Announcer+"_Nemesis.wav", 0, strcharinfo(3); } else { soundeffectall "1_Nemesis.wav", 0;}
+	if(#Announcer > 0){ soundeffectall #Announcer+"_Nemesis.wav", 0, strcharinfo(3); }/* else { soundeffectall "1_Nemesis.wav", 0;}*/
 }
 if(@nm >= .Feed){
-	announce rid2name(NemesisKilled)+" is feeding "+strcharinfo(0)+" "+((.Feeder)?"("+@nm+")":"")+"", ((.Broadcast)?bc_all:bc_map), .FDColor$;
+	//announce "[ "+rid2name(NemesisKilled)+" ] is feedeando a [ "+strcharinfo(0)+" ]"+((.Feeder)?"("+@nm+")":"")+"", ((.Broadcast)?bc_all:bc_map), .FDColor$;
 	sleep2 1500;
 	soundeffectall "Feeder.wav", 0, strcharinfo(3);
 } return;
 
 OnDeath:
-if(@ks > 2){
-	if(#Announcer == 0){ announce rid2name(killedrid)+" just ended "+strcharinfo(0)+"'s "+.ESDotA$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .ESColor$; }
-	if(#Announcer > 1){ announce rid2name(killedrid)+" just ended "+strcharinfo(0)+"'s "+.ESHoN$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .ESColor$; }
-}
-if(@nm > 3){
-	soundeffectall #Announcer+"_Payback.wav", 0, rid2name(killedrid);
-	announce rid2name(killedrid)+" just have a payback againts "+strcharinfo(0)+" "+((.Nemesis)?"("+@nm+")":"")+"", ((.Broadcast)?bc_all:bc_map), .PBColor$;
-}
-attachrid(killedrid); 
+set .@killer,getcharid(3);
+set .@killed,killedrid;
+attachrid(killedrid); //Para verificar status del player asesinado
+//if(NemesisKilled == .@killer) { //si player que matastes es tu nemesis
+	if(@ks > 2){
+		soundeffectall #Announcer+"_Payback.wav", 0,.PvPMap$[0];
+		if(#Announcer == 0){ announce rid2name(.@killer)+" just ended "+rid2name(.@killed)+"'s "+.ESDotA$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .ESColor$; }
+		if(#Announcer > 1){ announce rid2name(.@killer)+" just ended "+rid2name(.@killed)+"'s "+.ESHoN$[@ks - 3]+" "+((.Streak)?"("+@ks+")":"")+"", ((.Broadcast)?bc_all:bc_map), .ESColor$; }
+	}
+	if(@nm > 3){
+		//soundeffectall #Announcer+"_Payback.wav", 0,.PvPMap$[0];
+		announce rid2name(.@killer)+" just have a payback againts "+rid2name(.@killed)+" "+((.Nemesis)?"("+@nm+")":"")+"", ((.Broadcast)?bc_all:bc_map), .PBColor$;
+	}
 	callsub OnClearData;
+//}
+detachrid;
+attachrid .@killer;
 return;
 
 OnMKReset: set @mk, 0; end;
@@ -309,12 +340,23 @@ announce "[Anti-Feed] Your kill count has been rollbacked "+.Rollback+" times.",
 return;
 }
 
-pvp_castle,121,114,4	script	PVP Free For All	105,{
-mes "[PVP Free For All]"; mes "What can I do for you today?";
-switch(select("Player Ranking:PvP Statistic:Announcer Setting")){
-case 1: //Player Ranking
-	next; 
+pvp_castle,121,114,4	script	Loki	105,{
+mes "^0080ff^0080ff[ PVP Free For All ]^000000^000000"; 
+mes "Este PVP Normal implementado statics de ^0000ffLoL^000000 y ^006600Dota^000000.";
+mes "^ff0000Kill Streaks:^000000 Jugador que mata a multiples enemigos sin morir entra en una racha.";
+mes "^ff0000Multi Kill:^000000 Jugador que mata mucho en poco tiempo.";
+mes "^ff0000Nemesis^000000 Si matas a otro jugador mas de 4 veces te vuelves su nemesis.";
+mes "^ff0000Payback^000000 Es cuando matas a tu nemesis o al jugador que esta en racha.";
+switch(select("Ir a PVP:PVP Ranking:PVP Statics")){ //Sonidos se removio
+case 1: // Titans PVP Warp
+	warp "guild_vs3",0,0;
+	announce "[ "+strcharinfo(0)+" ] Ha entrado al PVP Free For All",bc_all;
+end;
+
+case 2: //Player Ranking
+	next2; 
 	if(getvariableofnpc(.ServerType, "Versus")){
+		if((getvariableofnpc(.ServerType, "Versus")) && (Kill)){ query_sql("REPLACE INTO `pvp_rank` (`char_id`, `account_id`, `char`, `kill`, `death`, `kdr`, `killingstreak`, `multikill`,  `nemesiskill`, `feedcount`,`killingspree`, `dominating`, `megakill`, `unstoppable`, `wickedsick`, `monsterkill`, `godlike`, `beyondgodlike`, `doublekill`, `triplekill`, `ultrakill`, `rampage`, `ownage`) VALUES ("+getcharid(0)+","+getcharid(3)+", '"+rid2name(getcharid(3))+"', "+Kill+", "+Death+", '"+callfunc("KDR_Calc", Kill, Death)+"', "+KillingStreak+", "+MultiKill+",  "+NemesisKill+", "+FeedCount+", "+KillingSpree+", "+Dominating+", "+MegaKill+", "+Unstoppable+", "+WickedSick+", "+MonsterKill+", "+Godlike+", "+BeyondGodlike+", "+DoubleKill+", "+TripleKill+", "+UltraKill+", "+Rampage+", "+Ownage+")"); }
 		mes "[Top "+getvariableofnpc(.Top, "Versus")+" PvP Players]";
 		mes "^0000FFKill^000000 | ^FF0000Death^000000 | ^FF22FFKDR^000000 | ^00FF00SK^000000 | ^666666MK^000000";
 		query_sql "SELECT `char`, `kill`, `death`, `kdr`, `killingstreak`, `multikill` FROM `pvp_rank` ORDER BY `pvp_rank`.`kill` DESC LIMIT "+getvariableofnpc(.Top, "Versus")+"", .@char$, .@kill, .@death, .@kdr$, .@sk, .@mk;
@@ -325,13 +367,13 @@ case 1: //Player Ranking
 	} else { 
 		mes "Top "+getvariableofnpc(.Top, "Versus")+" ranking is not yet implemented for this server type."; 
 	}
-case 2: //PvP Statistic
-	next;
+case 3: //PvP Statistic
+	next2;
 	mes strcharinfo(0)+"'s PvP Statistic"; mes "^666666Kill:^000000 "+Kill+" ^666666Death:^000000 "+Death+" ^666666KDR:^000000 "+callfunc("KDR_Calc", Kill, Death)+"^000000";
 	mes "^666666Killing Streak:^000000 "+KillingStreak+" ^666666Multi-Kills:^000000 "+MultiKill+"";
 	switch(select("Killing Streak:Multi-Kill Streak:Nemesis Streak:"+(getvariableofnpc(.Reset, "Versus")?"Reset":"")+"")){
 	case 1: //Killing Streak
-		next;
+		next2;
 		setarray .LSDotA$[0], ""+KillingSpree+"", ""+Dominating+"", ""+MegaKill+"", ""+Unstoppable+"", ""+WickedSick+"", ""+MonsterKill+"", ""+Godlike+"", ""+BeyondGodlike+"";
 		mes "Killing Streak Stats";
 		switch(#Announcer){
@@ -348,7 +390,7 @@ case 2: //PvP Statistic
 		}
 		close;
 	case 2: //Multi-Kill
-		next;
+		next2;
 		setarray .LMDotA$[0], ""+DoubleKill+"", ""+TripleKill+"", ""+UltraKill+"", ""+Rampage+"", ""+Ownage+"";
 		mes "Multi-Kill Stats";
 		switch(#Announcer){
@@ -364,18 +406,18 @@ case 2: //PvP Statistic
 			close;
 		}
 	case 3:	//Nemesis
-		next;
+		next2;
 		mes "Nemesis Stat";
 		mes "^666666Nemesis Kill^000000: "+NemesisKill;
 		mes "^666666Feed Count^000000: "+FeedCount;
 		close;
 	case 4: //Reset Stat
-		next;
+		next2;
 		set .Reset, getvariableofnpc(.Reset, "Versus");
 		set .ZenyFee, getvariableofnpc(.ZenyFee, "Versus");
 		set .CashFee, getvariableofnpc(.CashFee, "Versus");
 		set .SkullFee, getvariableofnpc(.SkullFee, "Versus");
-		mes "[Loki]"; mes "Are you sure you want to reset your PvP Statistics?";
+		mes "^0080ff[ PVP Free For All ]^000000"; mes "Estas seguro de que quieres resetear tus PvP Statistics?";
 		if(.Reset == 1){ mes "^FF0000Reset Fee:^000000 "+.ZenyFee+" Zeny"; }
 		if(.Reset == 2){ mes "^FF0000Reset Fee:^000000 "+.CashFee+" Kill Point"; }
 		if(.Reset == 3){ mes "^FF0000Reset Fee:^000000 "+.SkullFee+" Skull"; }
@@ -385,128 +427,144 @@ case 2: //PvP Statistic
 			switch(.Reset){
 				case 0: break;
 				case 1:
-					if(Zeny < .ZenyFee){ next; mes "[Loki]"; mes "You don't have enough Zeny."; close; }
+					if(Zeny < .ZenyFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Zeny."; close; }
 					set Zeny, Zeny - .ZenyFee; break;
 				case 2:
-					if(#CASHPOINTS < .CashFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+					if(#CASHPOINTS < .CashFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 					set #CASHPOINTS, #CASHPOINTS - .CashFee; break;
 				case 3:
-					if(countitem(7420) < .SkullFee){ next; mes "[Loki]"; mes "You don't have enough Skull."; close; }
+					if(countitem(7420) < .SkullFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Skull."; close; }
 					delitem 7420, .SkullFee; break;
 				default: break;
 			}
 		if(getvariableofnpc(.ServerType, "Versus")){ query_sql "DELETE FROM `pvp_rank` WHERE `pvp_rank`.`char_id` = "+getcharid(0)+""; }
-		callsub OnPvPReset; announce "[Loki] Your PvP Statistic has been reset.",bc_self,0xFF0000; close;
+		callsub OnPvPReset; announce "^0080ff[ PVP Free For All ]^000000 Your PvP Statistic has been reset.",bc_self,0xFF0000; close;
 		}
 		close;
 	}
 close;
-case 3: //Announcer Setting
-	next; mes "[Loki]"; mes "What kind of announcer you want to use?";
+case 4: //Announcer Setting
+	next2; mes "^0080ff^0080ff[ PVP Free For All ]^000000^000000"; mes "Que tipo de sonidos en el PVP deseas usar?";
 	if(getvariableofnpc(.AnnouncerFee, "Versus")){ set .AnnouncerFee, getvariableofnpc(.AnnouncerFee, "Versus"); }
 	L_Announce:
-	switch(select(""+((#Announcer == 0)?"^FF0000DotA^000000":"DotA")+":"+((#Announcer == 1)?"^FF0000HoN^000000":"HoN")+":"+((#Announcer == 2)?"^FF0000Ms. Pudding^000000":"Ms. Pudding")+":"+((#Announcer == 3)?"^FF0000Flamboyant^000000":"Flamboyant")+":"+((#Announcer == 4)?"^FF0000English^000000":"English")+":"+((#Announcer == 5)?"^FF0000Balls of Steel^000000":"Balls of Steel")+":"+((#Announcer == 6)?"^FF0000BreakyCPK^000000":"BreakyCPK")+"")){
+	switch(select(""+((#Announcer == 0)?"^FF0000LoL^000000":"LOL")+":"+((#Announcer == 1)?"^FF0000HoN^000000":"HoN")+":"+((#Announcer == 2)?"^FF0000Ms. Pudding^000000":"Ms. Pudding")+":"+((#Announcer == 3)?"^FF0000Flamboyant^000000":"Flamboyant")+":"+((#Announcer == 4)?"^FF0000English^000000":"English")+":"+((#Announcer == 5)?"^FF0000Balls of Steel^000000":"Balls of Steel")+":"+((#Announcer == 6)?"^FF0000BreakyCPK^000000":"BreakyCPK")+":"+((#Announcer == 7)?"^FF0000LOL^000000":"LOL")+"")){
 		case 1: //DotA
 			if(#Announcer == 0){ goto L_Announce; }
 			soundeffect "0_KS1.wav", 0;
 			set #Announcer, 0;
-			announce "[Loki] DotA announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de DotA ha sido configurados en tu cuenta .",bc_self,0xFF0000;
 			close;
 		case 2: //HoN
 			if(#Announcer == 1){ goto L_Announce; }
 			if((.AnnouncerFee) && (!#Hon)){
-			next; mes "[Loki]"; mes "Do you want to purchase HoN announcer for "+.AnnouncerFee+" Kill Point?";
+			next; mes "[PVP]"; mes "Do you want to purchase HoN announcer for "+.AnnouncerFee+" Kill Point?";
 			switch(select("No:Yes")){
 				case 1: close;
 				case 2: 
-				if(#CASHPOINTS < .AnnouncerFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
 				set #Hon, 1;
 			 }
 			}
 			soundeffect "1_KS1.wav", 0;
 			set #Announcer, 1;
-			announce "[Loki] HoN announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de HoN han sido configurados en tu cuenta.",bc_self,0xFF0000;
 			close;
 		case 3: //Ms. Pudding
 			if(#Announcer == 2){ goto L_Announce; }
 			if((.AnnouncerFee) && (!#MsPudding)){
-			next; mes "[Loki]"; mes "Do you want to purchase Ms. Pudding announcer for "+.AnnouncerFee+" Kill Point?";
+			next; mes "^0080ff[ PVP Free For All ]^000000"; mes "Do you want to purchase Ms. Pudding announcer for "+.AnnouncerFee+" Kill Point?";
 			switch(select("No:Yes")){
 				case 1: close;
 				case 2: 
-				if(#CASHPOINTS < .AnnouncerFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
 				set #MsPudding, 1;
 			 }
 			}
 			soundeffect "2_KS1.wav", 0;
 			set #Announcer, 2;
-			announce "[Loki] Ms. Pudding announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de Ms. Pudding han sido configurados en tu cuenta.",bc_self,0xFF0000;
 			close;		
 		case 4: //Flamboyant
 			if(#Announcer == 3){ goto L_Announce; }
 			if((.AnnouncerFee) && (!#Flamboyant)){
-			next; mes "[Loki]"; mes "Do you want to purchase Flamboyant announcer for "+.AnnouncerFee+" Kill Point?";
+			next; mes "[PVP]"; mes "Do you want to purchase Flamboyant announcer for "+.AnnouncerFee+" Kill Point?";
 			switch(select("No:Yes")){
 				case 1: close;
 				case 2: 
-				if(#CASHPOINTS < .AnnouncerFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
 				set #Flamboyant, 1;
 			 }
 			}
 			soundeffect "3_KS1.wav", 0;
 			set #Announcer, 3;
-			announce "[Loki] Flamboyant announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de Flamboyant han sido configurados en tu cuenta.",bc_self,0xFF0000;
 			close;			
 		case 5: //English
 			if(#Announcer == 4){ goto L_Announce; }
 			if((.AnnouncerFee) && (!#English)){
-			next; mes "[Loki]"; mes "Do you want to purchase English announcer for "+.AnnouncerFee+" Kill Point?";
+			next; mes "^0080ff[ PVP Free For All ]^000000"; mes "Do you want to purchase English announcer for "+.AnnouncerFee+" Kill Point?";
 			switch(select("No:Yes")){
 				case 1: close;
 				case 2: 
-				if(#CASHPOINTS < .AnnouncerFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
 				set #English, 1;
 			 }
 			}
 			soundeffect "4_KS1.wav", 0;
 			set #Announcer, 4;
-			announce "[Loki] English announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de English han sido configurados en tu cuenta.",bc_self,0xFF0000;
 			close;
 		case 6: //Balls of Steel
 			if(#Announcer == 5){ goto L_Announce; }
 			if((.AnnouncerFee) && (!#BallsofSteel)){
-			next; mes "[Loki]"; mes "Do you want to purchase Balls of Steel announcer for "+.AnnouncerFee+" Kill Point?";
+			next; mes "^0080ff[ PVP Free For All ]^000000"; mes "Do you want to purchase Balls of Steel announcer for "+.AnnouncerFee+" Kill Point?";
 			switch(select("No:Yes")){
 				case 1: close;
 				case 2: 
-				if(#CASHPOINTS < .AnnouncerFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
 				set #BallsofSteel, 1;
 			 }
 			}
 			soundeffect "5_KS1.wav", 0;
 			set #Announcer, 5;
-			announce "[Loki] Balls of Steel announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de Balls of Steel han sido configurados en tu cuenta.",bc_self,0xFF0000;
 			close;
 		case 7: //BreakyCPK
 			if(#Announcer == 6){ goto L_Announce; }
 			if((.AnnouncerFee) && (!#BreakyCPK)){
-			next; mes "[Loki]"; mes "Do you want to purchase BreakyCPK announcer for "+.AnnouncerFee+" Kill Point?";
+			next; mes "^0080ff[ PVP Free For All ]^000000"; mes "Do you want to purchase BreakyCPK announcer for "+.AnnouncerFee+" Kill Point?";
 			switch(select("No:Yes")){
 				case 1: close;
 				case 2: 
-				if(#CASHPOINTS < .AnnouncerFee){ next; mes "[Loki]"; mes "You don't have enough Kill Point."; close; }
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
 				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
 				set #BreakyCPK, 1;
 			 }
 			}
 			soundeffect "6_KS1.wav", 0;
 			set #Announcer, 6;
-			announce "[Loki] BreakyCPK announcer has been configured to your account.",bc_self,0xFF0000;
+			announce "[PVP] Sonidos de BreakyCPK Han sido configurados en tu cuenta.",bc_self,0xFF0000;
+			close;
+		case 8: //League Of Legends
+			if(#Announcer == 7){ goto L_Announce; }
+			if((.AnnouncerFee) && (!#BreakyCPK)){
+			next; mes "^0080ff[ PVP Free For All ]^000000"; mes "Do you want to purchase  LOL announcer for "+.AnnouncerFee+" Kill Point?";
+			switch(select("No:Yes")){
+				case 1: close;
+				case 2: 
+				if(#CASHPOINTS < .AnnouncerFee){ next; mes "^0080ff[ PVP Free For All ]^000000"; mes "You don't have enough Kill Point."; close; }
+				set #CASHPOINTS, #CASHPOINTS - .AnnouncerFee;
+				set #BreakyCPK, 1;
+			 }
+			}
+			soundeffect "7_KS1.wav", 0;
+			set #Announcer, 7;
+			announce "[PVP] Sonidos de LOL Han sido configurados en tu cuenta.",bc_self,0xFF0000;
 			close;
 	default: close;
 	}

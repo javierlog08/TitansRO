@@ -40,8 +40,8 @@ pvp_castle,88,101,5	script	KVM Logistic Officer#a	4_M_KNIGHT_GOLD,{
 	mes "[Logistics]";
 	mes "Hola?";
 	mes "Estoy a cargo de la distribucion";
-	mes "items de recompensa por puntos KVM. Ningun";
-	mes "Mala seleccion de items, no podra";
+	mes "items de recompensa por puntos KVM.";
+	mes "Cualquier Mala seleccion de items, no podra";
 	mes "ser revertida. Porfavor tenga cuidado.";
 	mes "Selecciona el proximo paso, porfavor.";
 	next;
@@ -59,8 +59,8 @@ pvp_castle,88,101,5	script	KVM Logistic Officer#a	4_M_KNIGHT_GOLD,{
 		end;
 	case 2:
 		mes "[Logistics]";
-		mes "Cuales items deseas ver? Como";
-		mes "por detallada especificacion de";
+		mes "Cuales items deseas ver?";
+		mes "Buscas detalles especificos de";
 		mes "los items, porfavor referirse al";
 		mes "^3131FFCatalogo^000000.";
 		next;
@@ -105,7 +105,7 @@ pvp_castle,88,101,5	script	KVM Logistic Officer#a	4_M_KNIGHT_GOLD,{
 					mes "Has seleccionado la categoria 'Staff'.";
 					mes "Existen 3 Staffs: a Two-handed Weapon Glorious Destruction Staff, a One-handed Glorious Arc Wand y a Glorious Healing Staff.";
 					mes "Si quieres mas detalle,porfavor referirse al catalogo KVM.";
-					mes "Please select one of them.";
+					mes "Porfavor seleccione uno de ellos.";
 					next;
 					switch(select("Glorious Destruction Staff:Glorious Arc Wand:Glorious Healing Staff")) {
 					case 1: callsub PurchaseItem,2002,0,0; //Krieger_Twohand_Staff1
@@ -275,7 +275,7 @@ PurchaseItem:
 
 	mes "Estas seguro que quieres este item?";
 	next;
-	switch(select("No, I won't purchase it.:Yes, I will purchase it.")) {
+	switch(select("No,No lo comprare.:Si, lo comprare.")) {
 	case 1:
 		mes "[Logistics]";
 		mes "Has seleccionado 'No lo comprare'.";

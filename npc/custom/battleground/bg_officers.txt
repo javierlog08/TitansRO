@@ -407,7 +407,7 @@ pvp_castle,107,114,4	script	PVP KING::pvp_king_officer	105,{
 		.mm = 59;
 		.hh = (.DELAY / 3600000)-1;
 		delwaitingroom;
-		waitingroom "PVP KING",0;
+		waitingroom "PVP TORNEO",0;
 	end;
 	
 	OnDelayTime:
@@ -555,7 +555,7 @@ pvp_castle,114,114,4	script	PVP KoE::pvp_koe_officer	105,{
 	}
 }
 
-//pvp_castle,121,114,4	duplicate(Loki)	PVP Free For All	105
+pvp_castle,121,114,4	duplicate(Loki)	PVP Free For All	105 //Oficial para el PVP Free For all 
 
 -	script	bg_messages	-1,{
 

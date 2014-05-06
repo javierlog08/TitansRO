@@ -40,6 +40,104 @@ function	script	F_DobleACC	{
 	return 0;
 }
 
+//- Evita que se activen NPCs de invitaciones o la Guia en mapas no deseados
+//=================================================================
+function	script	checkMapFlags	{
+		if(getmapflag( strcharinfo(3),mf_nowarp) ||
+			getmapflag( strcharinfo(3),mf_nowarpto) ||
+			getmapflag( strcharinfo(3),mf_noteleport) ||
+			/*getmapflag( strcharinfo(3),mf_nomemo) || */
+			getmapflag( strcharinfo(3),mf_pvp) ||
+			getmapflag( strcharinfo(3),mf_nosave) ||
+			getmapflag( strcharinfo(3),mf_gvg)) {
+			return 1;
+		}
+			
+		return 0;
+}
+
+//- MAPFLAG PARA INVITACIONES - Estos mapas no tenian definidos el flag nowarpto
+//=============================================================================
+moc_pryd06	mapflag	nowarpto
+thana_boss	mapflag	nowarpto
+gld_dun03_2	mapflag	nowarpto
+ra_fild02	mapflag	nowarpto
+ra_fild03	mapflag	nowarpto
+ra_fild04	mapflag	nowarpto
+ve_fild01	mapflag	nowarpto
+ve_fild02	mapflag	nowarpto
+lou_dun03	mapflag	nowarpto
+prt_maze03	mapflag	nowarpto
+bra_dun02	mapflag	nowarpto
+lhz_dun04	mapflag	nowarpto
+gld2_pay	mapflag	nowarpto
+gld_dun04	mapflag	nowarpto
+gld_dun04_2	mapflag	nowarpto
+gl_chyard	mapflag	nowarpto
+abyss_03	mapflag	nowarpto
+gef_dun02	mapflag	nowarpto
+gld_dun02	mapflag	nowarpto
+gef_dun01	mapflag	nowarpto
+treasure02	mapflag	nowarpto
+gld_dun01	mapflag	nowarpto
+gld_dun01_2	mapflag	nowarpto
+pay_fild11	mapflag	nowarpto
+gon_dun03	mapflag	nowarpto
+abbey02	mapflag	nowarpto
+xmas_fild01	mapflag	nowarpto
+gld2_ald	mapflag	nowarpto
+ra_san05	mapflag	nowarpto
+dic_dun03	mapflag	nowarpto
+prt_sewb4	mapflag	nowarpto
+mosk_dun03	mapflag	nowarpto
+lhz_dun04	mapflag	nowarpto
+lhz_dun03	mapflag	nowarpto
+thor_v03	mapflag	nowarpto
+ama_dun03	mapflag	nowarpto
+gld2_gef	mapflag	nowarpto
+kh_dun02	mapflag	nowarpto
+xmas_dun02	mapflag	nowarpto
+iz_dun05	mapflag	nowarpto
+ice_dun03	mapflag	nowarpto
+ayo_dun02	mapflag	nowarpto
+dew_dun01	mapflag	nowarpto
+niflheim	mapflag	nowarpto
+anthell02	mapflag	nowarpto
+mjolnir_04	mapflag	nowarpto
+pay_dun04	mapflag	nowarpto
+moc_prydn2	mapflag	nowarpto
+gef_fild02	mapflag	nowarpto
+gef_fild14	mapflag	nowarpto
+gef_fild10	mapflag	nowarpto
+moc_pryd04	mapflag	nowarpto
+in_sphinx5	mapflag	nowarpto
+moc_fild17	mapflag	nowarpto
+dic_dun02	mapflag	nowarpto
+ein_dun02	mapflag	nowarpto
+beach_dun	mapflag	nowarpto
+tur_dun04	mapflag	nowarpto
+odin_tem03	mapflag	nowarpto
+jupe_core	mapflag	nowarpto
+moc_fild22	mapflag	nowarpto
+pay_fild04	mapflag	nowarpto
+xmas_dun01	mapflag	nowarpto
+yuno_fild03	mapflag	nowarpto
+yuno_fild04	mapflag	nowarpto
+thor_v03	mapflag	nowarpto
+thor_v01	mapflag	nowarpto
+pay_dun04	mapflag	nowarpto
+gl_chyard	mapflag	nowarpto
+pay_fild04	mapflag	nowarpto
+yuno_fild03	mapflag	nowarpto
+lhz_dun02	mapflag	nowarpto
+lhz_dun01	mapflag	nowarpto
+pay_fild04	mapflag	nowarpto
+prt_maze03	mapflag	nowarpto
+treasure02	mapflag	nowarpto
+man_fild03	mapflag	nowarpto
+abyss_03	mapflag	nowarpto
+spl_fild03	mapflag	nowarpto
+
 function	script	F_ValidateBG	{
 	set .@WEIGHT_ERROR,1;
 	set .@JOB_ERROR,2;

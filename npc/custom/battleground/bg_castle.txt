@@ -26,6 +26,14 @@ OnInit:
 	setmapflag "pvp_castle", mf_loadevent;
 end;
 }
+
+/*titans,137,164,3	script	Central PVP::pvp_castle_warp	487,{
+	warp "pvp_castle",100,105;
+}*/
+
 pvp_castle,99,69,0	warp	pvpcastexit	2,2,titans,140,206
 titans,140,209,0	warp	pvpcastenter	1,1,pvp_castle,99,72
 
+// Titans Duplicados
+//============================================================
+pvp_castle,108,105,3	duplicate(Healer)	Healer#Castle	569

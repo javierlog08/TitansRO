@@ -1,0 +1,222 @@
+iz_ac01_d,100,39,4	script	Maestro Legendario::legend_master	4_M_MINISTER,{
+	mes "^00994c[ Maestro Legendario ]^000000";
+	cutin "jpn_zioma01",2;
+	doevent "Healer::OnHeal";
+	if(MY_TRAINER>0 && callfunc("checkJobStatus") > 0) {
+		doevent "Job Master::OnMasterCall";
+		end;
+	}
+	if(MY_TRAINER>0) {
+		mes "Debes seguir entrenando duro";
+		goto OnManager;
+		close2;
+		end;
+	}
+
+	mes "Yo soy el entrenador del server.";
+	mes "Mi función es la de guiarte mientras subes de nivel ";
+	next;
+	mes "^00994c[ Maestro Legendario ]^000000";
+	mes "Puedo  ser tu Job master personal.";
+	mes "^0000ffDeseas que sea tu Maestro?^000000";
+	mes "......";
+	if(select("Claro que Si!:Pff No necesito tu ayuda !")==1){
+		next2;
+		if(Class == Job_Novice) {
+			cutin "jpn_zioma02",2;
+			mes "^00994c[ Maestro Legendario ]^000000";
+			mes "Bien dicho !";
+			mes "Comenzaremos a entrar enseguida.";
+			next;
+			mes "^00994c[ Maestro Legendario ]^000000";
+			mes "Bueno veo que eres un Novice.";
+			mes "Debemos subir tu ^0000ffSkill Base^000000 a 9";
+			mes "Vamos al campo para noobs";
+			if(select("Llevame al campo para novatos:Nah ya me dio miedo")==1){
+				set ACTIVE_TRAINING_A,1;
+				set MY_TRAINER,1;
+				warp "poring_c01",104,106;
+				end;
+			}
+		} else {
+			cutin "jpn_zioma02",2;
+			mes "Cuanto lo siento.";
+			mes "^808080~ ~^000000";
+			mes "Yo solo accepto alumnos desde ^0000ffNovice^000000";
+			close2;
+			cutin "",255;
+			end;
+		}
+	} else {
+		next2;
+		mes "^00994c[ Maestro Legendario ]^000000";
+		cutin "jpn_zioma06",2;
+		mes "Quien gastaria energias en un chico debil como tu?";
+		close2;
+		cutin "",255;
+		end;
+	}
+	cutin "",255;
+	close;
+	end;
+
+	OnManager:
+		sleep2 1;
+		mes "Si deseas puedo sugerirte algunas zonas de entrenamiento de acuerdo al nivel en el que te encuentras";
+		switch(select("Level 0-10:Level 30-60:Level 60-80:Level 80-110:Level 110-150:^ff0000MVP level 150-175^000000")) {
+			case 1:
+				warp "prt_fild08",149,362;
+			break;
+
+			case 2:
+				warp "pay_dun00",28,162;
+			break;
+
+			case 3:
+				warp "cmd_fild02",251,109;
+			break;
+
+			case 4:
+				warp "c_tower3",65,147;
+			break;
+
+			case 5:
+				warp "gl_sew04",69,261;
+			break;
+
+			case 6:
+				if(BaseLevel >= 150) {
+					warp "pvp_n_2-3",98,101;
+				} else {
+					next2;
+					mes "^00994c[ Maestro Legendario ]^000000";
+					cutin "jpn_zioma02",2;
+					mes "Esta es la parte mas dificil.";
+					mes "Solo puedo dejarte entrar si tienes nivel ^ff0000150^000000 o mayor.";
+					next;
+					mes "^00994c[ Maestro Legendario ]^000000";
+					cutin "jpn_zioma01",2;
+					mes "Esta zona esta tiene MVPs especiales que dan mas nivel.";
+					close2;
+					cutin "",255;
+					end;
+				}
+			break;
+		}
+	end;
+
+	OnGoBack:
+		sleep2 1;
+		mes "^00994c[ Maestro Legendario ]^000000";
+		cutin "jpn_zioma01",2;
+		mes "Este es buen momento para cambiar de job.";
+		mes "^808080~ ~^000000";
+		mes "^0000ffDeseas volver al castillo?^000000";
+		if(select("Si:No")==1) {
+			warp "iz_ac01_d",100,34;
+		} else {
+			next2;
+			mes "^00994c[ Maestro Legendario ]^000000";
+			cutin "jpn_zioma02",2;
+			mes "Siguamos entrendo entonces.";
+			mes "Lo estas haciendo muy bien.";
+			close2;
+			cutin  "",255;
+		}
+	end;
+}
+
+-	script	token_training_kill	-1,{
+	/*OnNPCKillEvent:
+		sleep2 1;
+		if(MY_TRAINER>0 && callfunc("checkJobStatus") > 0) {
+			doevent "legend_master::OnGoBack";
+		}
+	end;*/
+
+	OnPCBaseLvUpEvent:
+		sleep2 1;
+		if(MY_TRAINER>0 && callfunc("checkJobStatus") && strcharinfo(3)!="poring_c01" && checkmes(getcharid(3))) {
+			doevent "legend_master::OnGoBack";
+		}
+	end;
+
+	OnPCDieEvent:
+		/*sleep2 1;
+		if(MY_TRAINER>0) {
+			mes "^00994c[ Maestro Legendario ]^000000";
+			cutin "jpn_zioma05",2;
+			mes "Vamos no te rindas !";
+			mes "^0000ff~ ~^000000";
+			mes "Aun puedes continuar !";
+			close2;
+			warp "iz_ac01_d",100,34;
+			atcommand "@alive ";
+			cutin "",255;
+		}*/
+	end;
+
+	OnInit:
+		bindatcmd "traineroff",strnpcinfo(3)+"::OnAtcommand";
+		bindatcmd "jobmaster",strnpcinfo(3)+"::OnJobMasterCmd";
+	end;
+
+	OnAtcommand:
+		sleep2 1;
+		if(MY_TRAINER>0) {
+			mes "^00994c[ Maestro Legendario ]^000000";
+			cutin "jpn_zioma04",2;
+			mes "Como es posible que uno de mis mejores disipulos me de la espalda...";
+			mes "^0000ff~ ~^000000";
+			mes "^ff0000Deseas desactivar al maestro?^000000";
+			if(select("Si:No")==1) {
+				set ACTIVE_TRAINING,0;
+			} else {
+				next2;
+				mes "^00994c[ Maestro Legendario ]^000000";
+				cutin "jpn_zioma02",2;
+				mes "Ya sabia yo que solo estabas bromeando";
+			}
+			close2;
+			cutin "",255;
+		}
+	end;
+
+	OnJobMasterCmd:
+		sleep2 1;
+		if(strcharinfo(3)!="poring_c01") {
+			mes "[Job Master]";
+			doevent "Job Master::OnMasterCall";
+		}
+	end;
+}
+
+iz_ac01_d,100,34,4	script	token_training_manager	139,3,3,{
+	OnTouch:
+		sleep2 1;
+		if(ACTIVE_TRAINING_B>0) {
+			goto OnNpcTalk;
+		}
+	end;
+
+	OnNpcTalk:
+		mes "^00994c[ Maestro Legendario ]^000000";
+		cutin "jpn_zioma02",2;
+		set ACTIVE_TRAINING_B,0;
+		mes "Bueno al parecer ya estas listo para seguir adelante. Has dejado de ser un noob.";
+		next;
+		mes "^00994c[ Maestro Legendario ]^000000";
+		mes "^FF0000~ IMPORTANTE ~^000000";
+		mes "De ahora en aldeante cada vez que llegues a un nivel determinado para cambiar de Job aparecere para ayudarte a hacerlo de manera mas rapida y sencilla.";
+		next;
+		mes "^00994c[ Maestro Legendario ]^000000";
+		mes "^FF0000~ IMPORTANTE ~^000000";
+		mes "En caso de que desees desactivar o reuniciar al entrenamiento del todo. solo deberas escribir el comando ^FF0000@traineroff^000000 ,pero no te lo recomiendo...";
+		close2;
+		cutin "",255;
+		end;
+	end;
+}
+
+titans,152,271,0	warp	trainingenter	1,1,iz_ac01_d,99,28
+iz_ac01_d,99,25,0	warp	trainingexit	1,1,titans,151,267

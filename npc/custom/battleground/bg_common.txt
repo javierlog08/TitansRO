@@ -186,7 +186,7 @@ pvp_castle,85,92,5	script	Erundek	4_M_MANAGER,{
 		mes "- Espera un minuto !! -";
 		mes "- Ahora mismo estas cargando -";
 		mes "- Demasiados items. -";
-		mes "- Por favor intentalo de nuevo -";
+		mes "- Porfavor intentalo de nuevo -";
 		mes "- Despues de perder algo de peso. -";
 		close;
 	}
@@ -194,7 +194,7 @@ pvp_castle,85,92,5	script	Erundek	4_M_MANAGER,{
 	mes "Posees medallas del campo de batalla?";
 	mes "Yo puedo cambiarte Bravery Badges y Valor Badges por items de recompensa.";
 	next;
-	switch(select("Exchange Badges:Check the Catalog")) {
+	switch(select("Cambiar medallas:Checear catalogo")) {
 	case 1:
 		mes "[Erundek]";
 		mes "Que tipo de items deseas cambiar?";
@@ -257,7 +257,7 @@ pvp_castle,85,92,5	script	Erundek	4_M_MANAGER,{
 				mes "Te gustaria gastar ^FF0000100 "+getitemname(.@Weapons[.@i+1])+"^000000 and receive a ^3131FF"+getitemname(.@Weapons[.@i])+.@type$+"^000000?";
 				next;
 				mes "[Erundek]";
-				mes "Recuerda, Los premios de recompensa del campo de batalla son ^FF0000Unicas por Personaje^000000. Are you sure you want this item?";
+				mes "Recuerda, Los premios de recompensa del campo de batalla son ^FF0000Unicas por Personaje^000000. Estas seguro que quieres este item?";
 				next;
 				switch(select("Si:No")) {
 				case 1:
@@ -321,7 +321,7 @@ pvp_castle,85,92,5	script	Erundek	4_M_MANAGER,{
 		set .@menu$, .@menu$+getitemname(.@items[.@i])+":";
 	set .@i, (select(.@menu$)-1)*2;
 	mes "[Erundek]";
-	mes "You chose ^3131FF"+getitemname(.@items[.@i])+"^000000.";
+	mes "Has escojido ^3131FF"+getitemname(.@items[.@i])+"^000000.";
 	switch(.@items[.@i]) {
 		case 2720: mes "Este item es solamente para Swordman y Taekwon Master Class solamente."; break;
 		case 2721: mes "Este item es solamente para Thief Class solamente."; break;

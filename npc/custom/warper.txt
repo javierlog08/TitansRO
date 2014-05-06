@@ -17,10 +17,10 @@
 //============================================================
 
 -	script	Warper	-1,{
-soundeffect "vallentine.wav",0;
-cutin "ma_tomas01",2;
 function Go; function Disp; function Pick; function Restrict; function Quest;
-
+cutin "ma_tomas01",2;
+OnWarpTalk: //Creado para el comando @warp
+soundeffect "vallentine.wav",0;
 // --------------------------------------------------
 //	Main Menu:
 // --------------------------------------------------
@@ -35,6 +35,13 @@ menu	"Last Warp ^777777["+lastwarp$+"]^000000",-,
 	else
 		warp lastwarp$,lastwarpx,lastwarpy;
 	close;
+end;
+
+//-Warper Comand-
+//=======================================================
+OnInit:
+	bindatcmd "warp",strnpcinfo(3)+"::OnWarpTalk"; //Coment this line if you dont want warper
+end;
 
 // ------------------- Functions -------------------
 // * Go("<map>",<x>,<y>);
@@ -182,7 +189,7 @@ function Quest {
 // --------------------------------------------------
 	Towns:
 // --------------------------------------------------
-menu	"Prontera",T1, "Alberta",T2, "Aldebaran",T3, "Amatsu",T4, "Ayothaya",T5,
+menu	"Titans",T0,"Prontera",T1, "Alberta",T2, "Aldebaran",T3, "Amatsu",T4, "Ayothaya",T5,
 	"Brasilis",T6, "Comodo",T7, "Dewata",T8, "Eclage",T9, "Einbech",T10, 
 	"Einbroch",T11, "El Dicastes",T12, "Geffen",T13, "Gonryun",T14, "Hugel",T15,
 	"Izlude",T16, "Jawaii",T17, "Lighthalzen",T18, "Louyang",T19, "Lutie",T20,
@@ -191,6 +198,7 @@ menu	"Prontera",T1, "Alberta",T2, "Aldebaran",T3, "Amatsu",T4, "Ayothaya",T5,
 	"Niflheim",T29, "Payon",T30, "Rachel",T31, "Splendide",T32, "Thor Camp",T33,
 	"Umbala",T34, "Veins",T35, "Yuno",T36;
 
+T0: Go("titans",147,168);
 T1: Go("prontera",155,183);
 T2: Go("alberta",28,234);
 T3: Go("aldebaran",140,131);

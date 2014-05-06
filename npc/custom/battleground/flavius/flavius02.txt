@@ -106,7 +106,8 @@ OnTimer1000:
 //============================================================
 bat_b02,15,15,3	script	start#bat_b02	CLEAR_NPC,{
 OnInit:
-	mapwarp "bat_b02","bat_room",154,150;
+	//mapwarp "bat_b02","bat_room",154,150;
+	mapwarp "bat_b02","pvp_castle",79,110;
 	end;
 
 OnReadyCheck:
@@ -466,7 +467,8 @@ bat_b02,10,294,3	script	Guillaume Vintenar#b02_a	4_M_RASWORD,{
 		}
 	}
 	bg_leave;
-	warp "bat_room",154,150;
+	//warp "bat_room",154,150;
+	warp "pvp_castle",79,110;
 	end;
 
 OnInit:
@@ -518,7 +520,8 @@ bat_b02,389,14,3	script	Croix Vintenar#b02_b	4_M_RASWORD,{
 		}
 	}
 	bg_leave;
-	warp "bat_room",154,150;
+	//warp "bat_room",154,150;
+	warp "pvp_castle",79,110;
 	end;
 
 OnInit:
@@ -577,7 +580,8 @@ OnTimer1830000:
 	end;
 
 OnTimer1900000:
-	mapwarp "bat_b02","bat_room",154,150;
+	//mapwarp "bat_b02","bat_room",154,150;
+	mapwarp "bat_b02","pvp_castle",79,110;
 	donpcevent "countdown#bat_b02::OnStop";
 	end;
 }
@@ -676,7 +680,8 @@ bat_b02,10,294,3	script	Vintenar#bat_b02_aover	4_M_KY_HEAD,{
 		close;
 	}
 	bg_leave;
-	warp "bat_room",154,150;
+	//warp "bat_room",154,150;
+	warp "pvp_castle",79,110;
 	end;
 
 OnInit:
@@ -754,7 +759,8 @@ bat_b02,389,14,3	script	Vintenar#bat_b02_bover	4_M_CRU_HEAD,{
 		close;
 	}
 	bg_leave;
-	warp "bat_room",154,150;
+	//warp "bat_room",154,150;
+	warp "pvp_castle",79,110;
 	end;
 
 OnInit:
@@ -776,7 +782,8 @@ bat_b02,1,10,3	script	Release all#b02	4_DOG01,{
 		case 1:
 			mes "Bye.";
 			close2;
-			mapwarp "bat_b02","bat_room",154,150;
+			//mapwarp "bat_b02","bat_room",154,150;3
+			mapwarp "bat_b02","pvp_castle",79,110;
 			end;
 		case 2:
 			mes "Cancelled.";

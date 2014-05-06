@@ -1,0 +1,67 @@
+function	script	checkJobStatus	{
+		setarray @Rebirth[0],99,40;	// Minimum base level, job level to rebirth OR change to third class
+		setarray @JobReq[0],10,50;	// Minimum job level to turn into 1st class, 2nd class
+		set @ThirdClass,1;		// Enable third classes? (1: yes / 0: no)
+		set @LastJob,1;			// Enforce linear class changes? (1: yes / 0: no)
+		
+		if (Class > 4049) {
+			return 0;
+		}
+	
+		set @eac, eaclass();
+		set @i, ((@ThirdClass)?roclass(@eac&EAJ_UPPERMASK):Class);
+		if (@i > 6 && @i < 22) {
+			if (BaseLevel < @Rebirth[0] || JobLevel < @Rebirth[1]) {
+				return 0;
+			}
+			
+			if (Class > 21) {
+				return 1;
+			}
+			
+			return 1;
+		}
+		
+		set @j1, roclass(@eac|EAJL_2_1); set @j2,roclass(@eac|EAJL_2_2);
+		if ((@eac&EAJ_UPPERMASK) == EAJ_SUPER_NOVICE){ setarray @exp[0],roclass(@eac|EAJL_THIRD),99;}
+		if (Class == Job_Ninja){ setarray @exp[0],@j1,70;}
+		if (@exp[0] && @ThirdClass) {
+			if (BaseLevel < @Rebirth[0] || JobLevel < @exp[1]) {
+				return 0;
+			}
+			return 1;
+		}
+
+		if (@eac&EAJL_2){
+			if (@eac&(EAJL_UPPER|EAJL_BABY) || roclass(@eac|EAJL_UPPER) == -1) {
+				return 0;
+			}
+		}
+
+		if ((@eac&EAJ_BASEMASK) == EAJ_NOVICE) {
+			if (JobLevel < @JobReq[0])
+				return 0;
+			else if (Class == 4001 && @LastJob && lastJob) {
+				return 1;
+			} else switch(Class) {
+				case 0: return 1;
+				case 4001: return 1;
+				case 4023: return 1;
+				default: return 0; break;
+			}
+
+			return 0; // estudia esto
+		}
+
+		if (roclass(@eac|EAJL_2_1) == -1 || roclass(@eac|EAJL_2_2) == -1) {
+			return 0;
+		}else if (!(@eac&EAJL_2) && JobLevel < @JobReq[1]){
+			return 0;
+		}else if (@LastJob && lastJob && (@eac&EAJL_UPPER)) {
+			return 1;
+		} else{
+			return 1;
+		}
+			
+		return 0;
+}

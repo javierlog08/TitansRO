@@ -13,6 +13,7 @@
 #include "../map/script.h"
 #include "../map/pc.h"
 #include "../map/clif.h"
+#include "../map/party.h"
 #include "../common/strlib.h"
 
 #include "../common/HPMDataCheck.h" /* should always be the last file included! (if you don't make it last, it'll intentionally break compile time) */
@@ -48,6 +49,53 @@ BUILDIN(next2)
 	return true;
 }
 
+BUILDIN(strcharinfo2)
+{
+	TBL_PC *sd;
+	int num;
+	struct guild* g;
+	struct party_data* p;
+
+	if( script_hasdata(st,3) )
+		sd=map->nick2sd(script_getstr(st,3));
+	else
+		sd=script->rid2sd(st);
+
+	if (!sd) { //Avoid crashing....
+		script_pushconststr(st,"");
+		return true;
+	}
+	num=script_getnum(st,2);
+	switch(num) {
+		case 0:
+			script_pushstrcopy(st,sd->status.name);
+			break;
+		case 1:
+			if( ( p = party->search(sd->status.party_id) ) != NULL ) {
+				script_pushstrcopy(st,p->party.name);
+			} else {
+				script_pushconststr(st,"");
+			}
+			break;
+		case 2:
+			if( ( g = sd->guild ) != NULL ) {
+				script_pushstrcopy(st,g->name);
+			} else {
+				script_pushconststr(st,"");
+			}
+			break;
+		case 3:
+			script_pushconststr(st,map->list[sd->bl.m].name);
+			break;
+		default:
+			ShowWarning("buildin_strcharinfo: unknown parameter.\n");
+			script_pushconststr(st,"");
+			break;
+	}
+
+	return true;
+}
+
 /* run when server starts */
 HPExport void plugin_init(void) {
 
@@ -63,6 +111,8 @@ HPExport void plugin_init(void) {
 	status = GET_SYMBOL("status");
 	npc = GET_SYMBOL("npc");
 	mob = GET_SYMBOL("mob");
+	party = GET_SYMBOL("party");
 
-	addScriptCommand("next2", "",next2)
+	addScriptCommand("next2", "",next2);
+	addScriptCommand("strcharinfo2","i?",strcharinfo2);
 }

@@ -8,6 +8,7 @@
 		setmapflag "hunt", mf_nomemo;
 		setmapflag "hunt", mf_pvp;
 		setmapflag "hunt", mf_noteleport;
+		setmapflag("hunt",mf_pvp_noguild);
 		setmapflag "hunt",mf_zone,"Jail"; //no warp no nada
 		setcell "hunt",104,26,110,44,cell_basilica,1; //area no atacable del mapa
 		setwall "hunt",112,46,10,2,0,"HuntWall"; //pared que evita el paso desde la entrada del pvp

@@ -1,0 +1,124 @@
+-	script	Maestro Legendario::legend_master_noob	-1,{
+	set .@eac, eaclass();
+	if((.@eac&EAJ_BASEMASK) != EAJ_NOVICE) {
+			mes "^00994c[ Maestro Legendario ]^000000";
+			cutin "jpn_zioma02",2;
+			mes "Felicidades !";
+			mes "Ya superastes a este campo de entrenamiento";
+			mes "^808080~ ~^000000";
+			mes "^0000ffPodemos avanzar a la siguiente Etapa.";
+			close2;
+			specialeffect2 EF_HEAL2; percentheal 100,100;
+			set ACTIVE_TRAINING_B,1;
+			warp "iz_ac01_d",100,34;
+			end;
+	}
+	mes "^00994c[ Maestro Legendario ]^000000";
+	cutin "jpn_zioma01.bmp",2;
+	mes "Soy tambien un Job Master Certificado.";
+	mes "^808080~ ~^000000";
+	mes "^FF0000Deseas que te cambie de Job?^000000";
+	if(select("Si Porfavor:No Viejo")==1) {
+		next2;
+			doevent "Job Master::OnMasterCall";
+		end;
+	} else {
+		next2;
+		mes "^00994c[ Maestro Legendario ]^000000";
+		cutin "jpn_zioma05.bmp",2;
+		mes "Deja de perder el tiempo !";
+		mes "tu ^0000ffSkill Base^000000 no subira solo !";
+		close2;
+		cutin "",255;
+	}
+
+	end;
+	
+	OnSummonPorings:
+		sleep2 1;
+		if(mobcount("poring_c01", strnpcinfo(3)+"::OnMobDead") < 5 && !(mobcount("poring_c01", strnpcinfo(3)+"::OnMobDead") >20 )) {
+			monster "poring_c01",0,0,"Poring Entrenamiento",1002,20,strnpcinfo(3)+"::OnMobDead";
+		}
+	end;
+	
+	
+	OnMobDead:
+		sleep2 5;
+		donpcevent "legend_master_noob::OnSummonPorings";
+		cutin "jpn_zioma01",2;
+		set .@eac, eaclass();
+		if(JobLevel >= 10 && getskilllv("NV_BASIC") < 9 &&  ((.@eac&EAJ_BASEMASK) == EAJ_NOVICE))
+		{
+			cutin "jpn_zioma02",2;
+			mes "^00994c[ Maestro Legendario ]^000000";
+			mes "Has subido al nivel maximo para novatos !";
+			mes "Llena tu ^0000FFBase Skill^000000 hasta el nivel 9 para que podamos continuar.";
+			mes "Presiona la tecla ^808080ALT+S^000000 para ver skills.";
+			mes "Y avisame cuando estes listo.";
+			close2;
+			cutin "",255;
+			end;
+		}
+
+		if(getskilllv("NV_BASIC") >= 9 &&  ((.@eac&EAJ_BASEMASK) == EAJ_NOVICE)) {
+			cutin "jpn_zioma06",2;
+			mes "^00994c[ Maestro Legendario ]^000000";
+			mes "Ya tienes tu ^0000ffSkill Base^000000  en 9";
+			mes "^FF0000No pierdas mas tiempo. Acercate a mi para que cambiemos tu JOB y podamos continuar el entrenamiento^000000";
+			close2;
+			cutin "",255;
+			end;
+		}
+
+		if((.@eac&EAJ_BASEMASK) != EAJ_NOVICE && BaseLevel >= 10) {
+			mes "^00994c[ Maestro Legendario ]^000000";
+			cutin "jpn_zioma02",2;
+			mes "Felicidades !";
+			mes "Ya superastes a este campo de entrenamiento";
+			mes "^808080~ ~^000000";
+			mes "^0000ffPodemos avanzar a la siguiente Etapa.";
+			close2;
+			specialeffect2 EF_HEAL2; percentheal 100,100;
+			set ACTIVE_TRAINING_B,1;
+			warp "iz_ac01_d",100,34;
+			end;
+		}
+		close2;
+		cutin "",255;
+	end;
+	
+	
+	OnInit:
+		hideonnpc "legend_master_noob#01";
+	end;
+}
+
+
+
+poring_c01,104,106,4	script	token_training_noob	139,3,3,{
+	OnTouch:
+		sleep2 1;
+		if(ACTIVE_TRAINING_A>0) {
+			goto OnNpcTalk;
+		}
+	end;
+
+	OnNpcTalk:
+		sleep2 1;
+		set ACTIVE_TRAINING_A,0;
+		cutin "jpn_zioma01",2;
+		mes "^00994c[ Maestro Legendario ]^000000";
+		mes "Aqui entreno a los novatos.";
+		mes "Invocare a monstruos debiles.";
+		mes "destruyelos para comenzar.";
+		close2;
+		cutin "",2;
+		hideoffnpc "legend_master_noob#01";
+		donpcevent "legend_master_noob::OnSummonPorings";
+	end;
+}
+
+// --------------------------------------------------
+//	Duplicados para evitar problemas durante el script
+// --------------------------------------------------
+poring_c01,104,110,4	duplicate(legend_master_noob)	Maestro Legendario::legend_master_noob#01	4_M_MINISTER

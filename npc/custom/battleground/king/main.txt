@@ -1,7 +1,6 @@
 -	script	Torneo Rey del PVP::pvp_king	-1,{
 	
 	OnInit:
-		setarray .NO_INVITE_MAPS$[0],"hunt","que_avan01","arena","pvp_castle","sec_pri";
 		set .GUEST_MAP$,"pvp_castle";
 		set .x,174;
 		set .y,31;
@@ -15,6 +14,7 @@
 		setmapflag "arena",mf_noteleport;
 		setmapflag "arena",mf_zone,"PvP"; //restricted items
 		setmapflag "arena",mf_zone,"Jail"; //restricted items
+		setmapflag("arena",mf_pvp_noguild);
 
 		setmapflag "que_avan01",mf_nomemo;
 		setmapflag "que_avan01",mf_nosave;
@@ -43,9 +43,8 @@
 	OnGuest: //Este label sera llamado por la funcion inviteToPVP
 		sleep2 100;
 		set .@no_invite,0;
-		for(@i=0;@i<getarraysize(.NO_INVITE_MAPS$);++@i)
-			if(strcharinfo(3)==.NO_INVITE_MAPS$[@i])
-				set .@no_invite,1;
+		if(callfunc("checkMapFlags"))
+			set .@no_invite,1;
 
 		if(#PVP_INVITATIONS>0 || .@no_invite) // no le manda nada a las personas que no quieren invitacion o estan en mapas prohibidos para invitar
 			end;

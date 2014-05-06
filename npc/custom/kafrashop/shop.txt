@@ -3,10 +3,10 @@
 //**********************************************************************************/
 -	script	cmd_kafra	-1,{
 OnInit:
-	bindatcmd "kpoints",strnpcinfo(3)+"::OnAtCommand";
+	bindatcmd "kpoints",strnpcinfo(3)+"::OnAtcommand";
 	end;
 	
-OnAtCommand:
+OnAtcommand:
 	dispbottom "--------------------------------------------------------";
 	dispbottom "TIENES "+#CASHPOINTS+" kafra points.";
 	dispbottom "--------------------------------------------------------";
