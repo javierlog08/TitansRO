@@ -20,23 +20,7 @@
 		donpcevent "poringStart::OnStart";
 	end;
 	
-	OnClock0300:
-		donpcevent "poringStart::OnStart";
-	end;
-	
-	OnClock0600:
-		donpcevent "poringStart::OnStart";
-	end;
-	
-	OnClock0900:
-		donpcevent "poringStart::OnStart";
-	end;
-	
 	OnClock1200:
-		donpcevent "poringStart::OnStart";
-	end;
-
-	OnClock1500:
 		donpcevent "poringStart::OnStart";
 	end;
 	
@@ -48,9 +32,6 @@
 		donpcevent "poringStart::OnStart";
 	end;
 	
-	OnClock2400:
-		donpcevent "poringStart::OnStart";
-	end;
 }
 //******************************************
 //*EVENT START SCRIPT
@@ -129,7 +110,7 @@ function	script	poringStop	{
 //******************************************
 //*PRONTERA NPC
 //******************************************
-prontera,161,181,4	script	Rey Poring::poring_king	10066,{
+titans,153,162,4	script	Rey Poring::poring_king	10066,{
 	for(set .@i,0; .@i< getvariableofnpc(.taSize,"poring_es");set .@i,.@i+1){ //NPC Text
 		mes	getvariableofnpc(.ta$[.@i],"poring_es");
 	}

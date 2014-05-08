@@ -16,31 +16,8 @@
 //*EVENT TIMER SCRIPT
 //******************************************
 -	script	mvp_timer	-1,{
-	OnClock0100:
-		donpcevent "mvp_event_manager::OnStart";
-	end;
 
-	OnClock0400:
-		donpcevent "mvp_event_manager::OnStart";
-	end;
-
-	OnClock0700:
-		donpcevent "mvp_event_manager::OnStart";
-	end;
-
-	OnClock1000:
-		donpcevent "mvp_event_manager::OnStart";
-	end;
-
-	OnClock1300:
-		donpcevent "mvp_event_manager::OnStart";
-	end;
-
-	OnClock1600:
-		donpcevent "mvp_event_manager::OnStart";
-	end;
-
-	OnClock1900:
+	OnClock1500:
 		donpcevent "mvp_event_manager::OnStart";
 	end;
 
@@ -193,7 +170,7 @@
 	
 }
 
-prontera,162,181,3	script	Monster Hunt::mvp_recruiter	10055,{
+titans,153,162,3	script	Monster Hunt::mvp_recruiter	10055,{
 	for(.@i=0;.@i<getvariableofnpc(.RECRUITER_TEXT_SIZE,"npc_translation");++.@i) {
 		mes getvariableofnpc(.T_RECRUITER_TEXT$[.@i],"npc_translation");
 	}

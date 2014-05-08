@@ -22,7 +22,7 @@ titans,148,172,4	script	WOE Information	2_BOARD1,{
 	end;
 OnAgitStart:
 	while(agitcheck()) {
-		misceffect EF_BEGINSPELL6;
+		specialeffect 67;
 		sleep 425;
 	}
 	end;
