@@ -1,6 +1,12 @@
 // Copyright (c) rAthena Project (www.rathena.org) - Licensed under GNU GPL
 // For more information, see LICENCE in the main folder
 
+#define HERCULES_CORE
+
+#include "mutex.h"
+
+#include "../common/cbasetypes.h" // for WIN32
+
 #ifdef WIN32
 #include "../common/winapi.h"
 #else
@@ -9,11 +15,9 @@
 #include <sys/time.h>
 #endif
 
-#include "../common/cbasetypes.h"
 #include "../common/malloc.h"
 #include "../common/showmsg.h"
 #include "../common/timer.h"
-#include "../common/mutex.h"
 
 struct ramutex{
 #ifdef WIN32
@@ -116,7 +120,7 @@ void ramutex_unlock( ramutex m ){
 
 ///////////////
 // Condition Variables
-// 
+//
 // Implementation:
 //
 

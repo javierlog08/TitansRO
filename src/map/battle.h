@@ -5,9 +5,12 @@
 #ifndef _MAP_BATTLE_H_
 #define _MAP_BATTLE_H_
 
-#include "../common/cbasetypes.h"
 #include "map.h" //ELE_MAX
+<<<<<<< HEAD
 #include "mapreg.h"
+=======
+#include "../common/cbasetypes.h"
+>>>>>>> 4b4e573b43f135d6cabc8d66b17610df6e96aecf
 
 /**
  * Declarations
@@ -22,12 +25,12 @@ struct status_data;
 /**
  * Defines
  **/
-#define MIN_HAIR_STYLE  (battle_config.min_hair_style)
-#define MAX_HAIR_STYLE  (battle_config.max_hair_style)
-#define MIN_HAIR_COLOR  (battle_config.min_hair_color)
-#define MAX_HAIR_COLOR  (battle_config.max_hair_color)
-#define MIN_CLOTH_COLOR (battle_config.min_cloth_color)
-#define MAX_CLOTH_COLOR (battle_config.max_cloth_color)
+#define MIN_HAIR_STYLE  (battle->bc->min_hair_style)
+#define MAX_HAIR_STYLE  (battle->bc->max_hair_style)
+#define MIN_HAIR_COLOR  (battle->bc->min_hair_color)
+#define MAX_HAIR_COLOR  (battle->bc->max_hair_color)
+#define MIN_CLOTH_COLOR (battle->bc->min_cloth_color)
+#define MAX_CLOTH_COLOR (battle->bc->max_cloth_color)
 
 #define	is_boss(bl)     (status_get_mode(bl)&MD_BOSS)	// Can refine later [Aru]
 
@@ -470,7 +473,9 @@ struct Battle_Config {
 	int mon_trans_disable_in_gvg;
 
 	int case_sensitive_aegisnames;
-} battle_config;
+};
+
+extern struct Battle_Config battle_config;
 
 /* criteria for battle_config.idletime_critera */
 enum e_battle_config_idletime {
@@ -538,9 +543,9 @@ struct battle_interface {
 	int64 (*attr_fix) (struct block_list *src, struct block_list *target, int64 damage, int atk_elem, int def_type, int def_lv);
 	/* applies card modifiers */
 	int64 (*calc_cardfix) (int attack_type, struct block_list *src, struct block_list *target, int nk, int s_ele, int s_ele_, int64 damage, int left, int flag);
-	/* applies element modifiers */	
+	/* applies element modifiers */
 	int64 (*calc_elefix) (struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int nk, int n_ele, int s_ele, int s_ele_, bool left, int flag);
-	/* applies mastery modifiers */	
+	/* applies mastery modifiers */
 	int64 (*calc_masteryfix) (struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv, int64 damage, int div, bool left, bool weapon);
 	/* calculates chorus bonus */
 	int (*calc_chorusbonus) (struct map_session_data *sd);
