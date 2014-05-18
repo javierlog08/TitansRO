@@ -55,27 +55,21 @@ titans,144,172,5	script	Horarios de Eventos::info_npc	837,{
 		
 		setarray .T_INFO_PORING$[0],"^B266FF[Horarios de Eventos]^000000",
 								"Evento automatico Poring:",
-								"  ^BBBBBB~00:00 L-D^000000",
+								"  ^BBBBBB~00:00 Toda la semana^000000",
 								//"  ^BBBBBB~03:00 L-D^000000",
 								//"  ^BBBBBB~06:00 L-D^000000",
 								//"  ^BBBBBB~09:00 L-D^000000",
-								"  ^BBBBBB~12:00 L-D^000000",
+								"  ^BBBBBB~12:00 Toda la semana^000000",
 								//"  ^BBBBBB~15:00 L-D^000000",
-								"  ^BBBBBB~18:00 L-D^000000",
-								"  ^BBBBBB~21:00 L-D^000000";
+								"  ^BBBBBB~18:00 Toda la semana^000000",
+								"  ^BBBBBB~21:00 Toda la semana^000000";
 
 		set .INFO_I_P,getarraysize(.T_INFO_PORING$);
 								
 		setarray .T_INFO_MVP$[0],"^B266FF[Horarios de Eventos]^000000",
 								"Evento automatico Monster Hunter:",
-								//"  ^BBBBBB~12:00 L-D^000000",
-								//"  ^BBBBBB~04:00 L-D^000000",
-								//"  ^BBBBBB~07:00 L-D^000000",
-								//"  ^BBBBBB~10:00 L-D^000000",
-								"  ^BBBBBB~15:00 L-D^000000",
-								//"  ^BBBBBB~16:00 L-D^000000",
-								//"  ^BBBBBB~19:00 L-D^000000",
-								"  ^BBBBBB~22:00 L-D^000000";
+								"  ^BBBBBB~15:00 Lunes-Miercoles-Sabado^000000",
+								"  ^BBBBBB~22:00 Lunes-Miercoles-Sabado^000000";
 
 		set .INFO_I_M,getarraysize(.T_INFO_MVP$);
 	end;

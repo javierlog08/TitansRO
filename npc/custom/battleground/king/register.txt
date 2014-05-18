@@ -67,14 +67,19 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 			if(select(.@menu$)==2) {
 				next2;
 				if(strcharinfo(0)==getvariableofnpc(.SPONSOR$,"pvp_king_officer")) {
+					next2;
 					mes "Si cancelas el torneo perderas todo el dinero que invertistes";
 					mes "^ff0000Deseas cancelarlo?^000000";
 					if(select("Si:No")==1) {
-						next2;
-						mes "FLUJO CANCELADO";
-						
+						areawarp "pvp_castle",159,11,188,38,"pvp_castle",106,110;
+						setState(0);
+						donpcevent "pvp_king_register_time::OnReset";
+						.time=0;
+						sleep2 1000;
+						reset();
 					} else {
 						next2;
+						mes "^00CCCC[ Organizador Rey del PVP ]^000000";
 						mes "Perfecto.";
 						mes "Que el torneo continue.";
 					}
@@ -93,7 +98,7 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 				} else {
 					next2;
 					mes "Perfecto.";
-					mes "Esa es la actitud de un futuro campeon";
+					mes "Esa es la actitud de un futuro ganador.";
 				}
 				close2;
 				end;
@@ -137,11 +142,15 @@ pvp_castle,184,34,4	script	Registro de Torneo::pvp_king_register	468,{
 				if(getarraysize(.queue$)>=.STACK) {
 					donpcevent "pvp_king_register_time::OnUpdateClock";
 					goto StartTournament;
-				} else {
-					areawarp "pvp_castle",159,11,188,38,"pvp_castle",106,110;
-					announce "La convocatoria al Torneo PVP Fallo. Se necesita un numero minimo de "+.STACK+" players para iniciar un Torneo.",bc_all,0xff3333;
-					setState(0);
-					reset();
+				} else {	
+					if(!getState()) {
+						announce "[ "+getvariableofnpc(.SPONSOR$,"pvp_king_officer")+" ] Ha cancelado la convocatoria para el torneo PVP",bc_all;
+					}else {
+						areawarp "pvp_castle",159,11,188,38,"pvp_castle",106,110;
+						announce "La convocatoria al Torneo PVP Fallo. Se necesita un numero minimo de "+.STACK+" players para iniciar un Torneo.",bc_all,0xff3333;
+						setState(0);
+						reset();
+					}
 				}
 				break;
 			}
@@ -609,6 +618,11 @@ pvp_castle,178,36,4	script	Tiempo de Registro::pvp_king_register_time	857,{
 	
 	OnInit:
 		set .REGISTER_TIME$,"";
+	end;
+
+	OnReset:
+		set .REGISTER_TIME$,"";
+		delwaitingroom;
 	end;
 
 	OnStartClock:

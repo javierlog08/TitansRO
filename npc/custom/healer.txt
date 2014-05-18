@@ -64,7 +64,6 @@ prontera,152,191,5	duplicate(Healer)	Healer#prt	569
 rachel,125,116,6	duplicate(Healer)	Healer#rac	569
 splendide,201,153,4	duplicate(Healer)	Healer#spl	569
 thor_camp,249,74,4	duplicate(Healer)	Healer#thor	569
-titans,141,174,5	duplicate(Healer)	Healer#tit	569
 umbala,105,148,3	duplicate(Healer)	Healer#umb	569
 veins,217,121,4	duplicate(Healer)	Healer#ve	569
 xmas,143,136,4	duplicate(Healer)	Healer#xmas	569

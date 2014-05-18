@@ -13,8 +13,8 @@ OnPCLoadMapEvent:
 				atcommand "@go 0";
 				end;
 			}
-			
-			set #PVP_INVITATIONS,0; //Dentro del castillo  las invitaciones son habilitadas nuevamente
+
+			//set #PVP_INVITATIONS,0; //Dentro del castillo  las invitaciones son habilitadas nuevamente
 		}
 	end;
 

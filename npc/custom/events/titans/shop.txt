@@ -1,7 +1,7 @@
 
 -	shop	event_shop_shop	-1,5254:10000000. //Deviling hat default
 
-titans,137,172,4	script	Tienda de Eventos::event_shop_titans	871,{
+titans,130,158,5	script	Tienda de Eventos::event_shop_titans	871,{
 	if(countitem(.REWARD_ITEM)>=getvariableofnpc(.BUY_REQUIRED_QUANTITY,"event_shop_es")) {
 		for(set .@i,0; .@i< getvariableofnpc(.haveTicketsSize,"event_shop_es");set .@i,.@i+1){ //NPC Text
 			mes	getvariableofnpc(.haveTickets$[.@i],"event_shop_es");

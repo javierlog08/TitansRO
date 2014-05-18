@@ -17,13 +17,30 @@
 //******************************************
 -	script	mvp_timer	-1,{
 
-	OnClock1500:
+	On021500: //Lunes 15:00
 		donpcevent "mvp_event_manager::OnStart";
 	end;
 
-	OnClock2200:
+	On022200: //Lunes a las 22:00
 		donpcevent "mvp_event_manager::OnStart";
 	end;
+
+	On041500: //Miercoles 15:00
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	On042200: //Miercoles a las 22:00
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	On011500: //Sabado 15:00
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+
+	On012200: //Sabado a las 22:00
+		donpcevent "mvp_event_manager::OnStart";
+	end;
+	
 }
 
 //******************************************
@@ -83,7 +100,7 @@
 	
 	STOP_EVENT:
 		disablenpc "mvp_recruiter";
-		mapwarp .Map$,"prontera",160,180;
+		mapwarp .Map$,"titans",146,168;
 		announce getvariableofnpc(.T_ANNOUNCE_STOP$,"npc_translation"), bc_all,getvariableofnpc(.ANNOUNCE_COLOR$,"npc_translation");
 		killmonster .Map$,"All";
 		cleanmap .Map$;

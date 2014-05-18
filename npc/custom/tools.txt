@@ -1,4 +1,3 @@
-
 //- NPC IDENTIFICADOR
 //=============================================================================
 titans,151,174,4	script	Identificador	623,{
@@ -18,6 +17,54 @@ titans,151,174,4	script	Identificador	623,{
 	message strcharinfo(0),"Identified "+.@Total[0]+" items"+((.@Total[1])?" for "+.@Total[1]+" Zeny":"")+".";
 	end;
 }
+
+//- NPC reparador
+//=============================================================================
+titans,137,172,5	script	Reparador::titan_repair	851,{
+	set .@Price, 10000;	// Zeny per identify
+	if (Zeny < .@Price) {
+			dispbottom "Reparar tiene un costo de  "+.@Price+" Zeny."; end; 
+	}
+		set Zeny, Zeny-.@Price;
+		specialeffect2 154;
+		repairall;
+		message strcharinfo(0),"Todos los items reparados, Pero pierdes "+.@Price+" Zeny";
+}
+
 //- TOOL DEALER
 //=============================================================================
 titans,146,176,4	shop	Tool Dealer#titans	581,611:-1,1750:-1,501:-1,502:-1,503:-1,504:-1,506:-1,645:-1,656:-1,657:-1,601:-1,602:-1,1065:-1,2239:-1
+
+// Healer
+//===========================================================================================
+titans,141,174,5	duplicate(Healer)	Healer#tit	569
+
+
+// --------------------------------------------------
+//	Job MAster
+// --------------------------------------------------
+titans,142,168,5	duplicate(Job Master)	Job Master#tit	646
+
+// --------------------------------------------------
+//	Noob Field
+// --------------------------------------------------
+poring_c01,0,0	monster	Poring	1002,20
+titans,138,155,5	script	Entrenamiento Noob	729,{
+        warp "poring_c01",104,106;
+		end;
+
+OnPCLoadMapEvent:
+	if(strcharinfo(3)=="poring_c01")
+		playbgm "33";
+end;
+
+OnInit:
+	setmapflag "poring_c01",mf_loadevent;
+end;
+}
+
+poring_c01,104,110,4	script	Salida	729,{
+        warp "titans",147,168;
+		end;
+
+}

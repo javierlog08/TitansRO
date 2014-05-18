@@ -27,17 +27,26 @@ OnAtcommand:
 //**********************************************************************************/
 //*	Kafra Shop core npc
 //**********************************************************************************/
-itemmall,180,71,4	script	Kafra Shop Employer::kafra_shop	423,{
-	mes "Bienvenido al Systema de Kafra Shop";
-	mes "Aqui puedes cambiar diferentes utilidades por ^0000FFKafra Points^000000";
-	mes "Que deseas hacer?";
+titans,136,164,5	script	Kafra Shop::kafra_shop	113,{
+	mes "^666600[ Kafra Shop ]^000000";
+	mes "Bienvenido al Systema de Kafra Shop de Titans RO";
+	mes " ";
+	//mes "Aqui puedes cambiar diferentes utilidades por ^0000FFKafra Points^000000";
+	mes "^0000ffEn que puedo ayudarte?^000000";
 	next;
 	
 	menu_kaf:
 		//menu "Que son Kafra Points en Titans?",m_explain,"Kafra Points x Zeny",m_xzeny,"Kafra Points x Medallas",m_xmedal,"Obtener Premios",m_menu_shop;
-		menu "Que son Kafra Points en Titans?",m_explain,"Kafra Points x Medallas",m_xmedal,"Recompensa para Guild",m_xguild,"Obtener Premios",m_menu_shop;
+		menu "Guardar mapa",m_save,"Que son Kafra Points en Titans?",m_explain,"Kafra Points x Medallas",m_xmedal,"Tienda",m_menu_shop;
 	end;
 	
+	m_save:
+		mes "^666600[ Kafra Shop ]^000000";
+		mes "He salvado tu punto en este mapa.";
+		mes "Regresa pronto !";
+		savepoint "titans",141,164;
+		close;
+	end;
 	m_explain:
 		mes "Los ^0000FFKafra Points^000000 Son puntajes especiales";
 		mes "Que puedes cambiar por los articulos que posee el sistema de kafra.";

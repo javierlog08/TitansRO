@@ -475,3 +475,39 @@ pvp_castle,114,97,4	script	PVP Points Checker::pvp_points_check	654,{
 	mes "^808080"+#PVPPOINTS+" Puntos de PVP^000000";
 	close;
 }
+
+pvp_castle,117,103,4	script	Caza Recompensas::pvp_bone_trader	405,{
+	set .@price,100;
+	mes "^cc66cc[ Caza Recompensas ]^000000";
+	mes "^ff0000--Yo compro craneos de gerreros.--^000000";
+	mes " ";
+	mes "Por la cabeza de cualquier gerrero pagaria ^0000ff"+.@price+"^000000 Zeny.";
+	mes "^808080~ Deseas hacer negocios? ~^000000";
+	if(select("Si:No")==1) {
+		if(countitem(7420)>=1) {
+			set .@reward,.@price*countitem(7420);
+			set Zeny,Zeny+.@reward;
+			delitem 7420,countitem(7420);
+			next2;
+			mes "^cc66cc[ Caza Recompensas ]^000000";
+			mes "Aqui tienes tu recompensa.";
+			mes "Hacen un total de ^0000ff"+.@reward+"^000000 Zeny.";
+			mes "Ha sido un placer hacer negocios contigo !";
+			close2;
+			message strcharinfo(0),"Has recibido "+.@reward+" Zeny";
+		} else {
+			next2;
+			mes "^cc66cc[ Caza Recompensas ]^000000";
+			mes "^ff0000No me tomes el pelo mocoso !.";
+			mes "No tienes nada por lo que pueda pagarte.^000000";
+			close;
+		}
+		
+	} else {
+		next2;
+		mes "^cc66cc[ Caza Recompensas ]^000000";
+		mes "Esta bien, accepto tu escogencia.";
+		mes "Regresa cuando quieras hacer negocios.";
+		close;
+	}
+}

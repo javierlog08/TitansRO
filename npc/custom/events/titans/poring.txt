@@ -101,9 +101,9 @@ function	script	poringStop	{
 	disablenpc "poring_king";
 	killmonster getvariableofnpc(.Map$,"poringStart"),"All";
 	mapannounce  getvariableofnpc(.Map$,"poringStart"),.@l$,bc_map,getvariableofnpc(.ANNOUNCE_COLOR$,"poringStart");
-	mapannounce  "prontera",.@l$,bc_map, getvariableofnpc(.ANNOUNCE_COLOR$,"poringStart");
+	mapannounce  "titans",.@l$,bc_map, getvariableofnpc(.ANNOUNCE_COLOR$,"poringStart");
 	sleep 5000;
-	mapwarp getvariableofnpc(.Map$,"poringStart"),"prontera",160,180;
+	mapwarp getvariableofnpc(.Map$,"poringStart"),"titans",146,168;
 	return;
 }
 

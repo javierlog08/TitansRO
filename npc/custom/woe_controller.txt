@@ -21,11 +21,17 @@ titans,148,172,4	script	WOE Information	2_BOARD1,{
 	doevent "WOE_CONTROL::OnMenu";
 	end;
 OnAgitStart:
+	delwaitingroom;
+	waitingroom "WOE ACTIVA !",0;
 	while(agitcheck()) {
-		specialeffect 67;
-		sleep 425;
+		specialeffect 865;
+		sleep 2000;
 	}
 	end;
+
+OnAgitEnd:
+	delwaitingroom;
+end;
 
 /*OnPCLoadMapEvent:
    getmapxy @map$,@x,@y,0;

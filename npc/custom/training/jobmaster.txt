@@ -245,9 +245,3 @@ OnPCBaseLvUpEvent:
 	}
 end;
 }
-
-// --------------------------------------------------
-//	Duplicates:
-// --------------------------------------------------
-
-titans,142,168,5	duplicate(Job Master)	Job Master#tit	646
