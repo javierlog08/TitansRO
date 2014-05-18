@@ -109,8 +109,8 @@ HPExport void plugin_init(void) {
 	strlib = GET_SYMBOL("strlib");
 	map = GET_SYMBOL("map");
 	status = GET_SYMBOL("status");
-	npc = GET_SYMBOL("npc");
-	mob = GET_SYMBOL("mob");
+	//npc = GET_SYMBOL("npc");
+//	mob = GET_SYMBOL("mob");
 	party = GET_SYMBOL("party");
 
 	addScriptCommand("next2", "",next2);

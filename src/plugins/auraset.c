@@ -7,6 +7,7 @@
 
 #include "../common/HPMi.h"
 #include "../common/mmo.h"
+#include "../common/timer.h"
 #include "../common/socket.h"
 #include "../common/malloc.h"
 #include "../common/strlib.h"

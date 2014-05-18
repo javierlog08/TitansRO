@@ -1,12 +1,15 @@
-﻿Build started 05/08/2014 03:56:09 p.m..
-     1>Project "C:\Users\Javier\Desktop\GIT-REPOS\TitansRO\titans\titans.vcxproj" on node 3 (Build target(s)).
+﻿Build started 05/18/2014 08:00:43 a.m..
+     1>Project "C:\Users\Javier\Desktop\GIT-REPOS\TitansRO\titans\titans.vcxproj" on node 5 (Rebuild target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V110\Microsoft.CppBuild.targets(346,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-     1>Link:
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I..\src\common /I..\3rdparty\msinttypes\include /ZI /nologo /W3 /WX- /Od /Oy- /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"titans\\" /Fd"titans\\vc110.pdb" /Gd /TC /analyze- /errorReport:prompt titans.c
+         titans.c
+       Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\plugins\\titans.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"..\plugins\titans.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"..\plugins\titans.lib" /MACHINE:X86 /DLL titans\\titans.obj
             Creating library ..\plugins\titans.lib and object ..\plugins\titans.exp
          titans.vcxproj -> C:\Users\Javier\Desktop\GIT-REPOS\TitansRO\titans\..\plugins\titans.dll
-     1>Done Building Project "C:\Users\Javier\Desktop\GIT-REPOS\TitansRO\titans\titans.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\Users\Javier\Desktop\GIT-REPOS\TitansRO\titans\titans.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.45
+Time Elapsed 00:00:01.88
