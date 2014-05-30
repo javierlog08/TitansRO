@@ -1143,8 +1143,8 @@ int skill_additional_effect(struct block_list* src, struct block_list *bl, uint1
 				int i;
 				const int pos[5] = { EQP_WEAPON, EQP_HELM, EQP_SHIELD, EQP_ARMOR, EQP_ACC };
 
-				for( i = 0; i < skill_lv; i++ )
-					skill->strip_equip(bl,pos[i], 6 * skill_lv + status->get_lv(src) / 4 + status_get_dex(src) / 10,
+				for( i = 0; i < skill_lv; i++ ) // TitansRO: Fixed earthstrain now take  target dex on formula too.
+					skill->strip_equip(bl,pos[i], 10 * skill_lv  + (sstatus->dex - tstatus->dex) / 10,
 						skill_lv,skill->get_time2(skill_id,skill_lv));
 			}
 			break;
@@ -12051,6 +12051,9 @@ int skill_unit_onplace_timer(struct skill_unit *src, struct block_list *bl, int6
 				skill->attack(BF_MAGIC,ss,&src->bl,bl,sg->skill_id,sg->skill_lv,tick,0);
 			break;
 
+		/**
+		* TitansRO: Modifications to fix Zenkai effects chance.
+		*/
 		case UNT_ZENKAI_WATER:
 		case UNT_ZENKAI_LAND:
 		case UNT_ZENKAI_FIRE:
@@ -12058,21 +12061,41 @@ int skill_unit_onplace_timer(struct skill_unit *src, struct block_list *bl, int6
 			if( battle->check_target(&src->bl,bl,BCT_ENEMY) > 0 ){
 				switch( sg->unit_id ){
 					case UNT_ZENKAI_WATER:
-						sc_start(ss, bl, SC_COLD, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
-						sc_start(ss, bl, SC_FREEZE, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
-						sc_start(ss, bl, SC_FROSTMISTY, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
+						switch (rand()%2 + 1) {
+							case 1:
+								sc_start(ss, bl, SC_FREEZE, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+							case 2:
+								sc_start(ss, bl, SC_FROSTMISTY, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+						}
 						break;
 					case UNT_ZENKAI_LAND:
-						sc_start(ss, bl, SC_STONE, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
-						sc_start(ss, bl, SC_POISON, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
+						switch (rand()%2 + 1) {
+							case 1:
+								sc_start(ss, bl, SC_STONE, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+							case 2:
+								sc_start(ss, bl, SC_POISON, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+						}
 						break;
 					case UNT_ZENKAI_FIRE:
-						sc_start4(ss, bl, SC_BURNING, sg->val1*5, sg->skill_lv, 0, ss->id, 0, skill->get_time2(sg->skill_id, sg->skill_lv));
+						sc_start(ss, bl, SC_BURNING, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
 						break;
 					case UNT_ZENKAI_WIND:
-						sc_start(ss, bl, SC_SILENCE, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
-						sc_start(ss, bl, SC_SLEEP, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
-						sc_start(ss, bl, SC_DEEP_SLEEP, sg->val1*5, sg->skill_lv, skill->get_time2(sg->skill_id, sg->skill_lv));
+						switch (rand()%3 + 1) {
+							case 1:
+								sc_start(ss, bl, SC_SLEEP, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+							case 2:
+								sc_start(ss, bl, SC_SILENCE, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+							case 3:
+								if((rand()%100 + 1) <= 10) // TitansRO: Only Deep Sleep have 10% chance to fail.
+									sc_start(ss, bl, SC_DEEP_SLEEP, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
+								break;
+						}
 						break;
 				}
 			}else
