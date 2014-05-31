@@ -12092,7 +12092,7 @@ int skill_unit_onplace_timer(struct skill_unit *src, struct block_list *bl, int6
 								sc_start(ss, bl, SC_SILENCE, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
 								break;
 							case 3:
-								if((rand()%100 + 1) <= 10) // TitansRO: Only Deep Sleep have 10% chance to fail.
+								if((rand()%100 + 1) <= 50) // TitansRO: Only Deep Sleep have 50% chance to fail.
 									sc_start(ss, bl, SC_DEEP_SLEEP, sg->val1*5, sg->skill_lv, skill_get_time2(sg->skill_id, sg->skill_lv));
 								break;
 						}
