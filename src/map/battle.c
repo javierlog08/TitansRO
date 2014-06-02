@@ -2335,8 +2335,10 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
  					break;
 				case SR_TIGERCANNON:// ATK [((Caster consumed HP + SP) / 4) x Caster Base Level / 100] %
 					{
-						int hp = status_get_max_hp(src) * (10 + 2 * skill_lv) / 100,
-							sp = status_get_max_sp(src) * (6 + skill_lv) / 100;
+						//int hp = status_get_max_hp(src) * (10 + 2 * skill_lv) / 100,
+						//	sp = status_get_max_sp(src) * (6 + skill_lv) / 100;
+						int hp = (status_get_max_hp(src) * ((10 + (2 * skill_lv)) / 100)),
+							sp = (status_get_max_sp(src) * ((5 + skill_lv) / 100));
 						if( sc && sc->data[SC_COMBOATTACK] && sc->data[SC_COMBOATTACK]->val1 == SR_FALLENEMPIRE ) // ATK [((Caster consumed HP + SP) / 2) x Caster Base Level / 100] %
 							skillratio += -100 + (hp+sp) / 2;
 						else
