@@ -2336,11 +2336,11 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 				case SR_TIGERCANNON:// ATK [((Caster consumed HP + SP) / 4) x Caster Base Level / 100] %
 					{
 						int hp = status_get_max_hp(src) * (10 + 2 * skill_lv) / 100,
-							sp = status_get_max_sp(src) * (6 + skill_lv) / 100;
+							sp = status_get_max_sp(src) * (5 + skill_lv) / 100;
 						if( sc && sc->data[SC_COMBOATTACK] && sc->data[SC_COMBOATTACK]->val1 == SR_FALLENEMPIRE ) // ATK [((Caster consumed HP + SP) / 2) x Caster Base Level / 100] %
 							skillratio += -100 + (hp+sp) / 2;
 						else
-							skillratio += ((hp+sp) / 4);
+							skillratio += -100 + (hp+sp) / 4;
 
 
 						RE_LVL_DMOD(100);
@@ -3375,7 +3375,7 @@ struct Damage battle_calc_magic_attack(struct block_list *src,struct block_list 
 		ad.damage = 0; //reinitialize..
 #endif
 //MATK_RATE scales the damage. 100 = no change. 50 is halved, 200 is doubled, etc
-#define MATK_RATE( a ) ( ad.damage= ad.damage*(a)/200 )
+#define MATK_RATE( a ) ( ad.damage= ad.damage*(a)/100 )
 //Adds dmg%. 100 = +100% (double) damage. 10 = +10% damage
 #define MATK_ADDRATE( a ) ( ad.damage+= ad.damage*(a)/100 )
 //Adds an absolute value to damage. 100 = +100 damage
@@ -4476,7 +4476,7 @@ struct Damage battle_calc_weapon_attack(struct block_list *src,struct block_list
 
 //Assuming that 99% of the cases we will not need to check for the flag.rh... we don't.
 //ATK_RATE scales the damage. 100 = no change. 50 is halved, 200 is doubled, etc
-#define ATK_RATE( a ) do { int64 temp__ = (a); wd.damage= wd.damage*temp__/200 ; if(flag.lh) wd.damage2= wd.damage2*temp__/200; } while(0)
+#define ATK_RATE( a ) do { int64 temp__ = (a); wd.damage= wd.damage*temp__/100 ; if(flag.lh) wd.damage2= wd.damage2*temp__/100; } while(0)
 #define ATK_RATE2( a , b ) do { wd.damage= wd.damage*(a)/100 ; if(flag.lh) wd.damage2= wd.damage2*(b)/100; } while(0)
 #define ATK_RATER(a) ( wd.damage = wd.damage*(a)/100 )
 #define ATK_RATEL(a) ( wd.damage2 = wd.damage2*(a)/100 )
