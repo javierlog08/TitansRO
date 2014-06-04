@@ -27,6 +27,7 @@
 
 payon,157,146,6	script	Suhnbi#cash	4_M_03,{
 	disable_items;
+	set .@bonus,10; // 10% bonus rate aditional
 	mes "[Suhnbi]";
 	mes "I am the Armsmith";
 	mes "I can refine all kinds of weapons,";
@@ -75,7 +76,7 @@ payon,157,146,6	script	Suhnbi#cash	4_M_03,{
 
 	mes "[Suhnbi]";
 	mes "Clang! Clang! Clang!";
-	if (getequippercentrefinery(.@part) > rand(100) || getequippercentrefinery(.@part) > rand(100)) {
+	if ((getequippercentrefinery(.@part)+.@bonus) > rand(100)) {
 		successrefitem .@part;
 		next;
 		emotion e_no1;
