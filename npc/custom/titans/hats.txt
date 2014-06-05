@@ -1,36 +1,96 @@
-titans,136,145,5	script	Ifrit Crown Quest	20000,{
-	mes "[^000099 Ifrit Mask Quest ^000000]";
-	if(callfunc("check",.items)) {
-		mes "Nice Done !";
-		mes "I have only to give you the crown as all respectable king.";
-		close2;
-			if(callfunc("remove",.items))
-				getitem .item,5420;
-		end;
-	}
-	mes "Do you like My Hat?";
-	mes "I just kill the Ifrit King.";
-	callfunc("list",.items);
-	close;
+titans,136,146,5	script	Ifrit Crown Quest	10067,{
+	mes "[^ff0000  Ifrit Mask Quest  ^000000]";
+	callfunc("dialog",.items,.item);
+	end;
 	
-	Init:
-		setarray .items[0],0,2678,1,7097,500,994,500; // <-- required items, Dont touch index 0
-		set .item,5420; // <-- Reward item
+	OnInit:
+		setarray .items[0],0,2678,1,7097,500,994,100; // <-- required items, Dont touch index 0
+		set .item,5430; // <-- Reward item
 	end;
 }
 
+titans,136,141,5	script	Magic Eyes Quest	10068,{
+	mes "[^ff0000  Magic Eyes Quest  ^000000]";
+	callfunc("dialog",.items,.item);
+	end;
+	
+	OnInit:
+		setarray .items[0],0,2678,1,7097,500,994,100; // <-- required items, Dont touch index 0
+		set .item,5138; // <-- Reward item
+	end;
+}
+
+titans,136,136,5	script	Carmen Miranda's Hat Quest	10069,{
+	mes "[^ff0000  Carmen Miranda's Hat Quest  ^000000]";
+	callfunc("dialog",.items,.item);
+	end;
+	
+	OnInit:
+		setarray .items[0],0,2678,1,7097,500,994,100; // <-- required items, Dont touch index 0
+		set .item,5307; // <-- Reward item
+	end;
+}
+
+titans,136,131,5	script	Sakura Mist Hat Quest	10070,{
+	mes "[^ff0000  Sakura Mist Hat Quest  ^000000]";
+	callfunc("dialog",.items,.item);
+	end;
+	
+	OnInit:
+		setarray .items[0],0,2678,1,7097,500,994,100; // <-- required items, Dont touch index 0
+		set .item,5523; // <-- Reward item
+	end;
+}
+
+titans,136,126,5	script	Hoplite Helmet Quest	10071,{
+	mes "[^ff0000  Hoplite Helmet Quest  ^000000]";
+	callfunc("dialog",.items,.item);
+	end;
+	
+	OnInit:
+		setarray .items[0],0,2678,1,7097,500,994,100; // <-- required items, Dont touch index 0
+		set .item,5782; // <-- Reward item
+	end;
+}
+
+
+
+function	script	dialog	{
+	if (!checkweight(getarg(1),1)) {
+		mes "^ff0000Weight Limit !";
+		mes "Please store some items to continue.^000000";
+		close2;
+		end;
+	}
+	if(callfunc("check",getarg(0))) {
+		mes "Nice Done !";
+		mes "I can give you a copy of my hat.";
+		mes "Enjoin !";
+		close2;
+			if(callfunc("remove",getarg(0)))
+				getitem getarg(1),1;
+		end;
+	}
+	mes "Do you like My Hat?";
+	mes "Just bring me some stuff.";
+	callfunc("list",getarg(0));
+}
 function	script	list	{
-	set .@items,getarg(0);
-	mes "^0000ff ~ Requirements ~ ^000000";
+	.@count = getarraysize(getarg(0));
+	copyarray .@items, getarg(0), .@count;
+	mes "^0000ff |-- Requirements --| ^000000";
 	for(.@j=1;.@j < getarraysize(.@items); .@j++)
-		if (.@i%2)
-			mes "^808080~ ".@items[.@j+1]" "+getitemname(.@items[.@j]);
+		if(.@j%2)
+			mes "^808080~ "+.@items[.@j+1]+" "+getitemname(.@items[.@j]);
+			
+	close;
 }
 
 function	script	check	{
 	set .@flag,true;
-	set .@items,getarg(0);
-	for (.@i=1;.@i < getarraysize(.@item); .@i++) {
+	.@count = getarraysize(getarg(0));
+	copyarray .@items, getarg(0), .@count;
+	for (.@i=1;.@i < getarraysize(.@items); .@i++) {
 		if (.@i%2) {
 			if(countitem(.@items[.@i]) < .@items[.@i+1]) {
 				.@flag = false;
@@ -41,7 +101,8 @@ function	script	check	{
 }
 
 function	script	remove	{
-	set .@items,getarg(0);
+	.@count = getarraysize(getarg(0));
+	copyarray .@items, getarg(0), .@count;
 	for(.@j=1;.@j < getarraysize(.@items); .@j++) {
 		if( .@j %2) {
 			if(countitem(.@items[.@j]) >= .@items[.@j+1]){
