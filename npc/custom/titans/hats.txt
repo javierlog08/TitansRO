@@ -1,0 +1,52 @@
+titans,136,145,5	script	Capitan Hat Quest	10067,{
+	function check;
+	function remove;
+			setarray .item[0],0,5074,1,7566,10,7064,200,4241,1,2573,1;
+			mes "[^000099 Archangel Wing Master ^000000]";
+			if(check()) {
+				mes "I can see you are one in a kind!, you deserve our power.";
+				mes "I will like to give my Wings as a reward for your hard work.";
+				close2;
+					if(remove())
+						getitem 2573,1;
+				end;
+			}
+				mes "Wings make with the blessing of the Gods.";
+				mes "if you think you deserve it, bring all the";
+				mes "items I need to make one for you.";
+				mes "^0000ff1^000000 ^FF0000Angel Wing Ears^000000";
+				mes "^0000ff10^000000 ^FF0000Will Of Red Darkness^000000";
+				mes "^0000ff200^000000 ^FF0000Wing of Dragonfly^000000";
+				mes "^0000ff1^000000 ^FF0000Arc Angeling Card^000000";
+				close;
+				end;
+				
+		function check {
+			set .@flag,true;
+			for (.@i=1;.@i < getarraysize(.item); .@i++) {
+				if (.@i%2) {
+					if(countitem(.item[.@i]) < .item[.@i+1]) {
+						.@flag = false;
+					}
+				}
+			}
+			return .@flag;
+		}
+		function remove {
+			for(.@j=1;.@j < getarraysize(.item); .@j++) {
+				if( .@j %2) {
+					if(countitem(.item[.@j]) >= .item[.@j+1])
+						delitem .item[.@j], .item[.@j+1];
+				}
+		}
+		return true;
+	}
+
+		
+}
+
+/* angel wing ears 5074
+10 will of red darkness 7566
+7064 Wing of Dragonfly (44.13%) 200
+Arc Angeling Card [Headgear]   Item ID# 4241 (Archangeling_Card) 1
+*/ 

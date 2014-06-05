@@ -1,0 +1,49 @@
+titans,152,78,4	script	Fallen Angel Wing Quest::quest01	403,{
+	function check;
+	function remove;
+	
+	setarray .item[0],0,7510,20,2726,1,5068,1;
+	set .zeny,10000000;
+	
+	mes "^330066[  Fallen Angel Wing Quest  ]^000000";
+	if(check()) {
+		mes "I can see, how you prove worthy of this glory.";
+		mes "Please recive this gift from the Old Mages !";
+		close2;
+			if(remove())
+				getitem 2589,1;
+		end;
+	}
+	mes "Wings that only ancient Mages Had.";
+	mes "To obtain it, prove worthy of them";
+	mes "^ff000020^000000 ^0000ffValhalla's Flower^000000";
+	mes "^ff00001^000000 ^0000ffEvil Wing Ears^000000";
+	mes "^ff00001^000000 ^0000ffIcarus Wings^000000";
+	close;
+	end;
+	
+	function check {
+			set .@flag,true; 
+			for(.@i=1;.@i < getarraysize(.item);++.@i) {
+				if( .@i % 2 ) {
+					if(countitem(.item[.@i]) < .item[.@i+1]) {
+						.@flag = false;
+					}
+				}
+			}
+			
+			return .@flag;
+	}
+	
+	function remove {
+		for(.@j=1;.@j < getarraysize(.item);++.@j) {
+			if( .@j % 2 ) {
+				if(countitem(.item[.@j]) >= .item[.@j+1]) {
+					delitem .item[.@j],.item[.@j+1];
+				}
+			}
+		}
+		return true;
+	}
+
+}
